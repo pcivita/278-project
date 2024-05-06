@@ -6,11 +6,11 @@ interface CustomTextProps extends TextProps {
 }
 
 export function MonoText(props: CustomTextProps) {
-  let fontFamily = 'TripSansRegular';  // Default to regular
+  let fontFamily = 'TripSans-Regular';  // Default to regular
   if (props.useMono) {
     fontFamily = 'SpaceMono';  // Use Space Mono if specified
   } else if (props.useUltra) {
-    fontFamily = 'TripSansUltra';  // Use TripSans Ultra if specified
+    fontFamily = 'TripSans-Ultra';  // Use TripSans Ultra if specified
   }
 
   return <Text {...props} style={[props.style, { fontFamily }]} />;
