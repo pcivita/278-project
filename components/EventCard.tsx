@@ -1,8 +1,14 @@
 // EventCard.tsx
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import Colors from '@/constants/Colors';
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 
 interface EventCardProps {
   eventName: string;
@@ -13,13 +19,20 @@ interface EventCardProps {
   colorScheme: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ eventName, eventTime, location, host, signups, colorScheme }) => {
+const EventCard: React.FC<EventCardProps> = ({
+  eventName,
+  eventTime,
+  location,
+  host,
+  signups,
+  colorScheme,
+}) => {
   let theme = Colors.color1;
   if (colorScheme === "color2") {
-    theme = Colors.color2
-  } 
+    theme = Colors.color2;
+  }
   if (colorScheme === "color3") {
-    theme = Colors.color3
+    theme = Colors.color3;
   }
 
   return (
@@ -39,7 +52,9 @@ const EventCard: React.FC<EventCardProps> = ({ eventName, eventTime, location, h
           <Ionicons name="location-sharp" size={20} color="black" />
           <Text style={styles.secondaryText}>{location}</Text>
         </View>
-        <TouchableOpacity style={[styles.button, { backgroundColor: theme.dark }]}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.dark }]}
+        >
           <Text style={styles.buttonText}>Join Event</Text>
         </TouchableOpacity>
       </View>
@@ -56,17 +71,17 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     padding: 15,
     marginVertical: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   leftSide: {
     width: "70%",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   rightSide: {
     width: "30%",
@@ -75,11 +90,11 @@ const styles = StyleSheet.create({
   },
   primaryText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   secondaryText: {
-    fontSize: 16
+    fontSize: 16,
   },
   location: {
     flexDirection: "row",
@@ -90,13 +105,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#0C7BC8",
     borderRadius: 15,
     padding: 10,
-    alignItems: 'center',
+    alignItems: "center",
     margin: 0,
   },
   buttonText: {
     color: "white",
-    fontWeight: 'bold',
-    fontSize: 16
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

@@ -1,95 +1,38 @@
-import React from 'react';
-import { Image, View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Feed from './screens/Feed';
-import Profile from './screens/Profile';
-import Calendar from './screens/Calendar';
-import Notifications from './screens/Notifications';
-import CreateEvent from './screens/CreateEvent';
-
-const Tab = createBottomTabNavigator();
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import Login from "./screens/Login";
+import TabNavigator from "./TabNavigator";
+import { createStackNavigator } from "@react-navigation/stack";
+import { useState, useEffect } from "react";
+import { Session } from "@supabase/supabase-js";
+import { useSegments } from "expo-router";
+import { supabase } from "./utils/supabase";
+const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [initialized, setInitialized] = useState(false);
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setInitialized(true);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
   return (
     <NavigationContainer independent={true}>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused }) => {
-            let iconName;
-            let iconStyle = { width: 30, height: 30 }; // Default icon size
-            if (route.name === 'Create Event') {
-              iconStyle = { width: 100, height: 100 }; // Larger icon for Create Event
-            }
-            switch (route.name) {
-              case 'Feed':
-                iconName = focused
-                  ? require('./assets/icons/active/home_active.png')
-                  : require('./assets/icons/inactive/home_inactive.png');
-                break;
-              case 'Profile':
-                iconName = focused
-                  ? require('./assets/icons/active/profile_active.png')
-                  : require('./assets/icons/inactive/profile_inactive.png');
-                break;
-              case 'Calendar':
-                iconName = focused
-                  ? require('./assets/icons/active/calendar_active.png')
-                  : require('./assets/icons/inactive/calendar_inactive.png');
-                break;
-              case 'Notifications':
-                iconName = focused
-                  ? require('./assets/icons/active/notif_active.png')
-                  : require('./assets/icons/inactive/notif_inactive.png');
-                break;
-              case 'Create Event':
-                iconName = require('./assets/icons/plus_icon.png');
-                break;
-            }
-            return (
-              <View style={{ marginTop: route.name === 'Create Event' ? -15 : 0 }}>
-                <Image source={iconName} style={iconStyle} resizeMode="contain" />
-              </View>
-            );
-          },
-          tabBarLabel: ({ focused }) => {
-            return route.name === 'Create Event' ? null : (
-              <Text style={{
-                fontSize: 12,
-                color: focused ? 'green' : 'gray',
-                marginBottom: 10 // Increased space between text and icon
-              }}>{route.name}</Text>
-            );
-          },
-          tabBarActiveTintColor: '#FAFFD8',
-          tabBarInactiveTintColor: 'gray',
-          tabBarLabelStyle: { fontSize: 12 },
-          tabBarStyle: {
-            padding: 10,
-            height: 90, // Increased height
-            backgroundColor: '#000', // Black background
-            borderTopRightRadius: 20, // Rounded top corners
-            borderTopLeftRadius: 20,
-            position: 'absolute',
-            bottom: 0, // Position above the bottom
-            left: 10,
-            right: 10, // Padding from the sides
-            elevation: 20, // Android shadow
-            shadowColor: '#000', // iOS shadow
-            shadowOffset: { width: 0, height: -1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 10
-          }
-        })}
-      >
-        <Tab.Screen name="Feed" component={Feed} options={{ tabBarLabel: 'Home' }} />
-        <Tab.Screen name="Calendar" component={Calendar} options={{ tabBarLabel: 'Calendar' }} />
-        <Tab.Screen name="Create Event" component={CreateEvent} options={{ tabBarLabel: '' }} />
-        <Tab.Screen name="Notifications" component={Notifications} options={{ tabBarLabel: 'Notifications' }} />
-        <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Profile' }} />
-      </Tab.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {session ? (
+          // If there is a session, navigate to Main
+          <Stack.Screen name="Main" component={TabNavigator} />
+        ) : (
+          // No session, navigate to Login
+          <Stack.Screen name="Login" component={Login} />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
 export default AppNavigator;
