@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { supabase } from "@/utils/supabase";
 
-export function Auth() {
+export function Auth({ navigation }) {
   if (Platform.OS === "ios")
     return (
       <AppleAuthentication.AppleAuthenticationButton
@@ -18,6 +18,7 @@ export function Auth() {
                 AppleAuthentication.AppleAuthenticationScope.EMAIL,
               ],
             });
+            console.log("credential", credential);
             // Sign in via Supabase Auth.
             if (credential.identityToken) {
               const {
@@ -30,6 +31,10 @@ export function Auth() {
               console.log(JSON.stringify({ error, user }, null, 2));
               if (!error) {
                 // User is signed in.
+                console.log(
+                  "Checked and User is Already Signed in - .native.tsx"
+                );
+                navigation.replace("Main");
               }
             } else {
               throw new Error("No identityToken.");
