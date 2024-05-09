@@ -2,19 +2,29 @@
 import { supabase } from "@/utils/supabase";
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import ProfileCard from "../components/ProfileCard";
+import Colors from "@/constants/Colors";
+
 
 const Profile = () => {
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
-        style={styles.profileImage}
+      <View style={styles.header}>
+        <Image
+          source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
+          style={styles.profileImage}
+        />
+      </View>
+      <View style={styles.friendsContainer}>
+        <Text>13 friends</Text>
+      </View>
+      <ProfileCard 
+        name="John Doe"
+        location="Stanford, CA"
+        bio="This is a short bio of John Doe."
+        wants="Try new food, go on hikes, and get off campus more often"
+        colorScheme="color1"
       />
-      <Text style={styles.name}>John Doe</Text>
-      <Text style={styles.bio}>
-        This is a short bio of John Doe. Here goes the description.
-      </Text>
-
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Edit Profile</Text>
       </TouchableOpacity>
@@ -32,14 +42,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: Colors.background,
+  },
+  header: {
+    width: "100%",
+    backgroundColor: Colors.color1.light,
+    alignItems: "center",
+    marginBottom: 70
   },
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 20,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    top: 70,
+  },
+  friendsContainer: {
+    margin: 10,
   },
   name: {
     fontSize: 24,
