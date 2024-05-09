@@ -1,17 +1,21 @@
-import { Text, TextProps } from './Themed';
+import React from 'react';
+import { Text, TextProps } from 'react-native';
 
 interface CustomTextProps extends TextProps {
-  useMono?: boolean;  // Flag to decide if Mono font should be used
-  useUltra?: boolean;  // Flag to use Ultra font
+  useMono?: boolean;
+  useUltra?: boolean;
 }
 
-export function MonoText(props: CustomTextProps) {
-  let fontFamily = 'TripSans-Regular';  // Default to regular
-  if (props.useMono) {
-    fontFamily = 'SpaceMono';  // Use Space Mono if specified
-  } else if (props.useUltra) {
-    fontFamily = 'TripSans';  // Use TripSans if specified
+export function MonoText({ style, useMono, useUltra, ...otherProps }: CustomTextProps) {
+  let fontFamily = 'TripSans-Regular';
+  if (useMono) {
+    fontFamily = 'SpaceMono';
+  } else if (useUltra) {
+    fontFamily = 'TripSans-Ultra';
   }
 
-  return <Text {...props} style={[props.style, { fontFamily }]} />;
+  const textStyle = { fontFamily, ...style };  // Combine fontFamily with existing styles safely
+
+  return <Text {...otherProps} style={textStyle} />;
 }
+

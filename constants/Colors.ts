@@ -1,31 +1,33 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
+interface ColorScheme {
+  light: string;
+  dark: string;
+}
 
-export default {
-  // light: {
-  //   text: '#000',
-  //   background: '#fff',
-  //   tint: tintColorLight,
-  //   tabIconDefault: '#ccc',
-  //   tabIconSelected: tintColorLight,
-  // },
-  // dark: {
-  //   text: '#fff',
-  //   background: '#000',
-  //   tint: tintColorDark,
-  //   tabIconDefault: '#ccc',
-  //   tabIconSelected: tintColorDark,
-  // },
+interface ColorSchemes {
+  [key: string]: ColorScheme;
+}
+
+const Colors: ColorSchemes = {
   color1: {  // Blue
-    dark: "#0C7BC8",
-    light: "#BCE4FF", 
+    dark: "#4A7B9D",
+    light: "#E1F3FF",
   },
-  color2: {  // Green
-    dark: "#64A407",
-    light: "#C9E3A2",
+  color2: {  // Moss
+    dark: "#9AA899",
+    light: "#E7F0E6",
   },
-  color3: {  // Pink
-    dark: "#B40D70",
-    light: "#EFC5DE",
-  }
+  color3: {  // Yellow
+    dark: "#ECFFB0",
+    light: "#FCFFF2",
+  },
+  color4: {  // Slate Grey
+    dark: "#54577C",
+    light: "#D5D7E7",
+  },
+  color5: {  // Lavender
+    dark: "#C6A5CF",
+    light: "#F8F0FF",
+  },
 };
+
+export default Colors;
