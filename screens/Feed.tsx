@@ -39,23 +39,23 @@ const Feed: React.FC = () => {
         location="Common Hall"
         host="Maria"
         signups="1/5"
+        colorScheme="color4"
+      />
+      <EventCard
+        eventName="Board Games Evening"
+        eventTime="6:00 - 8:00 PM"
+        location="Common Hall"
+        host="Maria"
+        signups="1/5"
+        colorScheme="color5"
+      />
+      <EventCard
+        eventName="Board Games Evening"
+        eventTime="6:00 - 8:00 PM"
+        location="Common Hall"
+        host="Maria"
+        signups="1/5"
         colorScheme="color1"
-      />
-      <EventCard
-        eventName="Board Games Evening"
-        eventTime="6:00 - 8:00 PM"
-        location="Common Hall"
-        host="Maria"
-        signups="1/5"
-        colorScheme="color2"
-      />
-      <EventCard
-        eventName="Board Games Evening"
-        eventTime="6:00 - 8:00 PM"
-        location="Common Hall"
-        host="Maria"
-        signups="1/5"
-        colorScheme="color3"
       />
     </ScrollView>
   );
