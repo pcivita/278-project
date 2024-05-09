@@ -1,5 +1,5 @@
 // EventCard.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { MonoText } from './StyledText';  // Adjust the import path as necessary
 
+import JoinEventModal from "./JoinEventModal";
 
 interface EventCardProps {
   eventName: string;
@@ -19,6 +20,7 @@ interface EventCardProps {
   host: string;
   signups: string;
   colorScheme: string;
+  joinEventButton?: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -28,8 +30,12 @@ const EventCard: React.FC<EventCardProps> = ({
   host,
   signups,
   colorScheme,
+  joinEventButton = true,
 }) => {
   const theme = Colors[colorScheme];
+
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const closeModal = () => setIsModalVisible(!isModalVisible);
 
   return (
     <View style={[styles.card, { backgroundColor: theme.light }]}>
@@ -47,9 +53,24 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
-        <TouchableOpacity style={[styles.button, { backgroundColor: theme.dark }]}>
-          <MonoText style={styles.buttonText}>Join Event</MonoText>
-        </TouchableOpacity>
+        {joinEventButton === true &&
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: theme.dark }]}
+            onPress={() => setIsModalVisible(!isModalVisible)}
+          >
+            <JoinEventModal 
+              isModalVisible={isModalVisible} 
+              closeModal={closeModal} 
+              eventName={eventName}
+              eventTime={eventTime}
+              location={location}
+              host={host}
+              signups={signups}
+              colorScheme={colorScheme}
+            />
+            <MonoText style={styles.buttonText}>Join Event</MonoText>
+          </TouchableOpacity>
+        }
       </View>
     </View>
   );

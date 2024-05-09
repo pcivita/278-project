@@ -1,11 +1,14 @@
 // Feed.tsx
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import EventCard from '../components/EventCard'; // Ensure this path is correct
+import React from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import EventCard from "../components/EventCard";
 
 const Feed: React.FC = () => {
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{alignItems: "center", paddingBottom: 100}}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ alignItems: "center", paddingBottom: 100 }}
+    >
       <EventCard
         eventName="Movie Night"
         eventTime="12:00 - 1:00 PM"
