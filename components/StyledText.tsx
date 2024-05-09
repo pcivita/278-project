@@ -10,7 +10,7 @@ export function MonoText(props: CustomTextProps) {
   if (props.useMono) {
     fontFamily = 'SpaceMono';  // Use Space Mono if specified
   } else if (props.useUltra) {
-    fontFamily = 'TripSansUltra';  // Use TripSans Ultra if specified
+    fontFamily = 'TripSans';  // Use TripSans if specified
   }
 
   return <Text {...props} style={[props.style, { fontFamily }]} />;
