@@ -1,9 +1,27 @@
-// App.tsx
-import React from 'react';
-import AppNavigator from './AppNavigator';  // Ensure this path is correct
+import React, { useEffect } from 'react';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import AppNavigator from './AppNavigator';
 
-const App: React.FC = () => {
+export default function App() {
+  const [fontsLoaded] = useFonts({
+    'TripSans-Regular': require('./assets/fonts/TripSans-Regular.ttf'),
+    'TripSans-Ultra': require('./assets/fonts/TripSans-Ultra.ttf'),
+    'SpaceMono-Regular': require('./assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  // Keep the splash screen visible while fonts are loading
+  SplashScreen.preventAutoHideAsync();
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null; // Return null to avoid rendering anything while loading
+  }
+
   return <AppNavigator />;
 }
-
-export default App;

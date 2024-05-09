@@ -4,6 +4,8 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
+
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -12,6 +14,8 @@ export {
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    TripSansRegular: require("../assets/fonts/TripSans-Regular.ttf"),  // Adjust path as needed
+    TripSansUltra: require("../assets/fonts/TripSans-Ultra.ttf"),      // Adjust path as needed
     ...FontAwesome.font,
   });
 

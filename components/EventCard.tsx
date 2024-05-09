@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import { MonoText } from './StyledText';  // Adjust the import path as necessary
+
 import JoinEventModal from "./JoinEventModal";
 
 interface EventCardProps {
@@ -30,13 +32,7 @@ const EventCard: React.FC<EventCardProps> = ({
   colorScheme,
   joinEventButton = true,
 }) => {
-  let theme = Colors.color1;
-  if (colorScheme === "color2") {
-    theme = Colors.color2;
-  }
-  if (colorScheme === "color3") {
-    theme = Colors.color3;
-  }
+  const theme = Colors[colorScheme];
 
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const closeModal = () => setIsModalVisible(!isModalVisible);
@@ -44,19 +40,18 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <View style={[styles.card, { backgroundColor: theme.light }]}>
       <View style={styles.leftSide}>
-        <View>
-          <Text style={styles.primaryText}>{eventName}</Text>
-          <Text style={styles.secondaryText}>{eventTime}</Text>
-        </View>
-        <View>
-          <Text style={styles.secondaryText}>Hosted by: {host}</Text>
-          <Text style={styles.secondaryText}>{signups} signups</Text>
+        <View style={[styles.verticalLine, { backgroundColor: theme.dark }]} />
+        <View style={styles.textContainer}>
+          <MonoText useUltra={true} style={styles.primaryText}>{eventName}</MonoText>
+          <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
+          <MonoText style={styles.secondaryText}>Hosted by: {host}</MonoText>
+          <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
         </View>
       </View>
       <View style={styles.rightSide}>
         <View style={styles.location}>
           <Ionicons name="location-sharp" size={20} color="black" />
-          <Text style={styles.secondaryText}>{location}</Text>
+          <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
         {joinEventButton === true &&
           <TouchableOpacity
@@ -73,7 +68,7 @@ const EventCard: React.FC<EventCardProps> = ({
               signups={signups}
               colorScheme={colorScheme}
             />
-            <Text style={styles.buttonText}>Join Event</Text>
+            <MonoText style={styles.buttonText}>Join Event</MonoText>
           </TouchableOpacity>
         }
       </View>
@@ -81,26 +76,33 @@ const EventCard: React.FC<EventCardProps> = ({
   );
 };
 
+
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#CAE9FF",
     width: "95%",
-    height: 160,
-
-    borderRadius: 30,
-    padding: 15,
+    height: 170,
+    borderRadius: 15,
+    padding: 20,
     marginVertical: 5,
-    shadowColor: "#000",
+    paddingLeft: 20,
+    shadowColor: "#333",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 3,
+    elevation: 2,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   leftSide: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Adjust this to control vertical alignment
     width: "70%",
-    justifyContent: "space-between",
+  },
+  textContainer: {
+    marginLeft: 10,
+    justifyContent: 'space-around', // This will help distribute the text vertically
+    flex: 1, // Takes up all available space after accounting for the vertical line
   },
   rightSide: {
     width: "30%",
@@ -108,16 +110,18 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   primaryText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  secondaryText: {
-    fontSize: 16,
-  },
+  fontSize: 28,
+  fontWeight: "bold",
+  marginBottom: 8, // Increase bottom margin to give more space below the headline
+  lineHeight: 32, // Adjust line height for better vertical spacing
+},
+secondaryText: {
+  fontSize: 14,
+  lineHeight: 18, // Increase if secondary texts feel too tight vertically
+},
   location: {
     flexDirection: "row",
-    gap: 5,
+    gap: 2,
     paddingRight: 5,
   },
   button: {
@@ -127,11 +131,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 0,
   },
+  verticalLine: {
+    width: 4,
+    height: '90%',
+    borderRadius: 5,
+    backgroundColor: "#54577C",  // Default color, will be overwritten dynamically
+  },
   buttonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
   },
 });
+
 
 export default EventCard;
