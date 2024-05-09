@@ -1,5 +1,5 @@
 // EventCard.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import JoinEventModal from "./JoinEventModal";
 
 interface EventCardProps {
   eventName: string;
@@ -17,6 +18,7 @@ interface EventCardProps {
   host: string;
   signups: string;
   colorScheme: string;
+  joinEventButton?: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -26,6 +28,7 @@ const EventCard: React.FC<EventCardProps> = ({
   host,
   signups,
   colorScheme,
+  joinEventButton = true,
 }) => {
   let theme = Colors.color1;
   if (colorScheme === "color2") {
@@ -34,6 +37,9 @@ const EventCard: React.FC<EventCardProps> = ({
   if (colorScheme === "color3") {
     theme = Colors.color3;
   }
+
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const closeModal = () => setIsModalVisible(!isModalVisible);
 
   return (
     <View style={[styles.card, { backgroundColor: theme.light }]}>
@@ -52,11 +58,24 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <Text style={styles.secondaryText}>{location}</Text>
         </View>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.dark }]}
-        >
-          <Text style={styles.buttonText}>Join Event</Text>
-        </TouchableOpacity>
+        {joinEventButton === true &&
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: theme.dark }]}
+            onPress={() => setIsModalVisible(!isModalVisible)}
+          >
+            <JoinEventModal 
+              isModalVisible={isModalVisible} 
+              closeModal={closeModal} 
+              eventName={eventName}
+              eventTime={eventTime}
+              location={location}
+              host={host}
+              signups={signups}
+              colorScheme={colorScheme}
+            />
+            <Text style={styles.buttonText}>Join Event</Text>
+          </TouchableOpacity>
+        }
       </View>
     </View>
   );
