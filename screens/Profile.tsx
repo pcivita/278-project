@@ -25,15 +25,19 @@ const Profile = () => {
         wants="Try new food, go on hikes, and get off campus more often"
         colorScheme="color1"
       />
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Edit Profile</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => supabase.auth.signOut()}
-      >
-        <Text style={styles.buttonText}>Sign Out</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Edit Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text 
+            style={styles.buttonText}
+            onPress={() => supabase.auth.signOut()}
+          >
+            Sign Out
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -59,19 +63,18 @@ const styles = StyleSheet.create({
   friendsContainer: {
     margin: 10,
   },
-  name: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  bio: {
-    fontSize: 16,
-    textAlign: "center",
-    marginVertical: 20,
+  buttonsContainer: {
+    width: "95%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 120,
   },
   button: {
+    width: "45%",
     backgroundColor: "blue",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
+    alignItems: "center"
   },
   buttonText: {
     color: "white",
