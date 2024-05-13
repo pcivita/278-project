@@ -1,11 +1,20 @@
 // ProfileScreen.tsx
 import { supabase } from "@/utils/supabase";
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import ProfileCard from "../components/ProfileCard";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Button,
+} from "react-native";
+import ProfileCard from "../../components/ProfileCard";
 import Colors from "@/constants/Colors";
+import { useNavigation } from "expo-router";
 
 const Profile = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,6 +23,10 @@ const Profile = () => {
           style={styles.profileImage}
         />
       </View>
+      <Button
+        title="Add Friends"
+        onPress={() => navigation.navigate("Friends")}
+      />
       <View style={styles.friendsContainer}>
         <Text>13 friends</Text>
       </View>

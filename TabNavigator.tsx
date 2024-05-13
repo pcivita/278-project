@@ -3,7 +3,8 @@ import { Image, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Feed from "./screens/Feed";
-import Profile from "./screens/Profile";
+import Profile from "./screens/Profile/Profile";
+import ProfileStack from "./screens/Profile/ProfileStack";
 import Calendar from "./screens/Calendar";
 import Notifications from "./screens/Notifications";
 import CreateEvent from "./screens/CreateEvent";
@@ -109,8 +110,8 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={Profile}
-        options={{ tabBarLabel: "Profile" }}
+        component={ProfileStack}
+        options={{ tabBarLabel: "Profile", headerShown: false }}
       />
     </Tab.Navigator>
   );
