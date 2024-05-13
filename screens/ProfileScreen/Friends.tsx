@@ -13,11 +13,25 @@ const Friends: React.FC = () => {
   // Fetch Users
   useEffect(() => {
     const fetchUsers = async () => {
+      const { data: user, error: authError } = await supabase.auth.getUser();
+
+      if (authError) {
+        console.error("Authentication error:", authError);
+        setError("Failed to authenticate.");
+        setLoading(false);
+        return;
+      }
+
+      if (!user.user?.id) {
+        console.error("User is not logged in or ID is unavailable.");
+        setError("User must be logged in.");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        const result = await fetchUsersWithStatus(
-          "f207cd61-2d7f-4ccb-9130-de3aed61b921"
-        );
+        const result = await fetchUsersWithStatus(user.user.id);
         if (result.error) {
           throw new Error(result.error.message);
         }
