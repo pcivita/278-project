@@ -7,6 +7,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     'TripSans-Regular': require('./assets/fonts/TripSans-Regular.ttf'),
     'TripSans-Ultra': require('./assets/fonts/TripSans-Ultra.ttf'),
+    'TripSans-Medium': require('./assets/fonts/TripSans-Medium.ttf'),
     'SpaceMono-Regular': require('./assets/fonts/SpaceMono-Regular.ttf'),
   });
 

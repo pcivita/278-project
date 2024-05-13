@@ -143,5 +143,4 @@ secondaryText: {
   },
 });
 
-
 export default EventCard;
