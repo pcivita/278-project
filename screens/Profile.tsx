@@ -5,7 +5,6 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ProfileCard from "../components/ProfileCard";
 import Colors from "@/constants/Colors";
 
-
 const Profile = () => {
   return (
     <View style={styles.container}>
@@ -18,7 +17,7 @@ const Profile = () => {
       <View style={styles.friendsContainer}>
         <Text>13 friends</Text>
       </View>
-      <ProfileCard 
+      <ProfileCard
         name="John Doe"
         location="Stanford, CA"
         bio="This is a short bio of John Doe."
@@ -30,7 +29,7 @@ const Profile = () => {
           <Text style={styles.buttonText}>Edit Profile</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
-          <Text 
+          <Text
             style={styles.buttonText}
             onPress={() => supabase.auth.signOut()}
           >
@@ -52,7 +51,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: Colors.color1.light,
     alignItems: "center",
-    marginBottom: 70
+    marginBottom: 70,
   },
   profileImage: {
     width: 140,
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: "blue",
     padding: 10,
     borderRadius: 10,
-    alignItems: "center"
+    alignItems: "center",
   },
   buttonText: {
     color: "white",
