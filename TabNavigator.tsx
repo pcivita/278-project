@@ -66,13 +66,13 @@ const TabNavigator = () => {
             </Text>
           );
         },
-        tabBarActiveTintColor: "#FAFFD8",
+        tabBarActiveTintColor: "#000",
         tabBarInactiveTintColor: "gray",
         tabBarLabelStyle: { fontSize: 12 },
         tabBarStyle: {
           padding: 10,
           height: 90, // Increased height
-          backgroundColor: "#000", // Black background
+          backgroundColor: "#fff", // Black background
           borderTopRightRadius: 20, // Rounded top corners
           borderTopLeftRadius: 20,
           position: "absolute",

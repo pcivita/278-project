@@ -10,7 +10,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { MonoText } from './StyledText';  // Adjust the import path as necessary
-
 import JoinEventModal from "./JoinEventModal";
 
 interface EventCardProps {
@@ -133,7 +132,7 @@ secondaryText: {
   },
   verticalLine: {
     width: 4,
-    height: '90%',
+    height: '100%',
     borderRadius: 5,
     backgroundColor: "#54577C",  // Default color, will be overwritten dynamically
   },
@@ -143,6 +142,5 @@ secondaryText: {
     fontSize: 16,
   },
 });
-
 
 export default EventCard;
