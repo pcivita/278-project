@@ -11,8 +11,10 @@ import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
 import { FriendRequest } from "@/utils/interfaces";
+import { useUser } from "@/UserContext";
 
 const NotificationsScreen = () => {
+  const { userId } = useUser();
   const notificationsToday = [
     {
       id: 1,
@@ -79,29 +81,9 @@ const NotificationsScreen = () => {
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserID] = useState<string>("");
-
   useEffect(() => {
     // Fetch initial data
     const fetchFriendRequests = async () => {
-      const { data: user, error: authError } = await supabase.auth.getUser();
-
-      if (authError) {
-        console.error("Authentication error:", authError);
-        setError("Failed to authenticate.");
-        setLoading(false);
-        return;
-      }
-
-      if (!user.user?.id) {
-        console.error("User is not logged in or ID is unavailable.");
-        setError("User must be logged in.");
-        setLoading(false);
-        return;
-      }
-      const userId = user.user.id;
-      setCurrentUserID(userId);
-
       const { data, error } = await supabase
         .from("friends")
         .select("*")
@@ -123,8 +105,14 @@ const NotificationsScreen = () => {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "friends" },
         (payload) => {
-          console.log("New friend request payload:", payload);
-          if (payload.new.user_accepted === currentUserId) {
+          console.log(
+            "New friend request payload:",
+            payload,
+            "Crrent: ",
+            userId
+          );
+
+          if (payload.new.user_accepted === userId) {
             console.log("RECEIVED");
             setFriendRequests((prevRequests) => [
               ...prevRequests,

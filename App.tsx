@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import AppNavigator from './AppNavigator';
+import React, { useEffect } from "react";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import AppNavigator from "./AppNavigator";
+import { UserProvider } from "./UserContext";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'TripSans-Regular': require('./assets/fonts/TripSans-Regular.ttf'),
-    'TripSans-Ultra': require('./assets/fonts/TripSans-Ultra.ttf'),
-    'TripSans-Medium': require('./assets/fonts/TripSans-Medium.ttf'),
-    'SpaceMono-Regular': require('./assets/fonts/SpaceMono-Regular.ttf'),
+    "TripSans-Regular": require("./assets/fonts/TripSans-Regular.ttf"),
+    "TripSans-Ultra": require("./assets/fonts/TripSans-Ultra.ttf"),
+    "TripSans-Medium": require("./assets/fonts/TripSans-Medium.ttf"),
+    "SpaceMono-Regular": require("./assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   // Keep the splash screen visible while fonts are loading
@@ -24,5 +25,9 @@ export default function App() {
     return null; // Return null to avoid rendering anything while loading
   }
 
-  return <AppNavigator />;
+  return (
+    <UserProvider>
+      <AppNavigator />
+    </UserProvider>
+  );
 }
