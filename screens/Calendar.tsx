@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
-import CalendarDate from "../components/CalendarDate"; // Ensure the correct path
-import EmptyCalendarDate from "../components/EmptyCalendarDate"; // Ensure the correct path
+import CalendarDate from "../components/CalendarDate";
+import EmptyCalendarDate from "../components/EmptyCalendarDate";
 
 const Calendar = () => {
   // Hardcoded event data
@@ -56,8 +56,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
+    textAlign: "left", // Change text alignment to left
+    marginBottom: 10,
+    marginLeft: 20, // Add left margin to the title
+    marginTop: 20,
+    alignSelf: "flex-start", // Ensure the text is aligned to the left within its container
   },
 });
 

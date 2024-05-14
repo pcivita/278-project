@@ -2,9 +2,14 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 const EmptyCalendarDate = ({ date }) => {
+  const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
+
   return (
     <View style={[styles.container, styles.emptyContainer]}>
-      <Text style={[styles.date, styles.emptyDate]}>{new Date(date).getDate()}</Text>
+      <View style={styles.dateContainer}>
+        <Text style={styles.dayOfWeek}>{dayOfWeek}</Text>
+        <Text style={[styles.date, styles.emptyDate]}>{new Date(date).getDate()}</Text>
+      </View>
       <View style={styles.eventList}>
         <Text style={styles.noEventsText}>No events.</Text>
       </View>
@@ -23,12 +28,19 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   emptyContainer: {
-    height: 70, // Approximate height of an EventItem
+    height: 90, // Approximate height of an EventItem
+  },
+  dateContainer: {
+    marginRight: 20,
+    alignItems: "center", // Center-aligns day and date
+  },
+  dayOfWeek: {
+    fontSize: 16,
+    color: "#666",
   },
   date: {
     fontSize: 40,
     fontWeight: "bold",
-    marginRight: 20,
   },
   emptyDate: {
     opacity: 0.5,

@@ -1,16 +1,10 @@
-// EventCard.tsx
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import { MonoText } from './StyledText'; 
 
-interface EventCardProps {
+interface ProfileCardProps {
   name: string;
   location: string;
   bio: string;
@@ -18,39 +12,29 @@ interface EventCardProps {
   colorScheme: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({
+const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
   location,
   bio,
   wants,
   colorScheme,
 }) => {
-  let theme = Colors.color1;
-  if (colorScheme === "color2") {
-    theme = Colors.color2;
-  }
-  if (colorScheme === "color3") {
-    theme = Colors.color3;
-  }
+  const theme = Colors[colorScheme];
 
   return (
     <View style={[styles.card, { backgroundColor: theme.light }]}>
-      <View style={styles.header}>
-        <Text style={styles.primaryText}>{name}</Text>
-        <View style={styles.location}>
-          <Ionicons name="location-sharp" size={20} color="black" />
-          <Text style={styles.secondaryText}>{location}</Text>
-        </View>
-      </View>
-
-      <View style={styles.body}>
-        <View style={styles.textGroup}>
-          <Text style={styles.boldText}>About me</Text>
-          <Text style={styles.secondaryText}>{bio}</Text>
-        </View>
-        <View style={styles.textGroup}>
-          <Text style={styles.boldText}>I want to...</Text>
-          <Text style={styles.secondaryText}>{wants}</Text>
+      <View style={styles.leftSide}>
+        <View style={[styles.verticalLine, { backgroundColor: theme.dark }]} />
+        <View style={styles.textContainer}>
+          <MonoText useUltra={true} style={styles.primaryText}>{name}</MonoText>
+          <View style={styles.location}>
+            <Ionicons name="location-sharp" size={20} color="black" />
+            <MonoText style={styles.secondaryText}>{location}</MonoText>
+          </View>
+          <MonoText style={styles.secondaryText}>Bio</MonoText>
+          <MonoText style={styles.secondaryText}>{bio}</MonoText>
+          <MonoText style={styles.secondaryText}>I want to...</MonoText>
+          <MonoText style={styles.secondaryText}>{wants}</MonoText>
         </View>
       </View>
     </View>
@@ -59,60 +43,51 @@ const EventCard: React.FC<EventCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#CAE9FF",
     width: "95%",
-    height: 200,
-
-    borderRadius: 30,
-    padding: 15,
+    borderRadius: 15,
+    padding: 20,
     marginVertical: 5,
-    shadowColor: "#000",
+    paddingLeft: 20,
+    shadowColor: "#333",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 3,
-    justifyContent: "space-between",
-  },
-  header: {
+    elevation: 2,
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center"
   },
-  body: {
-    gap: 10,
+  leftSide: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Adjust this to control vertical alignment
+    width: "100%",
   },
-  textGroup: {
-    
+  textContainer: {
+    marginLeft: 10,
+    justifyContent: 'space-around', // This will help distribute the text vertically
+    flex: 1, // Takes up all available space after accounting for the vertical line
   },
   primaryText: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 4,
-  },
-  boldText: {
-    fontWeight: "bold",
-    fontSize: 16,
+    marginBottom: 8, // Increase bottom margin to give more space below the headline
+    lineHeight: 32, // Adjust line height for better vertical spacing
   },
   secondaryText: {
-    fontSize: 16,
+    fontSize: 14,
+    lineHeight: 18, // Increase if secondary texts feel too tight vertically
   },
   location: {
     flexDirection: "row",
-    gap: 5,
+    gap: 2,
     paddingRight: 5,
-  },
-  button: {
-    backgroundColor: "#0C7BC8",
-    borderRadius: 15,
-    padding: 10,
     alignItems: "center",
-    margin: 0,
   },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
+  verticalLine: {
+    width: 4,
+    height: '100%',
+    borderRadius: 5,
+    backgroundColor: "#54577C",  // Default color, will be overwritten dynamically
   },
 });
 
-export default EventCard;
+export default ProfileCard;
