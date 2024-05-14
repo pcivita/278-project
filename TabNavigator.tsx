@@ -2,7 +2,8 @@ import React from "react";
 import { Image, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Feed from "./screens/Feed";
+import Feed from "./screens/FeedScreen/Feed";
+import FeedStack from "./screens/FeedScreen/FeedStack";
 import Profile from "./screens/ProfileScreen/Profile";
 import ProfileStack from "./screens/ProfileScreen/ProfileStack";
 import Calendar from "./screens/Calendar";
@@ -90,8 +91,8 @@ const TabNavigator = () => {
     >
       <Tab.Screen
         name="Feed"
-        component={Feed}
-        options={{ tabBarLabel: "Home" }}
+        component={FeedStack}
+        options={{ tabBarLabel: "Home", headerShown: false }}
       />
       <Tab.Screen
         name="Calendar"
