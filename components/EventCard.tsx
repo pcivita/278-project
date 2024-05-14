@@ -20,6 +20,7 @@ interface EventCardProps {
   signups: string;
   colorScheme: string;
   onNavigate: any;
+  isUserHost: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -30,6 +31,7 @@ const EventCard: React.FC<EventCardProps> = ({
   signups,
   colorScheme,
   onNavigate,
+  isUserHost
 }) => {
   const theme = Colors[colorScheme];
   const navigation = useNavigation();
@@ -59,10 +61,11 @@ const EventCard: React.FC<EventCardProps> = ({
             location,
             host,
             signups,
-            colorScheme
+            colorScheme,
+            isUserHost
           })}
         >
-          <MonoText style={styles.buttonText}>Join Event</MonoText>
+          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "Join Event"}</MonoText>
         </TouchableOpacity>
       </View>
     </View>
