@@ -52,8 +52,8 @@ const acceptFriendRequest = async (userOneId: string, userTwoId: string) => {
     .from("friends")
     .update({ status: "accepted" })
     .match({
-      user_one_id: userOneId,
-      user_two_id: userTwoId,
+      user_requested: userOneId,
+      user_accepted: userTwoId,
       status: "pending",
     });
 

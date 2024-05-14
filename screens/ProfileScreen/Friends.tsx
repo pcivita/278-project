@@ -9,7 +9,7 @@ const Friends: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [currentUserId, setCurrentUserID] = useState("");
   // Fetch Users
   useEffect(() => {
     const fetchUsers = async () => {
@@ -28,10 +28,11 @@ const Friends: React.FC = () => {
         setLoading(false);
         return;
       }
-
+      const userId = user.user.id;
+      setCurrentUserID(userId);
       try {
         setLoading(true);
-        const result = await fetchUsersWithStatus(user.user.id);
+        const result = await fetchUsersWithStatus(currentUserId);
         if (result.error) {
           throw new Error(result.error.message);
         }
@@ -50,14 +51,13 @@ const Friends: React.FC = () => {
 
   const handleAddFriend = async (friendId: string) => {
     // TODO: Change Hard Code
-    const currentUserId = "f207cd61-2d7f-4ccb-9130-de3aed61b921"; // This should be dynamically set
 
     // Check if a request already exists
     const { data: existingRequests, error } = await supabase
       .from("friends")
       .select("*")
-      .eq("user_one_id", currentUserId)
-      .eq("user_two_id", friendId);
+      .eq("user_requested", currentUserId)
+      .eq("user_accepted", friendId);
 
     if (error) {
       console.error("Error checking friendship status:", error);
@@ -77,7 +77,7 @@ const Friends: React.FC = () => {
         if (!deleteError) {
           setUsers(
             users.map((user) =>
-              user.id === friendId ? { ...user, status: "none" } : user
+              user.id === friendId ? { ...user, status: "add" } : user
             )
           );
         } else {
@@ -91,8 +91,8 @@ const Friends: React.FC = () => {
       // No existing request, create a new one
       const { error: insertError } = await supabase.from("friends").insert([
         {
-          user_one_id: currentUserId,
-          user_two_id: friendId,
+          user_requested: currentUserId,
+          user_accepted: friendId,
           status: "pending",
         },
       ]);
@@ -117,8 +117,7 @@ const Friends: React.FC = () => {
   if (error) return <Text>Error: {error}</Text>;
 
   return (
-    <View>
-      <Text>Friends</Text>
+    <View style={{ paddingTop: 10 }}>
       {users.map((user: User) => (
         // <AddFriendCard key={user.id} user={user} />
         <AddFriendCard
