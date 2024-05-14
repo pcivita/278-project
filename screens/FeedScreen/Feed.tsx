@@ -25,7 +25,9 @@ const Feed = ({ navigation }: FeedProps) => {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ alignItems: "center", paddingBottom: 100 }}>
       <View style={styles.dateSection}>
-        <MonoText style={styles.dateHeader}>Monday 04/31</MonoText>
+        <View style={styles.dateHeaderSection}>
+          <MonoText style={styles.dateHeader}>Monday 04/31</MonoText>
+        </View>
         <EventCard
           eventName="Movie Night"
           eventTime="12:00 - 1:00 PM"
@@ -54,8 +56,11 @@ const Feed = ({ navigation }: FeedProps) => {
           onNavigate={handleNavigateToEventDetails}
         />
       </View>
+      
       <View style={styles.dateSection}>
-        <MonoText style={styles.dateHeader}>Tuesday 05/01</MonoText>
+        <View style={styles.dateHeaderSection}>
+          <MonoText style={styles.dateHeader}>Tuesday 05/01</MonoText>
+        </View>
         <EventCard
           eventName="Board Games Evening"
           eventTime="6:00 - 8:00 PM"
@@ -86,7 +91,11 @@ const styles = StyleSheet.create({
   },
   dateSection: {
     width: '100%',
-    alignItems: 'flex-start',  // Changed from 'center' to 'flex-start' to align left
+    // alignItems: 'flex-start',  // Changed from 'center' to 'flex-start' to align left
+    alignItems: "center"
+  },
+  dateHeaderSection: {
+    width: "95%"
   },
   dateHeader: {
     fontSize: 23,
