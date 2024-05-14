@@ -99,7 +99,6 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Calendar"
         component={Calendar}
-        // options={{ tabBarLabel: "Calendar" }}
         options={{
           tabBarLabel: "Calendar",
           headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Calendar</MonoText>,
@@ -113,7 +112,10 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Notifications"
         component={Notifications}
-        options={{ tabBarLabel: "Notifications" }}
+        options={{
+          tabBarLabel: "Notifications",
+          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Notifications</MonoText>,
+        }}
       />
       <Tab.Screen
         name="Profile"
