@@ -25,7 +25,7 @@ export async function fetchUsersWithStatus(currentUserId: string) {
   const { data: friendships, error: friendshipError } = await supabase
     .from("friends")
     .select("*")
-    .or(`user_one_id.eq.${currentUserId},user_two_id.eq.${currentUserId}`);
+    .or(`user_requested.eq.${currentUserId},user_accepted.eq.${currentUserId}`);
   if (friendshipError) {
     console.error("Error fetching friendships:", friendshipError);
     return { error: friendshipError };
@@ -34,11 +34,11 @@ export async function fetchUsersWithStatus(currentUserId: string) {
   // Merge user data with friendship status
   const usersWithStatus = users.map((user) => {
     const friendship = friendships.find(
-      (f) => f.user_one_id === user.id || f.user_two_id === user.id
+      (f) => f.user_requested === user.id || f.user_accepted === user.id
     );
     return {
       ...user,
-      status: friendship ? friendship.status : "none",
+      status: friendship ? friendship.status : "add",
     };
   });
 

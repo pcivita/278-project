@@ -14,6 +14,10 @@ import { useNavigation } from "expo-router";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+
+  const goToFriends = () => {
+    navigation.navigate("Friends");
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header} />
@@ -25,7 +29,9 @@ const ProfileScreen = () => {
           />
         </View>
         <Text style={styles.username}>@fringe_diddy</Text>
-        <Text style={styles.mutualFriends}>13 mutual friends</Text>
+        <TouchableOpacity onPress={goToFriends}>
+          <Text style={styles.mutualFriends}>13 mutual friends</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.profileCardContainer}>
         <ProfileCard
