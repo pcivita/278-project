@@ -50,9 +50,9 @@ const CreateEvent = () => {
   const [eventStart, setEventStart] = useState('');
   const [eventEnd, setEventEnd] = useState('');
   const [creatorId, setCreatorId] = useState('');
+  const [location, setLocation] = useState('');
 
   useEffect(() => {
-    // Asynchronously fetch user data
     async function fetchUser() {
       const { data, error } = await supabase.auth.getUser();
       if (error) {
@@ -75,7 +75,8 @@ const CreateEvent = () => {
           max_people: parseInt(maxPeople, 10),
           event_name: eventName,
           event_start: new Date(eventStart).toISOString(),
-          event_end: new Date(eventEnd).toISOString()
+          event_end: new Date(eventEnd).toISOString(),
+          location: location
         },
       ]);
     if (error) {
@@ -110,6 +111,12 @@ const CreateEvent = () => {
         placeholder="Event End (YYYY-MM-DD)"
         value={eventEnd}
         onChangeText={setEventEnd}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Location"
+        value={location}
+        onChangeText={setLocation}
         style={styles.input}
       />
       <TouchableOpacity onPress={createEvent} style={styles.button}>
