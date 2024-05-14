@@ -4,32 +4,17 @@ import { fetchAllUsers, fetchUsersWithStatus } from "@/fetch/fetch"; // Ensure t
 import { User } from "@/utils/interfaces";
 import AddFriendCard from "@/components/AddFriendCard";
 import { supabase } from "@/utils/supabase";
+import { useUser } from "@/UserContext";
 
 const Friends: React.FC = () => {
+  const { userId } = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserID] = useState("");
+
   // Fetch Users
   useEffect(() => {
     const fetchUsers = async () => {
-      const { data: user, error: authError } = await supabase.auth.getUser();
-
-      if (authError) {
-        console.error("Authentication error:", authError);
-        setError("Failed to authenticate.");
-        setLoading(false);
-        return;
-      }
-
-      if (!user.user?.id) {
-        console.error("User is not logged in or ID is unavailable.");
-        setError("User must be logged in.");
-        setLoading(false);
-        return;
-      }
-      const userId = user.user.id;
-      setCurrentUserID(userId);
       try {
         setLoading(true);
         const result = await fetchUsersWithStatus(userId);
@@ -56,7 +41,7 @@ const Friends: React.FC = () => {
     const { data: existingRequests, error } = await supabase
       .from("friends")
       .select("*")
-      .eq("user_requested", currentUserId)
+      .eq("user_requested", userId)
       .eq("user_accepted", friendId);
 
     if (error) {
@@ -91,7 +76,7 @@ const Friends: React.FC = () => {
       // No existing request, create a new one
       const { error: insertError } = await supabase.from("friends").insert([
         {
-          user_requested: currentUserId,
+          user_requested: userId,
           user_accepted: friendId,
           status: "pending",
         },
