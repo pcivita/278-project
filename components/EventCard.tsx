@@ -62,7 +62,7 @@ const EventCard: React.FC<EventCardProps> = ({
             colorScheme
           })}
         >
-          <MonoText style={styles.buttonText}>Join Event</MonoText>
+          <MonoText style={styles.buttonText}>View Event</MonoText>
         </TouchableOpacity>
       </View>
     </View>
