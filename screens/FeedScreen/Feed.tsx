@@ -18,6 +18,22 @@ interface Event {
   creator_id: string;   // User ID of the event creator
 }
 
+interface EventCardProps {
+  eventName: string;
+  eventTime: string;
+  location: string;
+  host: string;
+  signups: string;
+  colorScheme: string;
+  onNavigate: Function;
+  isUserHost: boolean; // Ensure this is declared
+}
+
+interface User {
+  id: string;
+  name: string;
+}
+
 const Feed = ({ navigation }: FeedProps) => {
   //const [events, setEvents] = useState([]);
   const [userId, setUserId] = useState('');
@@ -46,9 +62,7 @@ const Feed = ({ navigation }: FeedProps) => {
       .from('group_membership')
       .select('group_id')
       .eq('member_id', userId);
-  
-    console.log("Memberships Data:", membershipsData);  // Debugging: Log the data
-    
+      
     if (membershipError) {
       console.error('Error fetching group memberships:', membershipError);
       return; // Handle error appropriately
@@ -74,9 +88,34 @@ const Feed = ({ navigation }: FeedProps) => {
       console.error('Error fetching events:', error);
       return;
     }
-  
-    console.log("Events Data:", eventsData);  // Debugging: Log the events data
-    setEvents(eventsData);
+
+    // Fetch user names for the creator_ids from events
+    const creatorIds = [...new Set(eventsData.map(event => event.creator_id))];
+    const { data: usersData, error: usersError } = await supabase
+      .from('users')
+      .select('id, name')  // assuming the user's name is stored under 'name'
+      .in('id', creatorIds);
+
+    if (usersError) {
+      console.error('Error fetching user details:', usersError);
+      return;
+    }
+
+    // Create a map of user IDs to names
+    const userIdToNameMap = usersData.reduce<Record<string, string>>((acc, user: User) => {
+      acc[user.id] = user.name;
+      return acc;
+    }, {});
+    
+
+    // Integrate the host names into the events data
+  const eventsWithHostNames = eventsData.map(event => ({
+    ...event,
+    host: userIdToNameMap[event.creator_id] || 'Unknown'  // Fallback if user name is not found
+  }));
+
+  setEvents(eventsWithHostNames);
+      //setEvents(eventsData);
   };
   
 
@@ -87,7 +126,8 @@ const Feed = ({ navigation }: FeedProps) => {
       location: params.location,
       host: params.host,
       signups: params.signups,
-      colorScheme: params.colorScheme
+      colorScheme: params.colorScheme,
+      isUserHost: params.isUserHost
     });
   };
 
@@ -103,6 +143,7 @@ const Feed = ({ navigation }: FeedProps) => {
             signups={`{event.max_people}`}
             colorScheme={`color${index % 5 + 1}`}
             onNavigate={handleNavigateToEventDetails}
+            isUserHost={event.creator_id === userId}
           />
         </View>
       ))}

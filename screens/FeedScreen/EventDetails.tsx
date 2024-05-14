@@ -16,12 +16,13 @@ interface EventDetailsProps {
   host: string;
   signups: string;
   colorScheme: string;
+  isUserHost: boolean;
 }
 
 
 const EventDetails = ({ route }: EventDetailsProps) => {
   // console.log(eventName, colorScheme)
-  const { eventName, eventTime, location, host, signups, colorScheme } = route.params;
+  const { eventName, eventTime, location, host, signups, colorScheme, isUserHost } = route.params;
   const theme = Colors[colorScheme];
   console.log(theme)
 
@@ -81,7 +82,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
       </View>
       <TouchableOpacity>
         <View style={[styles.button, { backgroundColor: theme.dark }]}>
-          <MonoText style={styles.buttonText}>Join Event</MonoText>
+          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "Join Event"}</MonoText>
         </View>
       </TouchableOpacity>
     </View>
