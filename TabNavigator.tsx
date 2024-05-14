@@ -74,7 +74,7 @@ const TabNavigator = () => {
         tabBarStyle: {
           padding: 10,
           height: 90, // Increased height
-          backgroundColor: "#fff", // Black background
+          backgroundColor: "#fff", // White background
           borderTopRightRadius: 20, // Rounded top corners
           borderTopLeftRadius: 20,
           position: "absolute",
