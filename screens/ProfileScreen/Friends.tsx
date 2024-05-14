@@ -32,7 +32,7 @@ const Friends: React.FC = () => {
       setCurrentUserID(userId);
       try {
         setLoading(true);
-        const result = await fetchUsersWithStatus(currentUserId);
+        const result = await fetchUsersWithStatus(userId);
         if (result.error) {
           throw new Error(result.error.message);
         }
