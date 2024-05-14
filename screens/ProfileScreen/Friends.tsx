@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { fetchAllUsers, fetchUsersWithStatus } from "@/fetch/fetch"; // Ensure this path is correct
 import { User } from "@/utils/interfaces";
 import AddFriendCard from "@/components/AddFriendCard";
@@ -102,7 +102,7 @@ const Friends: React.FC = () => {
   if (error) return <Text>Error: {error}</Text>;
 
   return (
-    <View style={{ paddingTop: 10 }}>
+    <ScrollView style={styles.container}>
       {users.map((user: User) => (
         // <AddFriendCard key={user.id} user={user} />
         <AddFriendCard
@@ -112,8 +112,16 @@ const Friends: React.FC = () => {
           status={user.status}
         />
       ))}
-    </View>
+    </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 10,
+    backgroundColor: "white",
+    flex: 1
+  }
+})
 
 export default Friends;

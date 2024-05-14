@@ -65,7 +65,7 @@ const EventCard: React.FC<EventCardProps> = ({
             isUserHost
           })}
         >
-          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "Join Event"}</MonoText>
+          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "View Event"}</MonoText>
         </TouchableOpacity>
       </View>
     </View>

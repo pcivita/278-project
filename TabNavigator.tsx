@@ -9,6 +9,8 @@ import ProfileStack from "./screens/ProfileScreen/ProfileStack";
 import Calendar from "./screens/Calendar";
 import Notifications from "./screens/Notifications";
 import CreateEvent from "./screens/CreateEvent";
+import { MonoText } from "./components/StyledText";
+import Colors from "./constants/Colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -97,7 +99,10 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Calendar"
         component={Calendar}
-        options={{ tabBarLabel: "Calendar" }}
+        options={{
+          tabBarLabel: "Calendar",
+          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Calendar</MonoText>,
+        }}
       />
       <Tab.Screen
         name="Create Event"
@@ -107,12 +112,18 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Notifications"
         component={Notifications}
-        options={{ tabBarLabel: "Notifications" }}
+        options={{
+          tabBarLabel: "Notifications",
+          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Notifications</MonoText>,
+        }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileStack}
-        options={{ tabBarLabel: "Profile", headerShown: false }}
+        options={{ 
+          tabBarLabel: "Profile",
+          headerShown: false
+        }}
       />
     </Tab.Navigator>
   );

@@ -11,6 +11,7 @@ import {
 import ProfileCard from "../../components/ProfileCard";
 import Colors from "@/constants/Colors";
 import { useNavigation } from "expo-router";
+import { MonoText } from "@/components/StyledText";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -18,8 +19,9 @@ const ProfileScreen = () => {
   const goToFriends = () => {
     navigation.navigate("Friends");
   };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header} />
       <View style={styles.profileImageWrapper}>
         <View style={styles.profileImageContainer}>
@@ -28,9 +30,9 @@ const ProfileScreen = () => {
             style={styles.profileImage}
           />
         </View>
-        <Text style={styles.username}>@fringe_diddy</Text>
+        <MonoText useUltra={true} style={styles.username}>@fringe_diddy</MonoText>
         <TouchableOpacity onPress={goToFriends}>
-          <Text style={styles.mutualFriends}>13 mutual friends</Text>
+          <MonoText style={styles.mutualFriends}>13 friends</MonoText>
         </TouchableOpacity>
       </View>
       <View style={styles.profileCardContainer}>
@@ -55,7 +57,7 @@ const ProfileScreen = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -63,18 +65,18 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: "center",
-    backgroundColor: Colors.background,
     paddingBottom: 20,
+    backgroundColor: "white"
   },
   header: {
     width: "100%",
     backgroundColor: Colors.color2.light,
     alignItems: "center",
-    height: 150, // Adjust this height to move the image further down
+    height: 100,
   },
   profileImageWrapper: {
     alignItems: "center",
-    marginTop: -75, // This moves the profile image up to overlap with the header
+    marginTop: -75,
     marginBottom: 20,
   },
   profileImageContainer: {
@@ -96,19 +98,19 @@ const styles = StyleSheet.create({
     borderRadius: 75,
   },
   username: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 22,
     marginTop: 10,
     marginBottom: 5,
   },
   mutualFriends: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#666",
     marginBottom: 20,
   },
   profileCardContainer: {
-    width: "95%", // Make the profile card take up 95% of the width
     paddingHorizontal: 10,
+    width: "100%",
+    alignItems: "center"
   },
   buttonsContainer: {
     width: "90%",
