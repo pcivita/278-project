@@ -1,9 +1,27 @@
 import React from "react";
-import { ScrollView, Text, StyleSheet, View } from "react-native";
-import EventCard from "../components/EventCard";
-import { MonoText } from '../components/StyledText'; // Adjust the import path as necessary
+import { ScrollView, Text, StyleSheet, View, Button } from "react-native";
+import EventCard from "../../components/EventCard";
+import { MonoText } from '../../components/StyledText'; 
+import { useNavigation } from "expo-router";
+import { FeedProps } from "./FeedStack";
 
-const Feed: React.FC = () => {
+const Feed = ({ navigation }: FeedProps) => {
+  // const navigation = useNavigation();
+
+  // const handleNavigateToEventDetails = (params) => {
+  //   navigation.navigate('EventDetails', params);
+  // };
+  const handleNavigateToEventDetails = (params: any) => {
+    navigation.push("EventDetails", {
+      eventName: params.eventName,
+      eventTime: params.eventTime,
+      location: params.location,
+      host: params.host,
+      signups: params.signups,
+      colorScheme: params.colorScheme
+    });
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ alignItems: "center", paddingBottom: 100 }}>
       <View style={styles.dateSection}>
@@ -15,6 +33,7 @@ const Feed: React.FC = () => {
           host="Elena"
           signups="0/1"
           colorScheme="color1"
+          onNavigate={handleNavigateToEventDetails}
         />
         <EventCard
           eventName="Lunch with Project Team"
@@ -23,6 +42,7 @@ const Feed: React.FC = () => {
           host="Carlos"
           signups="3/4"
           colorScheme="color2"
+          onNavigate={handleNavigateToEventDetails}
         />
         <EventCard
           eventName="Board Games Evening"
@@ -31,6 +51,7 @@ const Feed: React.FC = () => {
           host="Maria"
           signups="1/5"
           colorScheme="color3"
+          onNavigate={handleNavigateToEventDetails}
         />
       </View>
       <View style={styles.dateSection}>
@@ -42,6 +63,7 @@ const Feed: React.FC = () => {
           host="Maria"
           signups="1/5"
           colorScheme="color4"
+          onNavigate={handleNavigateToEventDetails}
         />
         <EventCard
           eventName="Board Games Evening"
@@ -50,6 +72,7 @@ const Feed: React.FC = () => {
           host="Maria"
           signups="1/5"
           colorScheme="color5"
+          onNavigate={handleNavigateToEventDetails}
         />
       </View>
     </ScrollView>

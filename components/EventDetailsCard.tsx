@@ -2,10 +2,8 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -19,7 +17,6 @@ interface EventCardProps {
   host: string;
   signups: string;
   colorScheme: string;
-  onNavigate: any;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -29,7 +26,6 @@ const EventCard: React.FC<EventCardProps> = ({
   host,
   signups,
   colorScheme,
-  onNavigate,
 }) => {
   const theme = Colors[colorScheme];
   const navigation = useNavigation();
@@ -50,20 +46,6 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.dark }]}
-          // onPress={() => navigation.navigate("EventDetails")}
-          onPress={() => onNavigate({
-            eventName,
-            eventTime,
-            location,
-            host,
-            signups,
-            colorScheme
-          })}
-        >
-          <MonoText style={styles.buttonText}>Join Event</MonoText>
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -107,11 +89,11 @@ const styles = StyleSheet.create({
   fontWeight: "bold",
   marginBottom: 8, // Increase bottom margin to give more space below the headline
   lineHeight: 32, // Adjust line height for better vertical spacing
-},
-secondaryText: {
-  fontSize: 14,
-  lineHeight: 18, // Increase if secondary texts feel too tight vertically
-},
+  },
+  secondaryText: {
+    fontSize: 14,
+    lineHeight: 18, // Increase if secondary texts feel too tight vertically
+  },
   location: {
     flexDirection: "row",
     gap: 2,
