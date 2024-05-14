@@ -34,7 +34,7 @@ const Calendar = () => {
   uniqueDates.push("2024-05-16"); // Adding a date with no events
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} style={{ backgroundColor: "white" }}>
       <Text style={styles.title}>May</Text>
       {uniqueDates.map(date => {
         const hasEvents = events.some(event => event.date === date);
