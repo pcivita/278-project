@@ -28,7 +28,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         return;
       }
 
+      console.log("User data:", user);
+
       if (user.user?.id) {
+        console.log("User ID found:", user.user.id);
         setUserId(user.user.id);
       } else {
         console.error("User is not logged in or ID is unavailable.");

@@ -8,6 +8,7 @@ import { useUser } from "@/UserContext";
 
 const Friends: React.FC = () => {
   const { userId } = useUser();
+  console.log(userId);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,8 +121,8 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 10,
     backgroundColor: "white",
-    flex: 1
-  }
-})
+    flex: 1,
+  },
+});
 
 export default Friends;
