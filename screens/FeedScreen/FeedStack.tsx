@@ -16,6 +16,7 @@ type FeedStackParamsList = {
     signups: string;
     colorScheme: string;
     isUserHost: boolean;
+    eventId: string;
   };
 }
 
