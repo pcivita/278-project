@@ -10,14 +10,20 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 interface EventDetailsProps {
-  eventName: string;
-  eventTime: string;
-  location: string;
-  host: string;
-  signups: string;
-  colorScheme: string;
-  isUserHost: boolean;
+  route: {
+    params: {
+      eventName: string;
+      eventTime: string;
+      location: string;
+      host: string;
+      signups: string;
+      colorScheme: string;
+      isUserHost: boolean;
+    }
+  };
 }
+
+
 
 
 const EventDetails = ({ route }: EventDetailsProps) => {
@@ -35,6 +41,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
         host={host}
         signups={signups}
         colorScheme={colorScheme}
+        isUserHost={isUserHost}
       />
       <MonoText style={styles.secondaryText}>Expires Sunday 11:59pm</MonoText>
       <View style={styles.section}>
@@ -136,6 +143,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
+  },
+  notes: {
+    marginVertical: 10,
   }
 });
 
