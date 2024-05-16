@@ -143,6 +143,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
+  },
+  notes: {
+    marginVertical: 10,
   }
 });
 
