@@ -17,6 +17,7 @@ interface Event {
   current_signups: number;  // Added to store the current number of signups
   group_id: string;     // ID of the group this event belongs to
   creator_id: string;   // User ID of the event creator
+  id: string;
 }
 
 interface User {
@@ -25,7 +26,6 @@ interface User {
 }
 
 const Feed = ({ navigation }: FeedProps) => {
-  //const [events, setEvents] = useState([]);
   const [userId, setUserId] = useState('');
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -96,12 +96,6 @@ const Feed = ({ navigation }: FeedProps) => {
       return acc;
     }, {});
     
-
-    // Integrate the host names into the events data
-  // const eventsWithHostNames = eventsData.map(event => ({
-  //   ...event,
-  //   host: userIdToNameMap[event.creator_id] || 'Unknown'  // Fallback if user name is not found
-  // }));
   const eventsWithSignupsAndHosts = await Promise.all(eventsData.map(async (event) => {
     const { data: signupData, error: signupError } = await supabase
       .from('event_signup')
@@ -137,7 +131,8 @@ const Feed = ({ navigation }: FeedProps) => {
       host: params.host,
       signups: params.signups,
       colorScheme: params.colorScheme,
-      isUserHost: params.isUserHost
+      isUserHost: params.isUserHost,
+      eventId: params.eventId,
     });
   };
 
@@ -152,8 +147,19 @@ const Feed = ({ navigation }: FeedProps) => {
             host={event.host} // Update based on actual data availability
             signups={`${event.current_signups}/${event.max_people}`}
             colorScheme={`color${index % 5 + 1}`}
-            onNavigate={handleNavigateToEventDetails}
+            //onNavigate={handleNavigateToEventDetails}
+            onNavigate={() => handleNavigateToEventDetails({
+              eventName: event.event_name,
+              eventTime: `${new Date(event.event_start).toLocaleTimeString()} - ${new Date(event.event_end).toLocaleTimeString()}`,
+              location: event.location,
+              host: event.host,
+              signups: `${event.current_signups}/${event.max_people}`,
+              colorScheme: `color${index % 5 + 1}`,
+              isUserHost: event.creator_id === userId,
+              eventId: event.id,  // Include event ID
+            })}
             isUserHost={event.creator_id === userId}
+            //eventId={event.event_id}
           />
         </View>
       ))}
