@@ -23,9 +23,9 @@ type FeedStackParamsList = {
 const Stack = createNativeStackNavigator<FeedStackParamsList>();
 
 export type FeedProps = NativeStackScreenProps<FeedStackParamsList, "Feed">; 
-export type EventDetailsProps = NativeStackScreenProps<FeedStackParamsList, "EventDetails">; 
+// export type EventDetailsProps = NativeStackScreenProps<FeedStackParamsList, "EventDetails">; 
 
-function ProfileStack() {
+function FeedStack() {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -51,4 +51,4 @@ function ProfileStack() {
   );
 }
 
-export default ProfileStack;
+export default FeedStack;

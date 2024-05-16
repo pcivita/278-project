@@ -7,11 +7,13 @@ import { useState, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
 import { useSegments } from "expo-router";
 import { supabase } from "./utils/supabase";
+
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [initialized, setInitialized] = useState(false);
+  
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
