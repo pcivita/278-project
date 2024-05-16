@@ -1,11 +1,8 @@
-// EventCard.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -43,8 +40,10 @@ const EventCard: React.FC<EventCardProps> = ({
         <View style={styles.textContainer}>
           <MonoText useUltra={true} style={styles.primaryText}>{eventName}</MonoText>
           <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
-          <MonoText style={styles.secondaryText}>Hosted by: {host}</MonoText>
-          <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
+          <View style={styles.bottomTextContainer}>
+            <MonoText useMedium={true} style={styles.secondaryText}>Hosted by: {host}</MonoText>
+            <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
+          </View>
         </View>
       </View>
       <View style={styles.rightSide}>
@@ -54,7 +53,6 @@ const EventCard: React.FC<EventCardProps> = ({
         </View>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.dark }]}
-          // onPress={() => navigation.navigate("EventDetails")}
           onPress={() => onNavigate({
             eventName,
             eventTime,
@@ -65,13 +63,12 @@ const EventCard: React.FC<EventCardProps> = ({
             isUserHost
           })}
         >
-          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "View Event"}</MonoText>
+          <MonoText useMedium={true} style={styles.buttonText}>{isUserHost ? "Your Event" : "View Event"}</MonoText>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   card: {
@@ -91,30 +88,34 @@ const styles = StyleSheet.create({
   },
   leftSide: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center', // Adjust this to control vertical alignment
-    width: "70%",
+    alignItems: 'flex-start', // Align to top
+    width: "60%",
   },
   textContainer: {
     marginLeft: 10,
-    justifyContent: 'space-around', // This will help distribute the text vertically
-    flex: 1, // Takes up all available space after accounting for the vertical line
+    flex: 1,
+    justifyContent: 'space-between',
+    height: '100%', // Ensures the container takes the full height of the card
+  },
+  primaryText: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 4, // Space between event name and time
+    lineHeight: 32,
+  },
+  secondaryText: {
+    fontSize: 14,
+    lineHeight: 18,
+  },
+  bottomTextContainer: {
+    marginTop: 'auto', // Push this container to the bottom
+    paddingTop: 8, // Add space above hosted by and signups
   },
   rightSide: {
     width: "30%",
     justifyContent: "space-between",
     alignItems: "flex-end",
   },
-  primaryText: {
-  fontSize: 28,
-  fontWeight: "bold",
-  marginBottom: 8, // Increase bottom margin to give more space below the headline
-  lineHeight: 32, // Adjust line height for better vertical spacing
-},
-secondaryText: {
-  fontSize: 14,
-  lineHeight: 18, // Increase if secondary texts feel too tight vertically
-},
   location: {
     flexDirection: "row",
     gap: 2,
@@ -131,7 +132,7 @@ secondaryText: {
     width: 4,
     height: '100%',
     borderRadius: 5,
-    backgroundColor: "#54577C",  // Default color, will be overwritten dynamically
+    backgroundColor: "#54577C",
   },
   buttonText: {
     color: "white",
