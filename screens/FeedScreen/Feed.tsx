@@ -25,7 +25,6 @@ interface User {
 }
 
 const Feed = ({ navigation }: FeedProps) => {
-  //const [events, setEvents] = useState([]);
   const [userId, setUserId] = useState('');
   const [events, setEvents] = useState<Event[]>([]);
 

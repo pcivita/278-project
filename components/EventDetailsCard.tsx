@@ -17,6 +17,7 @@ interface EventCardProps {
   host: string;
   signups: string;
   colorScheme: string;
+  isUserHost: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
