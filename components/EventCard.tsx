@@ -41,7 +41,10 @@ const EventCard: React.FC<EventCardProps> = ({
           <MonoText useUltra={true} style={styles.primaryText}>{eventName}</MonoText>
           <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
           <View style={styles.bottomTextContainer}>
-            <MonoText useMedium={true} style={styles.secondaryText}>Hosted by: {host}</MonoText>
+            <View style={styles.hostContainer}>
+              <MonoText useMedium={true} style={styles.hostText}>Hosted by: </MonoText>
+              <MonoText style={styles.secondaryText}>{host}</MonoText>
+            </View>
             <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
           </View>
         </View>
@@ -73,7 +76,6 @@ const EventCard: React.FC<EventCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     width: "95%",
-    height: 170,
     borderRadius: 15,
     padding: 20,
     marginVertical: 5,
@@ -89,13 +91,13 @@ const styles = StyleSheet.create({
   leftSide: {
     flexDirection: 'row',
     alignItems: 'flex-start', // Align to top
-    width: "60%",
+    width: "55%",
   },
   textContainer: {
     marginLeft: 10,
     flex: 1,
     justifyContent: 'space-between',
-    height: '100%', // Ensures the container takes the full height of the card
+    paddingRight: 10,
   },
   primaryText: {
     fontSize: 28,
@@ -111,8 +113,15 @@ const styles = StyleSheet.create({
     marginTop: 'auto', // Push this container to the bottom
     paddingTop: 8, // Add space above hosted by and signups
   },
+  hostContainer: {
+    flexDirection: 'row',
+  },
+  hostText: {
+    fontSize: 14,
+    lineHeight: 18,
+  },
   rightSide: {
-    width: "30%",
+    width: "40%",
     justifyContent: "space-between",
     alignItems: "flex-end",
   },
