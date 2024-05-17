@@ -26,16 +26,21 @@ interface EventDetailsProps {
 }
 
 
-
-
 const EventDetails = ({ route }: EventDetailsProps) => {
   const { eventName, eventTime, location, host, signups, colorScheme, isUserHost, eventId } = route.params;
   const theme = Colors[colorScheme];
-  const [userId, setUserId] = useState(' ');
+  const [userId, setUserId] = useState('');
+  const [isAttending, setIsAttending] = useState(false)
 
   useEffect(() => {
     fetchUserId();
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      checkAttendanceStatus();
+    }
+  }, [userId])
 
   const fetchUserId = async () => {
     const { data, error } = await supabase.auth.getUser();
@@ -44,7 +49,22 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     } else if (data.user) {
       setUserId(data.user.id);
     }
+    
   };
+
+  const checkAttendanceStatus = async () => {
+    const { data, error } = await supabase
+    .from('event_signup')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('event_id', eventId)
+
+    if (error) {
+      console.error('Error checking attendance status:', error)
+    } else if (data.length > 0) {
+      setIsAttending(true)
+    }
+  }
 
   const joinEvent = async () => {
     if (!userId) {
@@ -61,6 +81,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
         console.error('Error inserting data:', error);
       } else {
         console.log('Data inserted successfully:', data);
+        setIsAttending(true)
       }
     } catch (error) {
       console.error('Error joining event:', error);
@@ -122,18 +143,17 @@ const EventDetails = ({ route }: EventDetailsProps) => {
           </MonoText>
         </View>
         <View style={styles.horizontalLine} />
-      </View>
-      {/* <TouchableOpacity>
-        <View style={[styles.button, { backgroundColor: theme.dark }]}>
-          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "Join Event"}</MonoText>
         </View>
-      </TouchableOpacity> */}
-      {!isUserHost && (
-        <TouchableOpacity onPress={joinEvent}>
-          <View style={[styles.button, { backgroundColor: theme.dark }]}>
-            <MonoText style={styles.buttonText}>Join Event</MonoText>
-          </View>
-        </TouchableOpacity>
+        {!isUserHost && (
+          isAttending ? (
+            <MonoText style={styles.attendingText}>You're attending this event!</MonoText>
+          ) : (
+            <TouchableOpacity onPress={joinEvent}>
+              <View style={[styles.button, { backgroundColor: theme.dark }]}>
+                <MonoText style={styles.buttonText}>Join Event</MonoText>
+              </View>
+            </TouchableOpacity>
+          )
       )}
     </View>
   )
@@ -189,6 +209,11 @@ const styles = StyleSheet.create({
   },
   notes: {
     marginVertical: 10,
+  },
+  attendingText: {
+    fontSize: 20,
+    color: "green",
+    marginTop: 20
   }
 });
 

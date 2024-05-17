@@ -18,6 +18,7 @@ interface Event {
   group_id: string;     // ID of the group this event belongs to
   creator_id: string;   // User ID of the event creator
   id: string;
+  isAttending: boolean; // if user is attending the event
 }
 
 interface User {
@@ -107,14 +108,17 @@ const Feed = ({ navigation }: FeedProps) => {
       return {
         ...event,
         current_signups: 0,  // Default to 0 if there's an error
-        host: userIdToNameMap[event.creator_id] || 'Unknown'
+        host: userIdToNameMap[event.creator_id] || 'Unknown',
+        isAttending: false
       };
     }
-
+    const isAttending = signupData.some((signup) => signup.user_id == userId)
+    
     return {
       ...event,
       current_signups: signupData.length,
-      host: userIdToNameMap[event.creator_id] || 'Unknown'
+      host: userIdToNameMap[event.creator_id] || 'Unknown',
+      isAttending
     };
   }));
 
@@ -159,6 +163,7 @@ const Feed = ({ navigation }: FeedProps) => {
               eventId: event.id,  // Include event ID
             })}
             isUserHost={event.creator_id === userId}
+            buttonText={event.isAttending ? 'Attending' : 'View Event'}
             //eventId={event.event_id}
           />
         </View>
@@ -179,3 +184,4 @@ const styles = StyleSheet.create({
 });
 
 export default Feed;
+
