@@ -5,6 +5,8 @@ import { MonoText } from '../../components/StyledText';
 import { useNavigation } from "expo-router";
 import { FeedProps } from "./FeedStack";
 import { supabase } from '@/utils/supabase';
+import { toZonedTime, format } from 'date-fns-tz';
+
 
 interface Event {
   event_name: string;
@@ -114,9 +116,24 @@ const Feed = ({ navigation }: FeedProps) => {
       };
     }
     const isAttending = signupData.some((signup) => signup.user_id == userId)
-    
+    console.log("event start time: ", event.event_start)
+
+    const timeZone = 'America/Los_Angeles';
+    const eventStartPST = toZonedTime(event.event_start, timeZone);
+    console.log("eventStartPST: ", eventStartPST)
+    const eventEndPST = toZonedTime(event.event_end, timeZone);
+    console.log("eventEndPST: ", eventEndPST)
+    const eventStartFormatted = format(eventStartPST, 'M/d h:mm a', { timeZone });
+    console.log("eventStartFormatted: ", eventStartFormatted)
+    const eventEndFormatted = format(eventEndPST, 'h:mm a', { timeZone });
+
+    console.log("eventEndFormatted: ", eventEndFormatted)
+
+      
     return {
       ...event,
+      event_start: eventStartFormatted,
+      event_end: eventEndFormatted,
       current_signups: signupData.length,
       host: userIdToNameMap[event.creator_id] || 'Unknown',
       isAttending
@@ -147,7 +164,7 @@ const Feed = ({ navigation }: FeedProps) => {
         <View key={index} style={styles.dateSection}>
           <EventCard
             eventName={event.event_name}
-            eventTime={`${new Date(event.event_start).toLocaleTimeString()} - ${new Date(event.event_end).toLocaleTimeString()}`}
+            eventTime={`${event.event_start} - ${event.event_end}`}
             location={event.location} // Update based on actual data availability
             host={event.host} // Update based on actual data availability
             signups={`${event.current_signups}/${event.max_people}`}
@@ -155,7 +172,7 @@ const Feed = ({ navigation }: FeedProps) => {
             //onNavigate={handleNavigateToEventDetails}
             onNavigate={() => handleNavigateToEventDetails({
               eventName: event.event_name,
-              eventTime: `${new Date(event.event_start).toLocaleTimeString()} - ${new Date(event.event_end).toLocaleTimeString()}`,
+              eventTime:`${event.event_start} - ${event.event_end}`,
               location: event.location,
               host: event.host,
               signups: `${event.current_signups}/${event.max_people}`,

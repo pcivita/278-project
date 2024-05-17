@@ -29,7 +29,7 @@ interface EventDetailsProps {
 const EventDetails = ({ route }: EventDetailsProps) => {
   const { eventName, eventTime, location, host, signups, colorScheme, isUserHost, eventId } = route.params;
   const theme = Colors[colorScheme];
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState(' ');
   const [isAttending, setIsAttending] = useState(false)
 
   useEffect(() => {
