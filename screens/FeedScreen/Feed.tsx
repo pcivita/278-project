@@ -103,6 +103,7 @@ const Feed = ({ navigation }: FeedProps) => {
       .select('*', { count: 'exact' })
       .eq('event_id', event.id);
     
+    console.log("signup Data: ", signupData)
     if (signupError) {
       console.error('Error fetching signups:', signupError);
       return {
@@ -164,6 +165,7 @@ const Feed = ({ navigation }: FeedProps) => {
             })}
             isUserHost={event.creator_id === userId}
             buttonText={event.isAttending ? 'Attending' : 'View Event'}
+            isAttending={event.isAttending}
             //eventId={event.event_id}
           />
         </View>

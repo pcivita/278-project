@@ -21,7 +21,8 @@ interface EventCardProps {
   colorScheme: string;
   onNavigate: any;
   isUserHost: boolean;
-  buttonText: string
+  buttonText: string;
+  isAttending: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -33,7 +34,8 @@ const EventCard: React.FC<EventCardProps> = ({
   colorScheme,
   onNavigate,
   isUserHost,
-  buttonText
+  buttonText,
+  isAttending,
 }) => {
   const theme = Colors[colorScheme];
   const navigation = useNavigation();
@@ -54,6 +56,8 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
+        {isUserHost && <Text style={styles.hostText}>Your event</Text>}
+        {isAttending && <Text style={styles.attendingText}>You're attending!</Text>}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.dark }]}
           // onPress={() => navigation.navigate("EventDetails")}
@@ -67,7 +71,7 @@ const EventCard: React.FC<EventCardProps> = ({
             isUserHost
           })}
         >
-          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "View Event"}</MonoText>
+          <MonoText style={styles.buttonText}>View Event</MonoText>
         </TouchableOpacity>
       </View>
     </View>
@@ -139,6 +143,20 @@ secondaryText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  hostText: {
+    color: 'black',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    textAlign: 'center'
+  },
+  attendingText: {
+    color: 'black',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 1,
+    textAlign: 'center'
   },
 });
 
