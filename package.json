@@ -21,7 +21,7 @@
     "@react-navigation/stack": "^6.3.29",
     "@supabase/supabase-js": "^2.42.7",
     "expo": "~51.0.8",
-    "expo-app-loading": "^2.1.1",
+    "expo-app-loading": "^1.1.2",
     "expo-apple-authentication": "~6.4.1",
     "expo-font": "~12.0.5",
     "expo-linking": "~6.3.1",

@@ -18,6 +18,7 @@ interface EventCardProps {
   colorScheme: string;
   onNavigate: any;
   isUserHost: boolean;
+  buttonText: string
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -28,7 +29,8 @@ const EventCard: React.FC<EventCardProps> = ({
   signups,
   colorScheme,
   onNavigate,
-  isUserHost
+  isUserHost,
+  buttonText
 }) => {
   const theme = Colors[colorScheme];
   const navigation = useNavigation();
