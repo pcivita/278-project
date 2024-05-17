@@ -1,14 +1,26 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { toZonedTime, format } from 'date-fns-tz';
 
-const EmptyCalendarDate = ({ date }) => {
-  const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
+interface EmptyCalendarDateProps {
+  date: string;
+}
+
+const EmptyCalendarDate: React.FC<EmptyCalendarDateProps> = ({ date }) => {
+  const timeZone = 'America/Los_Angeles';
+
+  // Parse the date string in the given time zone
+  const parsedDate = toZonedTime(new Date(date), timeZone);
+
+  // Format the day of the week and date
+  const dayOfWeek = format(parsedDate, 'EEE', { timeZone });
+  const dayOfMonth = format(parsedDate, 'd', { timeZone });
 
   return (
     <View style={[styles.container, styles.emptyContainer]}>
       <View style={styles.dateContainer}>
         <Text style={styles.dayOfWeek}>{dayOfWeek}</Text>
-        <Text style={[styles.date, styles.emptyDate]}>{new Date(date).getDate()}</Text>
+        <Text style={[styles.date, styles.emptyDate]}>{dayOfMonth}</Text>
       </View>
       <View style={styles.eventList}>
         <Text style={styles.noEventsText}>No events.</Text>

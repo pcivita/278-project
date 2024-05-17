@@ -1,21 +1,40 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
-const EventItem = ({ event }) => {
-  const [mainTitle, rest] = event.title.split(" with ");
-  const [withText, ultraText] = rest.split(" Defne");
+interface Event {
+  id: string;
+  event_name: string;
+  event_start: string;
+  event_end: string;
+  location: string;
+  host: string;
+  max_people: number;
+  signups: number;
+  current_signups: number;
+  group_id: string;
+  creator_id: string;
+  isAttending: boolean;
+  event_date: string;
+}
+
+interface EventItemProps {
+  event: Event;
+}
+
+const EventItem: React.FC<EventItemProps> = ({ event }) => {
+  const [mainTitle, withText] = event.event_name.split(" with ");
 
   return (
     <View style={styles.eventItem}>
       <Image
-              source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
-              style={styles.profileImage}
-       />
+        source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
+        style={styles.profileImage}
+      />
       <View style={styles.eventDetails}>
         <Text style={styles.title}>
-          {mainTitle} <Text style={styles.regular}>with</Text> <Text style={styles.ultra}>Defne</Text>
+          {mainTitle} <Text style={styles.regular}>with</Text> <Text style={styles.ultra}>{withText}</Text>
         </Text>
-        <Text style={styles.time}>{event.time}</Text>
+        <Text style={styles.time}>{`${event.event_start} - ${event.event_end}`}</Text>
       </View>
     </View>
   );

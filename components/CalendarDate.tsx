@@ -1,19 +1,47 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import EventItem from "./EventItem";
+import { toZonedTime, format } from 'date-fns-tz';
 
-const CalendarDate = ({ date, events }) => {
-  const dateEvents = events.filter(event => event.date === date);
-  const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
+interface Event {
+  id: string;
+  event_name: string;
+  event_start: string;
+  event_end: string;
+  location: string;
+  host: string;
+  max_people: number;
+  signups: number;
+  current_signups: number;
+  group_id: string;
+  creator_id: string;
+  isAttending: boolean;
+  event_date: string;
+}
+
+interface CalendarDateProps {
+  date: string;
+  events: Event[];
+}
+
+const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
+  const timeZone = 'America/Los_Angeles';
+
+  // Parse the date string in the given time zone
+  const parsedDate = toZonedTime(new Date(date), timeZone);
+
+  // Format the day of the week and date
+  const dayOfWeek = format(parsedDate, 'EEE', { timeZone });
+  const dayOfMonth = format(parsedDate, 'd', { timeZone });
 
   return (
     <View style={styles.container}>
       <View style={styles.dateContainer}>
         <Text style={styles.dayOfWeek}>{dayOfWeek}</Text>
-        <Text style={styles.date}>{new Date(date).getDate()}</Text>
+        <Text style={styles.date}>{dayOfMonth}</Text>
       </View>
       <View style={styles.eventList}>
-        {dateEvents.map(event => (
+        {events.map(event => (
           <EventItem key={event.id} event={event} />
         ))}
       </View>
