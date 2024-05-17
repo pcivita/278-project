@@ -58,8 +58,8 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
-        {isUserHost && <Text style={styles.hostText}>Your event</Text>}
-        {isAttending && <Text style={styles.attendingText}>You're attending!</Text>}
+        {isUserHost && <MonoText style={styles.attendingText}>Your event</MonoText>}
+        {isAttending && <MonoText style={styles.attendingText}>You're attending!</MonoText>}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.dark }]}
           onPress={() => onNavigate({
@@ -154,13 +154,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  hostText: {
-    color: 'black',
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginBottom: 4,
-    textAlign: 'center'
   },
   attendingText: {
     color: 'black',
