@@ -29,7 +29,7 @@ interface EventDetailsProps {
 const EventDetails = ({ route }: EventDetailsProps) => {
   const { eventName, eventTime, location, host, signups, colorScheme, isUserHost, eventId } = route.params;
   const theme = Colors[colorScheme];
-  const [userId, setUserId] = useState(' ');
+  const [userId, setUserId] = useState('');
   const [isAttending, setIsAttending] = useState(false)
 
   useEffect(() => {
@@ -46,13 +46,19 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
       console.error('Error fetching user:', error);
-    } else if (data.user) {
+    } else if (data && data.user && data.user.id) {
       setUserId(data.user.id);
+    } else {
+      console.error('User data is invalid:', data);
     }
     
   };
 
   const checkAttendanceStatus = async () => {
+    if (!userId || userId.trim() === '') {
+      console.error('Invalid user ID:', userId);
+      return;
+    }
     const { data, error } = await supabase
     .from('event_signup')
     .select('*')
