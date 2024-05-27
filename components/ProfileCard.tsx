@@ -8,7 +8,7 @@ interface ProfileCardProps {
   name: string;
   location: string;
   bio: string;
-  wants: string;
+  //wants: string;
   colorScheme: string;
 }
 
@@ -16,7 +16,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
   location,
   bio,
-  wants,
+  //wants,
   colorScheme,
 }) => {
   const theme = Colors[colorScheme];
@@ -31,10 +31,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             <Ionicons name="location-sharp" size={20} color="black" />
             <MonoText style={styles.secondaryText}>{location}</MonoText>
           </View>
-          <MonoText style={styles.secondaryText}>Bio</MonoText>
           <MonoText style={styles.secondaryText}>{bio}</MonoText>
-          <MonoText style={styles.secondaryText}>I want to...</MonoText>
-          <MonoText style={styles.secondaryText}>{wants}</MonoText>
         </View>
       </View>
     </View>

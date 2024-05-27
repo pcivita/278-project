@@ -38,17 +38,38 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     eventId,
   } = route.params;
   const theme = Colors[colorScheme];
-  // const [userId, setUserId] = useState(' ');
-  const { userId } = useUser();
-  const [isAttending, setIsAttending] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [isAttending, setIsAttending] = useState(false)
+
+  useEffect(() => {
+    fetchUserId();
+  }, []);
+
 
   useEffect(() => {
     if (userId) {
       checkAttendanceStatus();
     }
-  }, [userId]);
+  }, [userId])
+
+  const fetchUserId = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error('Error fetching user:', error);
+    } else if (data && data.user && data.user.id) {
+      setUserId(data.user.id);
+    } else {
+      console.error('User data is invalid:', data);
+    }
+    
+  };
+
 
   const checkAttendanceStatus = async () => {
+    if (!userId || userId.trim() === '') {
+      console.error('Invalid user ID:', userId);
+      return;
+    }
     const { data, error } = await supabase
       .from("event_signup")
       .select("*")

@@ -80,12 +80,10 @@ const Feed = ({ navigation }: FeedProps) => {
       return;
     }
 
-
-    // Fetch user names for the creator_ids from events
     const creatorIds = [...new Set(eventsData.map(event => event.creator_id))];
     const { data: usersData, error: usersError } = await supabase
       .from('users')
-      .select('id, name')  // assuming the user's name is stored under 'name'
+      .select('id, name')  
       .in('id', creatorIds);
 
     if (usersError) {
