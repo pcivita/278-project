@@ -36,10 +36,10 @@ const EditProfileScreen = () => {
         Alert.alert('Error', 'Error fetching user');
         return;
       }
-  
+
       const userId = data.user.id;
       console.log("User ID:", userId);
-  
+
       let profilePhotoUrl = profilePhoto;
       if (profilePhoto) {
         try {
@@ -49,35 +49,42 @@ const EditProfileScreen = () => {
           const response = await fetch(profilePhoto);
           const blob = await response.blob();
           console.log("Blob created:", blob);
-  
+
+          const formData = new FormData();
+          formData.append('file', {
+            uri: profilePhoto,
+            name: `${Date.now()}.jpg`,
+            type: 'image/jpeg',
+          });
+
           const filePath = `${userId}/${Date.now()}.jpg`;
           console.log("File path for upload:", filePath);
-  
+
           // Upload the Blob using the Supabase storage API
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('profile_photos')
-            .upload(filePath, blob, {
+            .upload(filePath, formData, {
               cacheControl: '3600',
               upsert: false,
-              contentType: 'image/jpeg', // Ensure the correct content type is set
             });
-  
+
           if (uploadError) {
             console.error('Error uploading photo:', uploadError);
             throw uploadError;
           }
-  
+
           console.log("Photo uploaded:", uploadData);
-  
+
+          // Construct the public URL
           const { data: publicUrlData, error: urlError } = supabase.storage
             .from('profile_photos')
             .getPublicUrl(filePath);
-  
+
           if (urlError) {
             console.error('Error getting public URL:', urlError);
             throw urlError;
           }
-  
+
           profilePhotoUrl = publicUrlData.publicUrl;
           console.log("Public URL of uploaded photo:", profilePhotoUrl);
         } catch (photoError) {
@@ -86,13 +93,13 @@ const EditProfileScreen = () => {
           return;
         }
       }
-  
+
       console.log("Updating user profile...");
       const { error: updateError } = await supabase
         .from('users')
-        .update({ name, bio, username, profile_photo: profilePhotoUrl }) // Ensure the column name matches your database schema
+        .update({ name, bio, username, photo: profilePhotoUrl }) // Ensure the column name matches your database schema
         .eq('id', userId);
-  
+
       if (updateError) {
         console.error('Error updating profile:', updateError);
         Alert.alert('Error', 'Error updating profile');
@@ -106,7 +113,6 @@ const EditProfileScreen = () => {
       Alert.alert('Error', 'An unexpected error occurred');
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -178,4 +184,3 @@ const styles = StyleSheet.create({
 });
 
 export default EditProfileScreen;
-
