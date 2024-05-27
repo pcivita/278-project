@@ -38,7 +38,7 @@ export async function fetchUsersWithStatus(currentUserId: string) {
     );
     return {
       ...user,
-      status: friendship ? friendship.status : "add",
+      status: friendship ? friendship.status : "Add Friend",
     };
   });
 

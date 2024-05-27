@@ -101,7 +101,11 @@ const TabNavigator = () => {
         component={Calendar}
         options={{
           tabBarLabel: "Calendar",
-          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Calendar</MonoText>,
+          headerTitle: () => (
+            <MonoText useUltra={true} style={{ fontSize: 22 }}>
+              Calendar
+            </MonoText>
+          ),
         }}
       />
       <Tab.Screen
@@ -114,15 +118,19 @@ const TabNavigator = () => {
         component={Notifications}
         options={{
           tabBarLabel: "Notifications",
-          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Notifications</MonoText>,
+          headerTitle: () => (
+            <MonoText useUltra={true} style={{ fontSize: 22 }}>
+              Notifications
+            </MonoText>
+          ),
         }}
       />
       <Tab.Screen
         name="ProfileTab"
         component={ProfileStack}
-        options={{ 
+        options={{
           tabBarLabel: "Profile",
-          headerShown: false
+          headerShown: false,
         }}
       />
     </Tab.Navigator>
