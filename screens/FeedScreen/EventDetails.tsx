@@ -1,14 +1,15 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React, {useEffect, useState} from 'react'
-import EventCard from '@/components/EventCard'
-import Colors from '@/constants/Colors'
-import EventDetailsCard from "@/components/EventDetailsCard"
-import { MonoText } from '@/components/StyledText'
-import {Dimensions} from 'react-native';
-import { supabase } from '@/utils/supabase';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import EventCard from "@/components/EventCard";
+import Colors from "@/constants/Colors";
+import EventDetailsCard from "@/components/EventDetailsCard";
+import { MonoText } from "@/components/StyledText";
+import { Dimensions } from "react-native";
+import { supabase } from "@/utils/supabase";
+import { useUser } from "@/UserContext";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 interface EventDetailsProps {
   route: {
@@ -21,76 +22,71 @@ interface EventDetailsProps {
       colorScheme: string;
       isUserHost: boolean;
       eventId: string;
-    }
+    };
   };
 }
 
-
 const EventDetails = ({ route }: EventDetailsProps) => {
-  const { eventName, eventTime, location, host, signups, colorScheme, isUserHost, eventId } = route.params;
+  const {
+    eventName,
+    eventTime,
+    location,
+    host,
+    signups,
+    colorScheme,
+    isUserHost,
+    eventId,
+  } = route.params;
   const theme = Colors[colorScheme];
-  const [userId, setUserId] = useState(' ');
-  const [isAttending, setIsAttending] = useState(false)
-
-  useEffect(() => {
-    fetchUserId();
-  }, []);
+  // const [userId, setUserId] = useState(' ');
+  const { userId } = useUser();
+  const [isAttending, setIsAttending] = useState(false);
 
   useEffect(() => {
     if (userId) {
       checkAttendanceStatus();
     }
-  }, [userId])
-
-  const fetchUserId = async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      console.error('Error fetching user:', error);
-    } else if (data.user) {
-      setUserId(data.user.id);
-    }
-    
-  };
+  }, [userId]);
 
   const checkAttendanceStatus = async () => {
     const { data, error } = await supabase
-    .from('event_signup')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('event_id', eventId)
+      .from("event_signup")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("event_id", eventId);
 
     if (error) {
-      console.error('Error checking attendance status:', error)
+      console.error("Error checking attendance status:", error);
     } else if (data.length > 0) {
-      setIsAttending(true)
+      setIsAttending(true);
     }
-  }
+  };
 
   const joinEvent = async () => {
     if (!userId) {
-      console.error('User ID not found');
+      console.error("User ID not found");
       return;
     }
 
     try {
       const { data, error } = await supabase
-        .from('event_signup')
+        .from("event_signup")
         .insert([{ user_id: userId, event_id: eventId }]);
 
       if (error) {
-        console.error('Error inserting data:', error);
+        console.error("Error inserting data:", error);
       } else {
-        console.log('Data inserted successfully:', data);
-        setIsAttending(true)
+        console.log("Data inserted successfully:", data);
+        setIsAttending(true);
       }
     } catch (error) {
-      console.error('Error joining event:', error);
+      console.error("Error joining event:", error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <EventDetailsCard 
+      <EventDetailsCard
         eventName={eventName}
         eventTime={eventTime}
         location={location}
@@ -102,7 +98,9 @@ const EventDetails = ({ route }: EventDetailsProps) => {
       />
       <MonoText style={styles.secondaryText}>Expires Sunday 11:59pm</MonoText>
       <View style={styles.section}>
-        <MonoText useUltra={true} style={styles.primaryText}>Going</MonoText>
+        <MonoText useUltra={true} style={styles.primaryText}>
+          Going
+        </MonoText>
         <View style={styles.attendees}>
           <View style={styles.user}>
             <Image
@@ -136,28 +134,32 @@ const EventDetails = ({ route }: EventDetailsProps) => {
         <View style={styles.horizontalLine} />
       </View>
       <View style={styles.section}>
-        <MonoText useUltra={true} style={styles.primaryText}>Notes</MonoText>
+        <MonoText useUltra={true} style={styles.primaryText}>
+          Notes
+        </MonoText>
         <View style={styles.notes}>
           <MonoText style={styles.secondaryText}>
-            Meet me at Lake Lag by the fire pit! Wear sunscreen and text me at 4157996842 if you are running late.
+            Meet me at Lake Lag by the fire pit! Wear sunscreen and text me at
+            4157996842 if you are running late.
           </MonoText>
         </View>
         <View style={styles.horizontalLine} />
-        </View>
-        {!isUserHost && (
-          isAttending ? (
-            <MonoText style={styles.attendingText}>You're attending this event!</MonoText>
-          ) : (
-            <TouchableOpacity onPress={joinEvent}>
-              <View style={[styles.button, { backgroundColor: theme.dark }]}>
-                <MonoText style={styles.buttonText}>Join Event</MonoText>
-              </View>
-            </TouchableOpacity>
-          )
-      )}
+      </View>
+      {!isUserHost &&
+        (isAttending ? (
+          <MonoText style={styles.attendingText}>
+            You're attending this event!
+          </MonoText>
+        ) : (
+          <TouchableOpacity onPress={joinEvent}>
+            <View style={[styles.button, { backgroundColor: theme.dark }]}>
+              <MonoText style={styles.buttonText}>Join Event</MonoText>
+            </View>
+          </TouchableOpacity>
+        ))}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   user: {
-    alignItems: "center"
+    alignItems: "center",
   },
   profileImage: {
     width: 50,
@@ -190,14 +192,14 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 20,
-    color: "white"
+    color: "white",
   },
   horizontalLine: {
     width: "100%",
     height: 1,
     borderRadius: 5,
     backgroundColor: "#E3E3E3",
-    marginVertical: 15
+    marginVertical: 15,
   },
   button: {
     width: windowWidth * 0.9,
@@ -205,7 +207,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-
   },
   notes: {
     marginVertical: 10,
@@ -213,8 +214,8 @@ const styles = StyleSheet.create({
   attendingText: {
     fontSize: 20,
     color: "green",
-    marginTop: 20
-  }
+    marginTop: 20,
+  },
 });
 
-export default EventDetails
+export default EventDetails;
