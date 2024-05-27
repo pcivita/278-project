@@ -25,12 +25,12 @@ const TabNavigator = () => {
             iconStyle = { width: 100, height: 100 }; // Larger icon for Create Event
           }
           switch (route.name) {
-            case "Feed":
+            case "FeedTab":
               iconName = focused
                 ? require("./assets/icons/active/home_active.png")
                 : require("./assets/icons/inactive/home_inactive.png");
               break;
-            case "Profile":
+            case "ProfileTab":
               iconName = focused
                 ? require("./assets/icons/active/profile_active.png")
                 : require("./assets/icons/inactive/profile_inactive.png");
@@ -101,7 +101,11 @@ const TabNavigator = () => {
         component={Calendar}
         options={{
           tabBarLabel: "Calendar",
-          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Calendar</MonoText>,
+          headerTitle: () => (
+            <MonoText useUltra={true} style={{ fontSize: 22 }}>
+              Calendar
+            </MonoText>
+          ),
         }}
       />
       <Tab.Screen
@@ -114,15 +118,19 @@ const TabNavigator = () => {
         component={Notifications}
         options={{
           tabBarLabel: "Notifications",
-          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Notifications</MonoText>,
+          headerTitle: () => (
+            <MonoText useUltra={true} style={{ fontSize: 22 }}>
+              Notifications
+            </MonoText>
+          ),
         }}
       />
       <Tab.Screen
         name="ProfileTab"
         component={ProfileStack}
-        options={{ 
+        options={{
           tabBarLabel: "Profile",
-          headerShown: false
+          headerShown: false,
         }}
       />
     </Tab.Navigator>

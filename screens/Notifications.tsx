@@ -139,20 +139,20 @@ const NotificationsScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
-      <View>
+      {/* <View>
         <Text style={{ fontSize: 30, marginBottom: 30, marginTop: 30 }}>
           {" "}
           Backend Request System:{" "}
-        </Text>
-        <View>
+        </Text> */}
+      {/* <View>
           {friendRequests.map((request) => (
             <Text style={{ fontSize: 30 }} key={request.id}>
               You just received a friend request from Malina {request.id}{" "}
             </Text>
           ))}
         </View>
-      </View>
-      {/* <View style={styles.section}>
+      </View> */}
+      <View style={styles.section}>
         <Text style={styles.sectionTitle}>TODAY</Text>
         {notificationsToday.map((notification) => (
           <NotificationItem
@@ -186,7 +186,7 @@ const NotificationsScreen = () => {
             time={notification.time}
           />
         ))}
-      </View> */}
+      </View>
     </ScrollView>
   );
 };
