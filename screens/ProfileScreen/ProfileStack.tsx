@@ -1,12 +1,13 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Profile from "./Profile";
-import Friends from "./Friends";
+import ProfileScreen from "./Profile"; // Adjust the path as needed
+import FriendsScreen from "./Friends"; // Adjust the path as needed
+import EditProfileScreen from "./EditProfile"; // Adjust the path as needed
 import { MonoText } from "@/components/StyledText";
 import Colors from "@/constants/Colors";
-import UserProfile from "../UserProfile";
+import { RootStackParamList } from "./types"; // Adjust the path as needed
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function ProfileStack() {
   return (
@@ -18,38 +19,24 @@ function ProfileStack() {
     >
       <Stack.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileScreen}
         options={{
-          headerTitle: () => (
-            <MonoText useUltra={true} style={{ fontSize: 22 }}>
-              My Profile
-            </MonoText>
-          ),
+          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>My Profile</MonoText>,
           headerStyle: { backgroundColor: Colors.color2.light },
         }}
       />
       <Stack.Screen
         name="Friends"
-        component={Friends}
+        component={FriendsScreen}
         options={{
-          headerTitle: () => (
-            <MonoText useUltra={true} style={{ fontSize: 22 }}>
-              Friends
-            </MonoText>
-          ),
-          // headerStyle: { backgroundColor: Colors.color2.light }
+          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Friends</MonoText>,
         }}
       />
       <Stack.Screen
-        name="userProfile"
-        component={UserProfile}
+        name="EditProfile"
+        component={EditProfileScreen}
         options={{
-          headerTitle: () => (
-            <MonoText useUltra={true} style={{ fontSize: 22 }}>
-              Friends
-            </MonoText>
-          ),
-          // headerStyle: { backgroundColor: Colors.color2.light }
+          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Edit Profile</MonoText>,
         }}
       />
     </Stack.Navigator>
