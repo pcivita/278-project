@@ -5,6 +5,8 @@ import { MonoText } from '../../components/StyledText';
 import { useNavigation } from "expo-router";
 import { FeedProps } from "./FeedStack";
 import { supabase } from '@/utils/supabase';
+import { toZonedTime, format } from 'date-fns-tz';
+
 
 interface Event {
   event_name: string;
@@ -17,6 +19,8 @@ interface Event {
   current_signups: number;  // Added to store the current number of signups
   group_id: string;     // ID of the group this event belongs to
   creator_id: string;   // User ID of the event creator
+  id: string;
+  isAttending: boolean; // if user is attending the event
 }
 
 interface User {
@@ -25,7 +29,6 @@ interface User {
 }
 
 const Feed = ({ navigation }: FeedProps) => {
-  //const [events, setEvents] = useState([]);
   const [userId, setUserId] = useState('');
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -96,31 +99,44 @@ const Feed = ({ navigation }: FeedProps) => {
       return acc;
     }, {});
     
-
-    // Integrate the host names into the events data
-  // const eventsWithHostNames = eventsData.map(event => ({
-  //   ...event,
-  //   host: userIdToNameMap[event.creator_id] || 'Unknown'  // Fallback if user name is not found
-  // }));
   const eventsWithSignupsAndHosts = await Promise.all(eventsData.map(async (event) => {
     const { data: signupData, error: signupError } = await supabase
       .from('event_signup')
       .select('*', { count: 'exact' })
       .eq('event_id', event.id);
     
+    console.log("signup Data: ", signupData)
     if (signupError) {
       console.error('Error fetching signups:', signupError);
       return {
         ...event,
         current_signups: 0,  // Default to 0 if there's an error
-        host: userIdToNameMap[event.creator_id] || 'Unknown'
+        host: userIdToNameMap[event.creator_id] || 'Unknown',
+        isAttending: false
       };
     }
+    const isAttending = signupData.some((signup) => signup.user_id == userId)
+    console.log("event start time: ", event.event_start)
 
+    const timeZone = 'America/Los_Angeles';
+    const eventStartPST = toZonedTime(event.event_start, timeZone);
+    console.log("eventStartPST: ", eventStartPST)
+    const eventEndPST = toZonedTime(event.event_end, timeZone);
+    console.log("eventEndPST: ", eventEndPST)
+    const eventStartFormatted = format(eventStartPST, 'M/d h:mm a', { timeZone });
+    console.log("eventStartFormatted: ", eventStartFormatted)
+    const eventEndFormatted = format(eventEndPST, 'h:mm a', { timeZone });
+
+    console.log("eventEndFormatted: ", eventEndFormatted)
+
+      
     return {
       ...event,
+      event_start: eventStartFormatted,
+      event_end: eventEndFormatted,
       current_signups: signupData.length,
-      host: userIdToNameMap[event.creator_id] || 'Unknown'
+      host: userIdToNameMap[event.creator_id] || 'Unknown',
+      isAttending
     };
   }));
 
@@ -137,7 +153,8 @@ const Feed = ({ navigation }: FeedProps) => {
       host: params.host,
       signups: params.signups,
       colorScheme: params.colorScheme,
-      isUserHost: params.isUserHost
+      isUserHost: params.isUserHost,
+      eventId: params.eventId,
     });
   };
 
@@ -147,13 +164,26 @@ const Feed = ({ navigation }: FeedProps) => {
         <View key={index} style={styles.dateSection}>
           <EventCard
             eventName={event.event_name}
-            eventTime={`${new Date(event.event_start).toLocaleTimeString()} - ${new Date(event.event_end).toLocaleTimeString()}`}
+            eventTime={`${event.event_start} - ${event.event_end}`}
             location={event.location} // Update based on actual data availability
             host={event.host} // Update based on actual data availability
             signups={`${event.current_signups}/${event.max_people}`}
             colorScheme={`color${index % 5 + 1}`}
-            onNavigate={handleNavigateToEventDetails}
+            //onNavigate={handleNavigateToEventDetails}
+            onNavigate={() => handleNavigateToEventDetails({
+              eventName: event.event_name,
+              eventTime:`${event.event_start} - ${event.event_end}`,
+              location: event.location,
+              host: event.host,
+              signups: `${event.current_signups}/${event.max_people}`,
+              colorScheme: `color${index % 5 + 1}`,
+              isUserHost: event.creator_id === userId,
+              eventId: event.id,  // Include event ID
+            })}
             isUserHost={event.creator_id === userId}
+            buttonText={event.isAttending ? 'Attending' : 'View Event'}
+            isAttending={event.isAttending}
+            //eventId={event.event_id}
           />
         </View>
       ))}
@@ -173,3 +203,4 @@ const styles = StyleSheet.create({
 });
 
 export default Feed;
+

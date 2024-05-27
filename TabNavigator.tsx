@@ -92,7 +92,7 @@ const TabNavigator = () => {
       })}
     >
       <Tab.Screen
-        name="Feed"
+        name="FeedTab"
         component={FeedStack}
         options={{ tabBarLabel: "Home", headerShown: false }}
       />
@@ -118,7 +118,7 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="ProfileTab"
         component={ProfileStack}
         options={{ 
           tabBarLabel: "Profile",

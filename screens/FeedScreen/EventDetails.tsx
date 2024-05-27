@@ -1,30 +1,92 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import EventCard from '@/components/EventCard'
 import Colors from '@/constants/Colors'
 import EventDetailsCard from "@/components/EventDetailsCard"
 import { MonoText } from '@/components/StyledText'
 import {Dimensions} from 'react-native';
+import { supabase } from '@/utils/supabase';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 interface EventDetailsProps {
-  eventName: string;
-  eventTime: string;
-  location: string;
-  host: string;
-  signups: string;
-  colorScheme: string;
-  isUserHost: boolean;
+  route: {
+    params: {
+      eventName: string;
+      eventTime: string;
+      location: string;
+      host: string;
+      signups: string;
+      colorScheme: string;
+      isUserHost: boolean;
+      eventId: string;
+    }
+  };
 }
 
 
 const EventDetails = ({ route }: EventDetailsProps) => {
-  // console.log(eventName, colorScheme)
-  const { eventName, eventTime, location, host, signups, colorScheme, isUserHost } = route.params;
+  const { eventName, eventTime, location, host, signups, colorScheme, isUserHost, eventId } = route.params;
   const theme = Colors[colorScheme];
-  console.log(theme)
+  const [userId, setUserId] = useState(' ');
+  const [isAttending, setIsAttending] = useState(false)
+
+  useEffect(() => {
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      checkAttendanceStatus();
+    }
+  }, [userId])
+
+  const fetchUserId = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error('Error fetching user:', error);
+    } else if (data.user) {
+      setUserId(data.user.id);
+    }
+    
+  };
+
+  const checkAttendanceStatus = async () => {
+    const { data, error } = await supabase
+    .from('event_signup')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('event_id', eventId)
+
+    if (error) {
+      console.error('Error checking attendance status:', error)
+    } else if (data.length > 0) {
+      setIsAttending(true)
+    }
+  }
+
+  const joinEvent = async () => {
+    if (!userId) {
+      console.error('User ID not found');
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('event_signup')
+        .insert([{ user_id: userId, event_id: eventId }]);
+
+      if (error) {
+        console.error('Error inserting data:', error);
+      } else {
+        console.log('Data inserted successfully:', data);
+        setIsAttending(true)
+      }
+    } catch (error) {
+      console.error('Error joining event:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -35,6 +97,8 @@ const EventDetails = ({ route }: EventDetailsProps) => {
         host={host}
         signups={signups}
         colorScheme={colorScheme}
+        isUserHost={isUserHost}
+        eventId={eventId}
       />
       <MonoText style={styles.secondaryText}>Expires Sunday 11:59pm</MonoText>
       <View style={styles.section}>
@@ -79,12 +143,18 @@ const EventDetails = ({ route }: EventDetailsProps) => {
           </MonoText>
         </View>
         <View style={styles.horizontalLine} />
-      </View>
-      <TouchableOpacity>
-        <View style={[styles.button, { backgroundColor: theme.dark }]}>
-          <MonoText style={styles.buttonText}>{isUserHost ? "Your Event" : "Join Event"}</MonoText>
         </View>
-      </TouchableOpacity>
+        {!isUserHost && (
+          isAttending ? (
+            <MonoText style={styles.attendingText}>You're attending this event!</MonoText>
+          ) : (
+            <TouchableOpacity onPress={joinEvent}>
+              <View style={[styles.button, { backgroundColor: theme.dark }]}>
+                <MonoText style={styles.buttonText}>Join Event</MonoText>
+              </View>
+            </TouchableOpacity>
+          )
+      )}
     </View>
   )
 }
@@ -136,6 +206,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
+  },
+  notes: {
+    marginVertical: 10,
+  },
+  attendingText: {
+    fontSize: 20,
+    color: "green",
+    marginTop: 20
   }
 });
 
