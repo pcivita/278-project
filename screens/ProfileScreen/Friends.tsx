@@ -8,7 +8,6 @@ import { useUser } from "@/UserContext";
 
 const Friends: React.FC = () => {
   const { userId } = useUser();
-  console.log(userId);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,8 +35,6 @@ const Friends: React.FC = () => {
   }, []);
 
   const handleAddFriend = async (friendId: string) => {
-    // TODO: Change Hard Code
-
     // Check if a request already exists
     const { data: existingRequests, error } = await supabase
       .from("friends")
@@ -53,7 +50,10 @@ const Friends: React.FC = () => {
     if (existingRequests.length > 0) {
       // Assume handling the first entry if multiple; adjust logic if needed
       const existingRequest = existingRequests[0];
-      if (existingRequest.status === "pending") {
+      if (
+        existingRequest.status === "Requested" ||
+        existingRequest.status === "Friends"
+      ) {
         // Delete the request if it's pending
         const { error: deleteError } = await supabase
           .from("friends")
@@ -63,15 +63,14 @@ const Friends: React.FC = () => {
         if (!deleteError) {
           setUsers(
             users.map((user) =>
-              user.id === friendId ? { ...user, status: "add" } : user
+              user.id === friendId ? { ...user, status: "Add Friend" } : user
             )
           );
         } else {
           console.error("Error deleting friend request:", deleteError);
         }
-      } else {
-        // Optionally handle other statuses if necessary, e.g., 'accepted'
-        console.log("Handle other statuses if needed");
+      } else if (existingRequest.status === "Friends") {
+        // Delete Friend from table
       }
     } else {
       // No existing request, create a new one
@@ -79,14 +78,14 @@ const Friends: React.FC = () => {
         {
           user_requested: userId,
           user_accepted: friendId,
-          status: "pending",
+          status: "Requested",
         },
       ]);
 
       if (!insertError) {
         setUsers(
           users.map((user) =>
-            user.id === friendId ? { ...user, status: "pending" } : user
+            user.id === friendId ? { ...user, status: "Requested" } : user
           )
         );
       } else {
@@ -122,6 +121,11 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     backgroundColor: "white",
     flex: 1,
+  },
+  username: {
+    fontSize: 22,
+    marginTop: 10,
+    marginBottom: 5,
   },
 });
 
