@@ -25,12 +25,12 @@ const TabNavigator = () => {
             iconStyle = { width: 100, height: 100 }; // Larger icon for Create Event
           }
           switch (route.name) {
-            case "Feed":
+            case "FeedTab":
               iconName = focused
                 ? require("./assets/icons/active/home_active.png")
                 : require("./assets/icons/inactive/home_inactive.png");
               break;
-            case "Profile":
+            case "ProfileTab":
               iconName = focused
                 ? require("./assets/icons/active/profile_active.png")
                 : require("./assets/icons/inactive/profile_inactive.png");
