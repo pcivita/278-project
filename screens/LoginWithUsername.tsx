@@ -1,27 +1,27 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Auth } from "@/components/AppleAuth.native";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { OnboardingStackParamList } from "@/types";
-import LoginWithUsername from "./LoginWithUsername";
 
-interface LoginProps {
-  // navigation: any;
-  setCurrentScreen: (screen: string) => void;
+interface LoginWithUsernameProps {
+  navigation: any;
 }
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
-  const navigation = useNavigation<StackNavigationProp<OnboardingStackParamList>>();
+const LoginWithUsername: React.FC<LoginWithUsernameProps> = ({ navigation }) => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleLogIn = () => {
+    console.log("login with username");
+    // logIn(email, password);
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => setCurrentScreen("onboarding")}
+        onPress={() => navigation.goBack()}
         style={styles.backCaret}
       >
         <FontAwesome5 name="arrow-left" size={24} color="black" />
@@ -37,15 +37,23 @@ const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
       >
         Hang out with your friends
       </Text>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("LoginWithUsername")}
-        style={styles.primaryButton}
-      >
-        <Text style={styles.loginText}>Log In with Username</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        onChangeText={(text) => setEmail(text.toLowerCase())}
+        value={email}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        onChangeText={setPassword}
+        value={password}
+      />
+      <View style={{ height: 32 }} />
+      <TouchableOpacity onPress={handleLogIn} style={styles.secondaryButton}>
+        <Text style={styles.loginText}>Log In</Text>
       </TouchableOpacity>
-      <View style={{ alignItems: "center", marginTop: 20 }}>
-        <Auth navigation={navigation} />
-      </View>
     </View>
   );
 };
@@ -73,17 +81,25 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.7,
     textAlign: "center",
   },
-  primaryButton: {
+  input: {
+    width: "100%",
+    borderBottomWidth: 1,
+    borderColor: "green",
+    padding: 10,
+    marginVertical: 5,
+    color: "#000",
+  },
+  loginText: {
+    fontSize: 16,
+    color: "white",
+  },
+  secondaryButton: {
     backgroundColor: "pink",
     padding: 10,
     borderRadius: 999,
     width: windowWidth * 0.8,
     alignItems: "center",
     marginTop: 12,
-  },
-  loginText: {
-    fontSize: 16,
-    color: "white",
   },
   backCaret: {
     alignSelf: "flex-start",
@@ -96,4 +112,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default LoginWithUsername;
