@@ -5,6 +5,8 @@ export interface User {
   name: string;
   username: string;
   status: string;
+  bio: string;
+  photo: string;
 }
 
 // Define a type for the friend request
