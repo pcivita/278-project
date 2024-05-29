@@ -13,4 +13,7 @@ export interface FriendRequest {
   user_requested: string;
   user_accepted: string;
   created_at: Date;
+  user: {
+    name: string;
+  };
 }

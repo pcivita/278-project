@@ -43,8 +43,8 @@ const AddFriendCard: React.FC<AddFriendCardProps> = ({
   return (
     <TouchableOpacity style={styles.container} onPress={goToUserProfile}>
       <MonoText useUltra={true} style={styles.username}>
-        {" "}
-        {user.username}{" "}
+
+        {user.username}
       </MonoText>
       {user.id !== userId && (
         <TouchableOpacity
