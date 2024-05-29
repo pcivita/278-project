@@ -20,11 +20,13 @@ interface Event {
   creator_id: string;
   isAttending: boolean;
   event_date: string;
+  event_month: string; // Add event_month to the Event interface
 }
 
 const Calendar = () => {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [uniqueDates, setUniqueDates] = useState<string[]>([]);
+  const [eventsByMonth, setEventsByMonth] = useState<
+    Record<string, Record<string, Event[]>>
+  >({});
   const { userId } = useUser();
 
   useEffect(() => {
@@ -65,8 +67,7 @@ const Calendar = () => {
     );
 
     if (eventIds.length === 0) {
-      setEvents([]);
-      setUniqueDates([]);
+      setEventsByMonth({});
       return;
     }
 
@@ -81,18 +82,14 @@ const Calendar = () => {
     }
 
     const formattedEvents = formatEvents(eventsData);
-    const dates = Array.from(
-      new Set(formattedEvents.map((event) => event.event_date))
-    );
-
-    setEvents(formattedEvents);
-    setUniqueDates(dates);
+    setEventsByMonth(formattedEvents);
   };
 
   const formatEvents = (eventsData: Event[]) => {
     const timeZone = "America/Los_Angeles";
+    const eventsByMonth: Record<string, Record<string, Event[]>> = {};
 
-    return eventsData.map((event) => {
+    eventsData.forEach((event) => {
       const eventStartPST = toZonedTime(new Date(event.event_start), timeZone);
       const eventEndPST = toZonedTime(new Date(event.event_end), timeZone);
       const eventStartFormatted = format(eventStartPST, "yyyy-MM-dd h:mm a", {
@@ -100,14 +97,28 @@ const Calendar = () => {
       });
       const eventEndFormatted = format(eventEndPST, "h:mm a", { timeZone });
       const eventDate = format(eventStartPST, "yyyy-MM-dd", { timeZone });
+      const eventMonth = format(eventStartPST, "MMMM", { timeZone });
 
-      return {
+      const formattedEvent = {
         ...event,
         event_start: eventStartFormatted,
         event_end: eventEndFormatted,
         event_date: eventDate,
+        event_month: eventMonth,
       };
+
+      if (!eventsByMonth[eventMonth]) {
+        eventsByMonth[eventMonth] = {};
+      }
+
+      if (!eventsByMonth[eventMonth][eventDate]) {
+        eventsByMonth[eventMonth][eventDate] = [];
+      }
+
+      eventsByMonth[eventMonth][eventDate].push(formattedEvent);
     });
+
+    return eventsByMonth;
   };
 
   const handleInsert = async (payload) => {
@@ -124,30 +135,70 @@ const Calendar = () => {
       }
 
       const formattedEvent = formatEvents([eventData]);
-      setEvents((prevEvents) => [...prevEvents, ...formattedEvent]);
-      setUniqueDates((prevDates) => {
-        const newDates = [...prevDates, formattedEvent[0].event_date];
-        return [...new Set(newDates)];
+      setEventsByMonth((prevEventsByMonth) => {
+        const newEventsByMonth = { ...prevEventsByMonth };
+
+        Object.keys(formattedEvent).forEach((month) => {
+          if (!newEventsByMonth[month]) {
+            newEventsByMonth[month] = {};
+          }
+          Object.keys(formattedEvent[month]).forEach((date) => {
+            if (!newEventsByMonth[month][date]) {
+              newEventsByMonth[month][date] = [];
+            }
+            newEventsByMonth[month][date].push(...formattedEvent[month][date]);
+          });
+        });
+
+        return newEventsByMonth;
       });
     }
   };
 
   const handleDelete = (payload) => {
     if (payload.old.user_id === userId) {
-      setEvents((prevEvents) =>
-        prevEvents.filter((event) => event.id !== payload.old.event_id)
-      );
-      setUniqueDates((prevDates) => {
-        const remainingEvents = events.filter(
-          (event) => event.id !== payload.old.event_id
-        );
-        const newDates = remainingEvents.map((event) => event.event_date);
-        return [...new Set(newDates)];
+      setEventsByMonth((prevEventsByMonth) => {
+        const newEventsByMonth = { ...prevEventsByMonth };
+
+        Object.keys(newEventsByMonth).forEach((month) => {
+          Object.keys(newEventsByMonth[month]).forEach((date) => {
+            newEventsByMonth[month][date] = newEventsByMonth[month][
+              date
+            ].filter((event) => event.id !== payload.old.event_id);
+            if (newEventsByMonth[month][date].length === 0) {
+              delete newEventsByMonth[month][date];
+            }
+          });
+          if (Object.keys(newEventsByMonth[month]).length === 0) {
+            delete newEventsByMonth[month];
+          }
+        });
+
+        return newEventsByMonth;
       });
     }
   };
 
-  if (!events.length) {
+  const monthOrder = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const sortedMonths = Object.keys(eventsByMonth).sort(
+    (a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b)
+  );
+
+  if (Object.keys(eventsByMonth).length === 0) {
     return <Text>No events found</Text>;
   }
 
@@ -156,19 +207,26 @@ const Calendar = () => {
       contentContainerStyle={styles.container}
       style={{ backgroundColor: "white" }}
     >
-      <Text style={styles.title}>May</Text>
-      {uniqueDates.map((date) => {
-        const dateEvents = events.filter((event) => event.event_date === date);
-        return dateEvents.length > 0 ? (
-          <CalendarDate
-            key={`calendar-date-${date}`}
-            date={date}
-            events={dateEvents}
-          />
-        ) : (
-          <EmptyCalendarDate key={`empty-calendar-date-${date}`} date={date} />
-        );
-      })}
+      {sortedMonths.map((month) => (
+        <View key={`month-${month}`}>
+          <Text style={styles.title}>{month}</Text>
+          {Object.keys(eventsByMonth[month]).map((date) => {
+            const dateEvents = eventsByMonth[month][date];
+            return dateEvents.length > 0 ? (
+              <CalendarDate
+                key={`calendar-date-${date}`}
+                date={date}
+                events={dateEvents}
+              />
+            ) : (
+              <EmptyCalendarDate
+                key={`empty-calendar-date-${date}`}
+                date={date}
+              />
+            );
+          })}
+        </View>
+      ))}
     </ScrollView>
   );
 };
@@ -181,39 +239,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    textAlign: "left", // Change text alignment to left
+    textAlign: "left",
     marginBottom: 10,
-    marginLeft: 20, // Add left margin to the title
+    marginLeft: 20,
     marginTop: 20,
-    alignSelf: "flex-start", // Ensure the text is aligned to the left within its container
+    alignSelf: "flex-start",
   },
 });
 
 export default Calendar;
-
-// const events = [
-//   {
-//     id: 1,
-//     title: "Dish Hike with Defne",
-//     time: "09:00 AM - 10:30 AM",
-//     date: "2024-05-15",
-//     imageUrl: "https://example.com/defne.jpg"
-//   },
-//   {
-//     id: 2,
-//     title: "Dish Hike with Defne",
-//     time: "09:00 AM - 10:30 AM",
-//     date: "2024-05-15",
-//     imageUrl: "https://example.com/defne.jpg"
-//   },
-//   {
-//     id: 3,
-//     title: "Dish Hike with Defne",
-//     time: "09:00 AM - 10:30 AM",
-//     date: "2024-05-15",
-//     imageUrl: "https://example.com/defne.jpg"
-//   },
-//   // Add more events as needed
-// ];
-// const uniqueDates = [...new Set(events.map(event => event.date))];
-// uniqueDates.push("2024-05-16"); // Adding a date with no events
