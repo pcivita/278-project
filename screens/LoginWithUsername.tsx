@@ -29,27 +29,25 @@ const LoginWithUsername: React.FC<LoginWithUsernameProps> = ({ navigation }) => 
       <View style={styles.spacing} />
       <Text>flock logo</Text>
       <Text style={styles.title}>Flock</Text>
-      <Text
-        style={[
-          styles.subtitle,
-          { width: 220, fontSize: 20, marginTop: 6, marginBottom: 30 },
-        ]}
-      >
+      <Text style={styles.subtitle}>
         Hang out with your friends
       </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        onChangeText={(text) => setEmail(text.toLowerCase())}
-        value={email}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={setPassword}
-        value={password}
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          onChangeText={(text) => setEmail(text.toLowerCase())}
+          value={email}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          onChangeText={setPassword}
+          value={password}
+        />
+      </View>
+      
       <View style={{ height: 32 }} />
       <TouchableOpacity onPress={handleLogIn} style={styles.secondaryButton}>
         <Text style={styles.loginText}>Log In</Text>
@@ -76,18 +74,22 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 20,
     marginTop: 14,
     width: windowWidth * 0.7,
     textAlign: "center",
   },
+  inputContainer: {
+    width: "95%",
+    paddingVertical: 40,
+  },
   input: {
     width: "100%",
-    borderBottomWidth: 1,
-    borderColor: "green",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 10,
     padding: 10,
     marginVertical: 5,
-    color: "#000",
   },
   loginText: {
     fontSize: 16,
