@@ -13,87 +13,68 @@ import { useEffect, useState } from "react";
 import { FriendRequest } from "@/utils/interfaces";
 import { useUser } from "@/UserContext";
 
+const formatDate = (date: Date) => {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const inputDate = new Date(date);
+  if (
+    inputDate.getFullYear() === today.getFullYear() &&
+    inputDate.getMonth() === today.getMonth() &&
+    inputDate.getDate() === today.getDate()
+  ) {
+    return "Today";
+  } else if (
+    inputDate.getFullYear() === yesterday.getFullYear() &&
+    inputDate.getMonth() === yesterday.getMonth() &&
+    inputDate.getDate() === yesterday.getDate()
+  ) {
+    return "Yesterday";
+  } else {
+    return inputDate.toLocaleDateString(undefined, {
+      month: "long",
+      day: "numeric",
+    });
+  }
+};
+
 const NotificationsScreen = () => {
   const { userId } = useUser();
-  const notificationsToday = [
-    {
-      id: 1,
-      type: "friend_request",
-      message: "Defne wants to be your friend.",
-      time: "1h ago",
-    },
-    {
-      id: 2,
-      type: "event_join",
-      message: "Defne joined your event Dish Hike.",
-      time: "1h ago",
-    },
-    {
-      id: 3,
-      type: "event_join",
-      message: "Defne and Annie joined your event Dish Hike.",
-      time: "1h ago",
-    },
-  ];
-
-  const notificationsYesterday = [
-    {
-      id: 4,
-      type: "friend_request",
-      message: "Defne accepted your friend request.",
-      time: "1d ago",
-    },
-    {
-      id: 5,
-      type: "event_join",
-      message: "Defne joined your event Dish Hike.",
-      time: "1d ago",
-    },
-    {
-      id: 6,
-      type: "event_join",
-      message: "Defne and Annie joined your event Dish Hike.",
-      time: "1d ago",
-    },
-  ];
-
-  const notificationsMay12 = [
-    {
-      id: 7,
-      type: "friend_request",
-      message: "Defne accepted your friend request.",
-      time: "2d ago",
-    },
-    {
-      id: 8,
-      type: "event_join",
-      message: "Defne joined your event Dish Hike.",
-      time: "2d ago",
-    },
-    {
-      id: 9,
-      type: "event_join",
-      message: "Defne and Annie joined your event Dish Hike.",
-      time: "2d ago",
-    },
-  ];
-
-  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+  const [friendRequestsByDate, setFriendRequestsByDate] = useState<{
+    [key: string]: FriendRequest[];
+  }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     // Fetch initial data
     const fetchFriendRequests = async () => {
       const { data, error } = await supabase
         .from("friends")
-        .select("*")
+        .select(
+          `
+          *,
+          users: user_requested ( name )
+        `
+        )
         .eq("user_accepted", userId);
 
       if (error) {
         console.error(error);
+        setError(error.message);
       } else {
-        setFriendRequests(data || []);
+        const groupedRequests = data.reduce((acc, request) => {
+          const date = formatDate(new Date(request.created_at));
+          if (!acc[date]) {
+            acc[date] = [];
+          }
+          acc[date].push(request);
+          return acc;
+        }, {});
+        setFriendRequestsByDate(groupedRequests);
       }
+      setLoading(false);
     };
 
     fetchFriendRequests();
@@ -105,54 +86,54 @@ const NotificationsScreen = () => {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "friends" },
         (payload) => {
-          console.log(
-            "New friend request payload:",
-            payload,
-            "Crrent: ",
-            userId
-          );
-
           if (payload.new.user_accepted === userId) {
-            console.log("RECEIVED");
-            setFriendRequests((prevRequests) => [
-              ...prevRequests,
-              payload.new as FriendRequest,
-            ]);
+            const date = formatDate(new Date(payload.new.created_at));
+            setFriendRequestsByDate((prevRequests) => {
+              const updatedRequests = { ...prevRequests };
+              if (!updatedRequests[date]) {
+                updatedRequests[date] = [];
+              }
+              updatedRequests[date].push(payload.new);
+              return updatedRequests;
+            });
           }
         }
       )
-      .subscribe((status) => {
-        console.log("Subscription status:", status);
-      });
+      .subscribe();
 
     // Clean up subscription on unmount
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, []);
+  }, [userId]);
 
-  const renderItem: ListRenderItem<FriendRequest> = ({ item }) => (
-    <View>
-      <Text>Friend Request from: {item.user_requested}</Text>
-    </View>
-  );
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text>Error: {error}</Text>;
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainer}>
-      {/* <View>
-        <Text style={{ fontSize: 30, marginBottom: 30, marginTop: 30 }}>
-          {" "}
-          Backend Request System:{" "}
-        </Text> */}
-      {/* <View>
-          {friendRequests.map((request) => (
-            <Text style={{ fontSize: 30 }} key={request.id}>
-              You just received a friend request from Malina {request.id}{" "}
-            </Text>
-          ))}
-        </View>
-      </View> */}
-      <View style={styles.section}>
+    <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <View>
+        {Object.keys(friendRequestsByDate).map((date) => (
+          <View key={date}>
+            <Text style={{ fontSize: 24, marginTop: 20 }}>{date}</Text>
+            {friendRequestsByDate[date].map((request) => (
+              <NotificationItem
+                type={"friend_request"}
+                message={request.users.name + " wants to be your friend."}
+                requestId={request.id}
+                key={request.id}
+              />
+            ))}
+          </View>
+        ))}
+      </View>
+
+      {/* <View style={styles.section}>
         <Text style={styles.sectionTitle}>TODAY</Text>
         {notificationsToday.map((notification) => (
           <NotificationItem
@@ -186,7 +167,7 @@ const NotificationsScreen = () => {
             time={notification.time}
           />
         ))}
-      </View>
+      </View> */}
     </ScrollView>
   );
 };
