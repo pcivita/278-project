@@ -24,6 +24,7 @@ import * as ImagePicker from "expo-image-picker";
 // import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 // import { storage } from "../firebase";
 import Login from "./Login"
+import SignUp from "./SignUp";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -541,7 +542,8 @@ export default function Onboarding() {
       // return renderLogIn();
       return <Login setCurrentScreen={setCurrentScreen} />;
     case "sign up":
-      return renderSignUp();
+      // return renderSignUp();
+      return <SignUp setCurrentScreen={setCurrentScreen} />;
     default:
       return renderOnboarding();
   }

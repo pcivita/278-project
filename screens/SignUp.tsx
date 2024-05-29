@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { OnboardingStackParamList } from "@/types";
 
-interface LoginProps {
+interface SignUpProps {
   // navigation: any;
   setCurrentScreen: (screen: string) => void;
 }
@@ -14,7 +14,7 @@ interface LoginProps {
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
+const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
   const navigation = useNavigation<StackNavigationProp<OnboardingStackParamList>>();
 
   return (
@@ -37,10 +37,10 @@ const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
         Hang out with your friends
       </Text>
       <TouchableOpacity
-        onPress={() => navigation.navigate("LoginWithUsername")}
+        onPress={() => navigation.navigate("SignUpManually")}
         style={styles.primaryButton}
       >
-        <Text style={styles.loginText}>Log In with Username</Text>
+        <Text style={styles.loginText}>Sign Up Manually</Text>
       </TouchableOpacity>
       <View style={{ alignItems: "center", marginTop: 20 }}>
         <Auth navigation={navigation} />
@@ -101,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default SignUp;

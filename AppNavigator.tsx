@@ -8,6 +8,7 @@ import { supabase } from "./utils/supabase";
 import Onboarding from "./screens/Onboarding";
 import Login from "./screens/Login";
 import LoginWithUsername from "./screens/LoginWithUsername";
+import SignUpManually from "./screens/SignUpManually";
 
 const Stack = createStackNavigator();
 
@@ -33,8 +34,9 @@ const AppNavigator: React.FC = () => {
           // No session, navigate to Login
           <Stack.Screen name="Onboarding" component={Onboarding} />
         )}
-        <Stack.Screen name="Login" component={Login} />
+        {/* <Stack.Screen name="Login" component={Login} /> */}
         <Stack.Screen name="LoginWithUsername" component={LoginWithUsername} />
+        <Stack.Screen name="SignUpManually" component={SignUpManually} />
       </Stack.Navigator>
     </NavigationContainer>
   );
