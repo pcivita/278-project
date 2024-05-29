@@ -43,7 +43,7 @@ const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
         <Text style={styles.loginText}>Sign Up Manually</Text>
       </TouchableOpacity>
       <View style={{ alignItems: "center", marginTop: 20 }}>
-        <Auth navigation={navigation} />
+        <Auth navigation={navigation} signup={true} />
       </View>
       <Text
         style={styles.submessageText}

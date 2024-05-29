@@ -1,15 +1,19 @@
 import { Platform } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { supabase } from "@/utils/supabase";
+import { StyleSheet, Dimensions } from "react-native";
 
-export function Auth({ navigation }) {
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+
+export function Auth({ navigation, signup = false }) {
   if (Platform.OS === "ios")
     return (
       <AppleAuthentication.AppleAuthenticationButton
-        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+        buttonType={signup ? AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP : AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-        cornerRadius={5}
-        style={{ width: 200, height: 64 }}
+        cornerRadius={20}
+        style={styles.appleButton}
         onPress={async () => {
           try {
             const credential = await AppleAuthentication.signInAsync({
@@ -51,3 +55,16 @@ export function Auth({ navigation }) {
     );
   return <>{/* Implement Android Auth options. */}</>;
 }
+
+
+const styles = StyleSheet.create({
+  appleButton: {
+    width: windowWidth * 0.8,
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#9AA899",
+    justifyContent: "center",
+    alignItems: "center",
+    // padding: 10,
+  },
+});
