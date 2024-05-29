@@ -1,52 +1,50 @@
-import React, { useEffect, useState} from "react";
-import { ScrollView, Text, StyleSheet, View, Button } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, StyleSheet, View } from "react-native";
 import EventCard from "../../components/EventCard";
 import { MonoText } from '../../components/StyledText'; 
 import { useNavigation } from "expo-router";
-import { FeedProps } from "./FeedStack";
 import { supabase } from '@/utils/supabase';
-import { toZonedTime, format } from 'date-fns-tz';
-
+import { parseISO, format } from 'date-fns';
 
 interface Event {
   event_name: string;
-  event_start: Date;
-  event_end: Date;
-  location: string;     // Venue or address of the event
-  host: string;         // Name of the host or organizer
-  max_people: number;   // Maximum number of attendees
-  signups: number;      // Current number of sign-ups
-  current_signups: number;  // Added to store the current number of signups
-  group_id: string;     // ID of the group this event belongs to
-  creator_id: string;   // User ID of the event creator
+  event_start: string;
+  event_end: string;
+  location: string;     
+  host: string;         
+  max_people: number;   
+  signups: number;      
+  current_signups: number;  
+  group_id: string;     
+  creator_id: string;   
   id: string;
-  isAttending: boolean; // if user is attending the event
+  isAttending: boolean;
+  attendees: Array<{ userId: string, photo: string | null }>;
+  signupsText: string;
 }
 
 interface User {
   id: string;
   name: string;
+  photo: string | null;
 }
 
-const Feed = ({ navigation }: FeedProps) => {
+const Feed = ({ navigation }) => {
   const [userId, setUserId] = useState('');
   const [events, setEvents] = useState<Event[]>([]);
-
 
   useEffect(() => {
     fetchUserAndEvents();
   }, []);
 
   const fetchUserAndEvents = async () => {
-    // Fetch user details
     const { data, error } = await supabase.auth.getUser();
     if (error) {
       console.error('Error fetching user:', error);
-      return; // Optionally, handle error e.g., show an error message
+      return;
     } else if (data.user) {
-      setUserId(data.user.id)
-      console.log("User ID is", userId)
-      await fetchEvents(data.user.id)
+      setUserId(data.user.id);
+      await fetchEvents(data.user.id);
     }
   };
 
@@ -55,35 +53,35 @@ const Feed = ({ navigation }: FeedProps) => {
       .from('group_membership')
       .select('group_id')
       .eq('member_id', userId);
-      
+
     if (membershipError) {
       console.error('Error fetching group memberships:', membershipError);
-      return; // Handle error appropriately
-    }
-  
-    const memberships = membershipsData || [];
-    const groupIds = memberships.map(m => m.group_id);
-      
-    if (groupIds.length === 0) {
-      console.log('No groups found for this user.');
-      setEvents([]);  // Clear events as precautionary measure
       return;
     }
-  
-    const { data: eventsData, error } = await supabase
+
+    const memberships = membershipsData || [];
+    const groupIds = memberships.map(m => m.group_id);
+
+    if (groupIds.length === 0) {
+      console.log('No groups found for this user.');
+      setEvents([]);
+      return;
+    }
+
+    const { data: eventsData, error: eventsError } = await supabase
       .from('event')
       .select('*')
       .in('group_id', groupIds);
-  
-    if (error) {
-      console.error('Error fetching events:', error);
+
+    if (eventsError) {
+      console.error('Error fetching events:', eventsError);
       return;
     }
 
     const creatorIds = [...new Set(eventsData.map(event => event.creator_id))];
     const { data: usersData, error: usersError } = await supabase
       .from('users')
-      .select('id, name')  
+      .select('id, name, photo')
       .in('id', creatorIds);
 
     if (usersError) {
@@ -91,57 +89,62 @@ const Feed = ({ navigation }: FeedProps) => {
       return;
     }
 
-    // Create a map of user IDs to names
-    const userIdToNameMap = usersData.reduce<Record<string, string>>((acc, user: User) => {
-      acc[user.id] = user.name;
+    const userIdToUserMap = usersData.reduce<Record<string, { name: string, photo: string | null }>>((acc, user: any) => {
+      acc[user.id] = { name: user.name, photo: user.photo };
       return acc;
     }, {});
+
+    const eventsWithDetails = await Promise.all(eventsData.map(async (event) => {
+      const { data: signupData, error: signupError } = await supabase
+        .from('event_signup')
+        .select('user_id')
+        .eq('event_id', event.id);
     
-  const eventsWithSignupsAndHosts = await Promise.all(eventsData.map(async (event) => {
-    const { data: signupData, error: signupError } = await supabase
-      .from('event_signup')
-      .select('*', { count: 'exact' })
-      .eq('event_id', event.id);
+      if (signupError) {
+        console.error('Error fetching signups:', signupError);
+        return {
+          ...event,
+          current_signups: 0,
+          host: userIdToUserMap[event.creator_id]?.name || 'Unknown',
+          attendees: [],
+          isAttending: false,
+          signupsText: '0 signups'
+        };
+      }
     
-    console.log("signup Data: ", signupData)
-    if (signupError) {
-      console.error('Error fetching signups:', signupError);
+      const attendees = signupData.map(signup => ({
+        userId: signup.user_id,
+        photo: userIdToUserMap[signup.user_id]?.photo || 'default_image_url',
+      }));
+    
+      const isAttending = signupData.some((signup) => signup.user_id === userId);
+      const attendeesCount = signupData.length;
+    
+      const signupsText = attendeesCount > 1
+        ? `${userIdToUserMap[event.creator_id]?.name || 'Someone'} +${attendeesCount - 1} more attending`
+        : `${userIdToUserMap[event.creator_id]?.name || 'Someone'} attending`;
+    
+      const eventStart = parseISO(event.event_start);
+      const eventEnd = parseISO(event.event_end);
+    
+      const eventStartFormatted = format(eventStart, 'MM/dd h:mm a');
+      const eventEndFormatted = format(eventEnd, 'h:mm a');
+    
       return {
         ...event,
-        current_signups: 0,  // Default to 0 if there's an error
-        host: userIdToNameMap[event.creator_id] || 'Unknown',
-        isAttending: false
+        event_start: eventStartFormatted,
+        event_end: eventEndFormatted,
+        current_signups: signupData.length,
+        host: userIdToUserMap[event.creator_id]?.name || 'Unknown',
+        attendees,
+        isAttending,
+        signupsText
       };
-    }
-    const isAttending = signupData.some((signup) => signup.user_id == userId)
-    console.log("event start time: ", event.event_start)
-
-    const timeZone = 'America/Los_Angeles';
-    const eventStartPST = toZonedTime(event.event_start, timeZone);
-    console.log("eventStartPST: ", eventStartPST)
-    const eventEndPST = toZonedTime(event.event_end, timeZone);
-    console.log("eventEndPST: ", eventEndPST)
-    const eventStartFormatted = format(eventStartPST, 'M/d h:mm a', { timeZone });
-    console.log("eventStartFormatted: ", eventStartFormatted)
-    const eventEndFormatted = format(eventEndPST, 'h:mm a', { timeZone });
-
-    console.log("eventEndFormatted: ", eventEndFormatted)
-
-      
-    return {
-      ...event,
-      event_start: eventStartFormatted,
-      event_end: eventEndFormatted,
-      current_signups: signupData.length,
-      host: userIdToNameMap[event.creator_id] || 'Unknown',
-      isAttending
-    };
-  }));
-
-  setEvents(eventsWithSignupsAndHosts);
-      //setEvents(eventsData);
+    }));
+    
+    setEvents(eventsWithDetails);
+    
   };
-  
 
   const handleNavigateToEventDetails = (params: any) => {
     navigation.push("EventDetails", {
@@ -163,25 +166,24 @@ const Feed = ({ navigation }: FeedProps) => {
           <EventCard
             eventName={event.event_name}
             eventTime={`${event.event_start} - ${event.event_end}`}
-            location={event.location} // Update based on actual data availability
-            host={event.host} // Update based on actual data availability
-            signups={`${event.current_signups}/${event.max_people}`}
+            location={event.location}
+            host={event.host}
+            signups={event.signupsText}
             colorScheme={`color${index % 5 + 1}`}
-            //onNavigate={handleNavigateToEventDetails}
             onNavigate={() => handleNavigateToEventDetails({
               eventName: event.event_name,
-              eventTime:`${event.event_start} - ${event.event_end}`,
+              eventTime: `${event.event_start} - ${event.event_end}`,
               location: event.location,
               host: event.host,
-              signups: `${event.current_signups}/${event.max_people}`,
+              signups: event.signupsText,
               colorScheme: `color${index % 5 + 1}`,
               isUserHost: event.creator_id === userId,
-              eventId: event.id,  // Include event ID
+              eventId: event.id,
             })}
             isUserHost={event.creator_id === userId}
             buttonText={event.isAttending ? 'Attending' : 'View Event'}
             isAttending={event.isAttending}
-            //eventId={event.event_id}
+            attendees={event.attendees}
           />
         </View>
       ))}
@@ -201,4 +203,3 @@ const styles = StyleSheet.create({
 });
 
 export default Feed;
-
