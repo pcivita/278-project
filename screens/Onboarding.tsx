@@ -196,17 +196,7 @@ export default function Onboarding() {
         )}
         {renderOnboardingImage()}
         <View
-          style={{
-            position: "absolute",
-            bottom: 0,
-            backgroundColor: "#fff",
-            alignItems: "center",
-            width: windowWidth,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            height: windowHeight * 0.45,
-            paddingBottom: 10,
-          }}
+          style={styles.bottomSheet}
         >
           {onboardingScreenNumber === 0 ? (
             <View style={styles.firstScreenContainer}>
@@ -555,13 +545,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     padding: 20,
-    backgroundColor: "blue",
+    backgroundColor: "white",
     zIndex: 1,
+  },
+  bottomSheet: {
+    position: "absolute",
+    bottom: 0,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    width: windowWidth,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    height: windowHeight * 0.45,
+    paddingBottom: 10,
+
+    elevation: 20, // Android shadow
+    shadowColor: "#000", // iOS shadow
+    shadowOffset: { width: 0, height: -1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
   },
   whiteContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyCofntent: "flex-start",
     padding: 20,
     backgroundColor: "white",
   },
