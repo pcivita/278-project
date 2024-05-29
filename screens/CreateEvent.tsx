@@ -6,11 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   Button,
+  Alert,
 } from "react-native";
 import { supabase } from "@/utils/supabase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "./types"; // Adjust the path as needed
 
 const CreateEvent = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [maxPeople, setMaxPeople] = useState("");
   const [eventName, setEventName] = useState("");
   const [eventStart, setEventStart] = useState("");
@@ -99,6 +103,12 @@ const CreateEvent = () => {
   }, []);
 
   const createEvent = async () => {
+
+    if (!maxPeople || !eventName || !eventStart || !eventEnd || !location) {
+      Alert.alert("Please fill in all fields");
+      return;
+    }
+
     console.log("Creating event");
     const { data, error } = await supabase.from("event").insert([
       {
@@ -113,8 +123,25 @@ const CreateEvent = () => {
     ]);
     if (error) {
       console.error("Error creating event:", error);
+      Alert.alert("Error", "Error creating event");
     } else {
       console.log("Event created:", data);
+      Alert.alert("Success", "Event created successfully", [
+        {
+          text: "OK",
+          onPress: () => {
+            // Reset form fields
+            setMaxPeople("");
+            setEventName("");
+            setEventStart("");
+            setEventEnd("");
+            setEventStartShow("");
+            setEventEndShow("");
+            setLocation("");
+            navigation.navigate("Feed"); // Navigate to Feed screen
+          },
+        },
+      ]);
     }
   };
 
