@@ -1,19 +1,11 @@
-import React from "react";
-import {
-  ScrollView,
-  View,
-  Text,
-  StyleSheet,
-  ListRenderItem,
-  FlatList,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
 import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
-import { useEffect, useState } from "react";
 import { FriendRequest } from "@/utils/interfaces";
 import { useUser } from "@/UserContext";
 
-const formatDate = (date: Date) => {
+const formatDate = (date) => {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -41,30 +33,43 @@ const formatDate = (date: Date) => {
 
 const NotificationsScreen = () => {
   const { userId } = useUser();
-  const [friendRequestsByDate, setFriendRequestsByDate] = useState<{
-    [key: string]: FriendRequest[];
-  }>({});
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [friendRequestsByDate, setFriendRequestsByDate] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch initial data
     const fetchFriendRequests = async () => {
       const { data, error } = await supabase
         .from("friends")
-        .select(
-          `
-          *,
-          users: user_requested ( name )
-        `
-        )
+        .select("*")
         .eq("user_accepted", userId);
 
       if (error) {
         console.error(error);
         setError(error.message);
-      } else {
-        const groupedRequests = data.reduce((acc, request) => {
+        setLoading(false);
+        return;
+      }
+
+      const fetchUserNames = async (requests) => {
+        const updatedRequests = await Promise.all(
+          requests.map(async (request) => {
+            const { data: userData, error: userError } = await supabase
+              .from("users")
+              .select("name")
+              .eq("id", request.user_requested)
+              .single();
+
+            if (userError) {
+              console.error(userError);
+              return { ...request, userName: "Unknown" };
+            }
+
+            return { ...request, userName: userData.name };
+          })
+        );
+
+        const groupedRequests = updatedRequests.reduce((acc, request) => {
           const date = formatDate(new Date(request.created_at));
           if (!acc[date]) {
             acc[date] = [];
@@ -72,14 +77,16 @@ const NotificationsScreen = () => {
           acc[date].push(request);
           return acc;
         }, {});
+
         setFriendRequestsByDate(groupedRequests);
-      }
-      setLoading(false);
+        setLoading(false);
+      };
+
+      fetchUserNames(data);
     };
 
     fetchFriendRequests();
 
-    // Set up subscription
     const subscription = supabase
       .channel("friends")
       .on(
@@ -87,21 +94,35 @@ const NotificationsScreen = () => {
         { event: "INSERT", schema: "public", table: "friends" },
         (payload) => {
           if (payload.new.user_accepted === userId) {
-            const date = formatDate(new Date(payload.new.created_at));
-            setFriendRequestsByDate((prevRequests) => {
-              const updatedRequests = { ...prevRequests };
-              if (!updatedRequests[date]) {
-                updatedRequests[date] = [];
-              }
-              updatedRequests[date].push(payload.new);
-              return updatedRequests;
-            });
+            const fetchUserName = async () => {
+              const { data: userData, error: userError } = await supabase
+                .from("users")
+                .select("name")
+                .eq("id", payload.new.user_requested)
+                .single();
+
+              const userName = userError ? "Unknown" : userData.name;
+
+              const date = formatDate(new Date(payload.new.created_at));
+              setFriendRequestsByDate((prevRequests) => {
+                const updatedRequests = { ...prevRequests };
+                if (!updatedRequests[date]) {
+                  updatedRequests[date] = [];
+                }
+                updatedRequests[date].push({
+                  ...payload.new,
+                  userName,
+                });
+                return updatedRequests;
+              });
+            };
+
+            fetchUserName();
           }
         }
       )
       .subscribe();
 
-    // Clean up subscription on unmount
     return () => {
       supabase.removeChannel(subscription);
     };
@@ -124,7 +145,7 @@ const NotificationsScreen = () => {
             {friendRequestsByDate[date].map((request) => (
               <NotificationItem
                 type={"friend_request"}
-                message={request.users.name + " wants to be your friend."}
+                message={request.userName + " wants to be your friend."}
                 requestId={request.id}
                 key={request.id}
               />
@@ -132,42 +153,6 @@ const NotificationsScreen = () => {
           </View>
         ))}
       </View>
-
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionTitle}>TODAY</Text>
-        {notificationsToday.map((notification) => (
-          <NotificationItem
-            key={notification.id}
-            type={notification.type}
-            message={notification.message}
-            time={notification.time}
-          />
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>YESTERDAY</Text>
-        {notificationsYesterday.map((notification) => (
-          <NotificationItem
-            key={notification.id}
-            type={notification.type}
-            message={notification.message}
-            time={notification.time}
-          />
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>MAY 12th</Text>
-        {notificationsMay12.map((notification) => (
-          <NotificationItem
-            key={notification.id}
-            type={notification.type}
-            message={notification.message}
-            time={notification.time}
-          />
-        ))}
-      </View> */}
     </ScrollView>
   );
 };
@@ -179,7 +164,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingBottom: 20, // Add some padding at the bottom if needed
+    paddingBottom: 20,
   },
   section: {
     marginTop: 10,
