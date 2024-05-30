@@ -5,11 +5,11 @@ import ProfileCard from "../../components/ProfileCard";
 import Colors from "@/constants/Colors";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { MonoText } from "@/components/StyledText";
-import { RootStackParamList } from "./types"; // Adjust the path as needed
+import { RootStackParamList, UserProfile } from "./types"; // Adjust the path as needed
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -46,7 +46,9 @@ const ProfileScreen = () => {
   };
 
   const goToEditProfile = () => {
-    navigation.navigate("EditProfile");
+    if (userProfile) {
+      navigation.navigate("EditProfile", { userProfile });
+    }
   };
 
   if (loading) {
@@ -86,7 +88,7 @@ const ProfileScreen = () => {
       <View style={styles.profileCardContainer}>
         <ProfileCard
           name={userProfile.name || 'Full Name'}
-          location={userProfile.location || 'Location'}
+          location={'Location'}
           bio={userProfile.bio || 'Bio'}
           colorScheme="color2"
         />
