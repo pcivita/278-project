@@ -3,11 +3,13 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { MonoText } from './StyledText'; 
 import { useNavigation } from "expo-router";
+import { format } from 'date-fns';
 
 interface EventCardProps {
   eventName: string;
@@ -20,6 +22,7 @@ interface EventCardProps {
   isUserHost: boolean;
   buttonText: string;
   isAttending: boolean;
+  attendees: Array<{ userId: string, photo: string | null }>;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -33,6 +36,7 @@ const EventCard: React.FC<EventCardProps> = ({
   isUserHost,
   buttonText,
   isAttending,
+  attendees,
 }) => {
   const theme = Colors[colorScheme];
   const navigation = useNavigation();
@@ -47,9 +51,18 @@ const EventCard: React.FC<EventCardProps> = ({
           <View style={styles.bottomTextContainer}>
             <View style={styles.hostContainer}>
               <MonoText useMedium={true} style={styles.hostText}>Hosted by: </MonoText>
-              <MonoText style={styles.secondaryText}>{host}</MonoText>
+              <MonoText style={[styles.secondaryText, { color: 'black' }]}>{host}</MonoText>
             </View>
-            <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
+            <View style={styles.attendeesContainer}>
+              {attendees.map((attendee, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: attendee.photo || 'default_image_url' }} // Replace 'default_image_url' with an actual URL
+                  style={styles.attendeePhoto}
+                />
+              ))}
+              <MonoText style={[styles.secondaryText, { color: 'gray' }]}>{signups}</MonoText>
+            </View>
           </View>
         </View>
       </View>
@@ -72,8 +85,7 @@ const EventCard: React.FC<EventCardProps> = ({
             isUserHost
           })}
         >
-
-          <MonoText style={styles.buttonText}>View Event</MonoText>
+          <MonoText style={styles.buttonText}>{buttonText}</MonoText>
         </TouchableOpacity>
       </View>
     </View>
@@ -97,7 +109,7 @@ const styles = StyleSheet.create({
   },
   leftSide: {
     flexDirection: 'row',
-    alignItems: 'flex-start', // Align to top
+    alignItems: 'flex-start',
     width: "55%",
   },
   textContainer: {
@@ -109,7 +121,7 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 4, // Space between event name and time
+    marginBottom: 4,
     lineHeight: 32,
   },
   secondaryText: {
@@ -117,8 +129,8 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   bottomTextContainer: {
-    marginTop: 'auto', // Push this container to the bottom
-    paddingTop: 8, // Add space above hosted by and signups
+    marginTop: 'auto',
+    paddingTop: 8,
   },
   hostContainer: {
     flexDirection: 'row',
@@ -126,6 +138,19 @@ const styles = StyleSheet.create({
   hostText: {
     fontSize: 14,
     lineHeight: 18,
+  },
+  attendeesContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  attendeePhoto: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginRight: 4,
+    marginBottom: 2,
+    overflow: 'hidden',
   },
   rightSide: {
     width: "40%",

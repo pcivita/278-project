@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import EventCard from "../../components/EventCard";
-import { FeedProps } from "./FeedStack";
 import { supabase } from '@/utils/supabase';
 import { toZonedTime, format } from 'date-fns-tz';
 
@@ -16,15 +15,18 @@ interface Event {
   current_signups: number;  // Added to store the current number of signups
   creator_id: string;   // User ID of the event creator
   id: string;
-  isAttending: boolean; // if user is attending the event
+  isAttending: boolean;
+  attendees: Array<{ userId: string, photo: string | null }>;
+  signupsText: string;
 }
 
 interface User {
   id: string;
   name: string;
+  photo: string | null;
 }
 
-const Feed = ({ navigation }: FeedProps) => {
+const Feed = ({ navigation }) => {
   const [userId, setUserId] = useState('');
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -165,7 +167,7 @@ const Feed = ({ navigation }: FeedProps) => {
               eventTime: `${event.event_start} - ${event.event_end}`,
               location: event.location,
               host: event.host,
-              signups: `${event.current_signups}/${event.max_people}`,
+              signups: event.signupsText,
               colorScheme: `color${index % 5 + 1}`,
               isUserHost: event.creator_id === userId,
               eventId: event.id,
@@ -192,4 +194,3 @@ const styles = StyleSheet.create({
 });
 
 export default Feed;
-
