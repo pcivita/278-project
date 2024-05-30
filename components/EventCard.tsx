@@ -17,7 +17,7 @@ interface EventCardProps {
   isUserHost: boolean;
   buttonText: string;
   isAttending: boolean;
-  attendees: Array<{ userId: string; photo: string | null }>;
+  // attendees: Array<{ userId: string; photo: string | null }>;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -55,13 +55,13 @@ const EventCard: React.FC<EventCardProps> = ({
               </MonoText>
             </View>
             <View style={styles.attendeesContainer}>
-              {attendees.map((attendee, index) => (
+              {/* {attendees.map((attendee, index) => (
                 <Image
                   key={index}
                   source={{ uri: attendee.photo || "default_image_url" }} // Replace 'default_image_url' with an actual URL
                   style={styles.attendeePhoto}
                 />
-              ))}
+              ))} */}
               <MonoText style={[styles.secondaryText, { color: "gray" }]}>
                 {signups}
               </MonoText>
