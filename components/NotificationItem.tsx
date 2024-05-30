@@ -8,7 +8,7 @@ const NotificationItem = ({ type, message, time, requestId }) => {
     try {
       const { data, error } = await supabase
         .from("friends")
-        .update({ status: "Friends" }) // Update the status to "Accepted"
+        .update({ status: "Accepted" }) // Update the status to "Accepted"
         .eq("id", requestId); // Ensure you are updating the correct request ID
 
       if (error) {
