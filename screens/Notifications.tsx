@@ -87,39 +87,100 @@ const NotificationsScreen = () => {
 
     fetchFriendRequests();
 
+    const handleInsert = (payload) => {
+      if (payload.new.user_accepted === userId) {
+        const fetchUserName = async () => {
+          const { data: userData, error: userError } = await supabase
+            .from("users")
+            .select("name")
+            .eq("id", payload.new.user_requested)
+            .single();
+
+          const userName = userError ? "Unknown" : userData.name;
+
+          const date = formatDate(new Date(payload.new.created_at));
+          setFriendRequestsByDate((prevRequests) => {
+            const updatedRequests = { ...prevRequests };
+            if (!updatedRequests[date]) {
+              updatedRequests[date] = [];
+            }
+            updatedRequests[date].push({
+              ...payload.new,
+              userName,
+            });
+            return updatedRequests;
+          });
+        };
+
+        fetchUserName();
+      }
+    };
+
+    const handleDelete = (payload) => {
+      console.log("I deleted");
+      setFriendRequestsByDate((prevRequests) => {
+        const updatedRequests = { ...prevRequests };
+        console.log(payload);
+
+        Object.keys(updatedRequests).forEach((date) => {
+          updatedRequests[date] = updatedRequests[date].filter(
+            (req) => req.id !== payload.old.id
+          );
+          if (updatedRequests[date].length === 0) {
+            delete updatedRequests[date];
+          }
+        });
+
+        return updatedRequests;
+      });
+    };
+    const handleUpdate = (payload) => {
+      console.log("I updated");
+      setFriendRequestsByDate((prevRequests) => {
+        const updatedRequests = { ...prevRequests };
+        console.log(payload);
+
+        // Check if the updated request has a status of "Accepted"
+        if (payload.new.status === "Friends") {
+          Object.keys(updatedRequests).forEach((date) => {
+            updatedRequests[date] = updatedRequests[date].filter(
+              (req) => req.id !== payload.new.id
+            );
+            if (updatedRequests[date].length === 0) {
+              delete updatedRequests[date];
+            }
+          });
+        } else {
+          // Update the request if needed
+          Object.keys(updatedRequests).forEach((date) => {
+            updatedRequests[date] = updatedRequests[date].map((req) => {
+              if (req.id === payload.new.id) {
+                return { ...req, ...payload.new };
+              }
+              return req;
+            });
+          });
+        }
+
+        return updatedRequests;
+      });
+    };
     const subscription = supabase
       .channel("friends")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "friends" },
-        (payload) => {
-          if (payload.new.user_accepted === userId) {
-            const fetchUserName = async () => {
-              const { data: userData, error: userError } = await supabase
-                .from("users")
-                .select("name")
-                .eq("id", payload.new.user_requested)
-                .single();
-
-              const userName = userError ? "Unknown" : userData.name;
-
-              const date = formatDate(new Date(payload.new.created_at));
-              setFriendRequestsByDate((prevRequests) => {
-                const updatedRequests = { ...prevRequests };
-                if (!updatedRequests[date]) {
-                  updatedRequests[date] = [];
-                }
-                updatedRequests[date].push({
-                  ...payload.new,
-                  userName,
-                });
-                return updatedRequests;
-              });
-            };
-
-            fetchUserName();
-          }
-        }
+        handleInsert
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "friends" },
+        handleDelete
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "friends" },
+        handleUpdate
       )
       .subscribe();
 
