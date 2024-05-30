@@ -113,7 +113,7 @@ const CreateEvent = () => {
     const { data, error } = await supabase.from("event").insert([
       {
         creator_id: creatorId,
-        group_id: "9bed5464-2dd3-4655-933c-eedfffb1a7dd",
+        //group_id: "9bed5464-2dd3-4655-933c-eedfffb1a7dd",
         max_people: parseInt(maxPeople, 10),
         event_name: eventName,
         event_start: new Date(eventStart).toISOString(),
