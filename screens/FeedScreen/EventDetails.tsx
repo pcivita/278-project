@@ -25,6 +25,7 @@ interface EventDetailsProps {
   };
 }
 
+// EventDetails component: a functional component taking in a route prop
 const EventDetails = ({ route }: EventDetailsProps) => {
   const {
     eventName,
@@ -36,7 +37,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     isUserHost,
     eventId,
   } = route.params;
-  const theme = Colors[colorScheme];
+  const theme = Colors[colorScheme]; // Gets theme from event's colour scheme
   const [userId, setUserId] = useState('');
   const [isAttending, setIsAttending] = useState(false);
   const [attendees, setAttendees] = useState<Array<{ userId: string, name: string, photo: string | null }>>([]);

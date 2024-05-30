@@ -6,18 +6,17 @@ import { toZonedTime, format } from "date-fns-tz";
 
 interface Event {
   event_name: string;
-  event_start: Date;
-  event_end: Date;
-  location: string; // Venue or address of the event
-  host: string; // Name of the host or organizer
-  max_people: number; // Maximum number of attendees
-  signups: number; // Current number of sign-ups
-  current_signups: number; // Added to store the current number of signups
-  creator_id: string; // User ID of the event creator
+  event_start: string; // Updated from Date to string
+  event_end: string;   // Updated from Date to string
+  location: string;
+  host: string;
+  max_people: number;
+  signups: number;
+  current_signups: number;
+  creator_id: string;
   id: string;
   isAttending: boolean;
   attendees: Array<{ userId: string; photo: string | null }>;
-  signupsText: string;
 }
 
 interface User {
@@ -47,63 +46,56 @@ const Feed = ({ navigation }) => {
   };
 
   const fetchEvents = async (userId: string) => {
-    // Fetch friends
     const { data: friendsData, error: friendsError } = await supabase
       .from("friends")
       .select("user_requested, user_accepted")
       .or(`user_requested.eq.${userId},user_accepted.eq.${userId}`)
       .eq("status", "Friends");
-
+  
     if (friendsError) {
       console.error("Error fetching friends:", friendsError);
       return;
     }
-
+  
     const friendIds = friendsData.reduce(
-      (
-        acc: string[],
-        friend: { user_requested: string; user_accepted: string }
-      ) => {
+      (acc: string[], friend: { user_requested: string; user_accepted: string }) => {
         if (friend.user_requested !== userId) acc.push(friend.user_requested);
         if (friend.user_accepted !== userId) acc.push(friend.user_accepted);
         return acc;
       },
       []
     );
-
+  
     // Include user's own ID to fetch their events as well
     const allIds = [...friendIds, userId];
-
+  
     if (allIds.length === 0) {
       console.log("No friends found for this user.");
       setEvents([]);
       return;
     }
-
-    // Fetch events created by friends or the user
+  
     const { data: eventsData, error: eventsError } = await supabase
       .from("event")
       .select("*")
       .in("creator_id", allIds);
-
+  
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
       return;
     }
-
-    const creatorIds = [
-      ...new Set(eventsData.map((event) => event.creator_id)),
-    ];
+  
+    const creatorIds = [...new Set(eventsData.map((event) => event.creator_id))];
     const { data: usersData, error: usersError } = await supabase
       .from("users")
       .select("id, name")
       .in("id", creatorIds);
-
+  
     if (usersError) {
       console.error("Error fetching user details:", usersError);
       return;
     }
-
+  
     const userIdToNameMap = usersData.reduce<Record<string, string>>(
       (acc, user: User) => {
         acc[user.id] = user.name;
@@ -111,14 +103,14 @@ const Feed = ({ navigation }) => {
       },
       {}
     );
-
+  
     const eventsWithSignupsAndHosts = await Promise.all(
       eventsData.map(async (event) => {
         const { data: signupData, error: signupError } = await supabase
           .from("event_signup")
           .select("*", { count: "exact" })
           .eq("event_id", event.id);
-        console.log("SIGN UP DATA", signupData);
+  
         if (signupError) {
           console.error("Error fetching signups:", signupError);
           return {
@@ -126,21 +118,41 @@ const Feed = ({ navigation }) => {
             current_signups: 0,
             host: userIdToNameMap[event.creator_id] || "Unknown",
             isAttending: false,
+            attendees: [],
           };
         }
-
-        const isAttending = signupData.some(
-          (signup) => signup.user_id == userId
-        );
-
+  
+        const isAttending = signupData.some((signup) => signup.user_id == userId);
+  
+        const attendeeIds = signupData.map((signup) => signup.user_id);
+        const { data: attendeesData, error: attendeesError } = await supabase
+          .from("users")
+          .select("id, name, photo")
+          .in("id", attendeeIds);
+  
+        if (attendeesError) {
+          console.error("Error fetching attendees' details:", attendeesError);
+          return {
+            ...event,
+            current_signups: signupData.length,
+            host: userIdToNameMap[event.creator_id] || "Unknown",
+            isAttending,
+            attendees: [],
+          };
+        }
+  
+        const attendees = attendeesData.map((attendee) => ({
+          userId: attendee.id,
+          name: attendee.name, // Ensure we include the name
+          photo: attendee.photo,
+        }));
+  
         const timeZone = "America/Los_Angeles";
         const eventStartPST = toZonedTime(event.event_start, timeZone);
         const eventEndPST = toZonedTime(event.event_end, timeZone);
-        const eventStartFormatted = format(eventStartPST, "M/d h:mm a", {
-          timeZone,
-        });
+        const eventStartFormatted = format(eventStartPST, "M/d h:mm a", { timeZone });
         const eventEndFormatted = format(eventEndPST, "h:mm a", { timeZone });
-
+  
         return {
           ...event,
           event_start: eventStartFormatted,
@@ -148,12 +160,14 @@ const Feed = ({ navigation }) => {
           current_signups: signupData.length,
           host: userIdToNameMap[event.creator_id] || "Unknown",
           isAttending,
+          attendees,
         };
       })
     );
-
+  
     setEvents(eventsWithSignupsAndHosts);
   };
+  
 
   const handleNavigateToEventDetails = (params: any) => {
     navigation.push("EventDetails", {
@@ -197,7 +211,7 @@ const Feed = ({ navigation }) => {
             isUserHost={event.creator_id === userId}
             buttonText={"View Event"}
             isAttending={event.isAttending}
-            attendees={event.attendees}
+            attendees={event.attendees} // Pass attendees data here
           />
         </View>
       ))}
