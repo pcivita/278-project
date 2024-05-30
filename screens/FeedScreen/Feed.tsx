@@ -1,8 +1,6 @@
-import React, { useEffect, useState} from "react";
-import { ScrollView, Text, StyleSheet, View, Button } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import EventCard from "../../components/EventCard";
-import { MonoText } from '../../components/StyledText'; 
-import { useNavigation } from "expo-router";
 import { FeedProps } from "./FeedStack";
 import { supabase } from '@/utils/supabase';
 import { toZonedTime, format } from 'date-fns-tz';
@@ -47,12 +45,13 @@ const Feed = ({ navigation }: FeedProps) => {
   };
 
   const fetchEvents = async (userId: string) => {
+    // Fetch friends
     const { data: friendsData, error: friendsError } = await supabase
       .from('friends')
       .select('user_requested, user_accepted')
       .or(`user_requested.eq.${userId},user_accepted.eq.${userId}`)
-      .eq('status', 'Accepted');
-    
+      .or('status.eq.Accepted,status.eq.Friends');
+
     if (friendsError) {
       console.error('Error fetching friends:', friendsError);
       return;
@@ -64,19 +63,20 @@ const Feed = ({ navigation }: FeedProps) => {
       return acc;
     }, []);
 
-    if (friendIds.length === 0) {
+    // Include user's own ID to fetch their events as well
+    const allIds = [...friendIds, userId];
+
+    if (allIds.length === 0) {
       console.log('No friends found for this user.');
       setEvents([]);
       return;
     }
-    else {
-      console.log(friendIds)
-    }
 
+    // Fetch events created by friends or the user
     const { data: eventsData, error: eventsError } = await supabase
       .from('event')
       .select('*')
-      .in('creator_id', friendIds);
+      .in('creator_id', allIds);
 
     if (eventsError) {
       console.error('Error fetching events:', eventsError);
@@ -114,7 +114,7 @@ const Feed = ({ navigation }: FeedProps) => {
           isAttending: false
         };
       }
-      
+
       const isAttending = signupData.some((signup) => signup.user_id == userId);
 
       const timeZone = 'America/Los_Angeles';
@@ -192,3 +192,4 @@ const styles = StyleSheet.create({
 });
 
 export default Feed;
+
