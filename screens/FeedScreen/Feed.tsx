@@ -52,7 +52,7 @@ const Feed = ({ navigation }) => {
       .from("friends")
       .select("user_requested, user_accepted")
       .or(`user_requested.eq.${userId},user_accepted.eq.${userId}`)
-      .or("status.eq.Accepted,status.eq.Friends");
+      .eq("status", "Friends");
 
     if (friendsError) {
       console.error("Error fetching friends:", friendsError);
