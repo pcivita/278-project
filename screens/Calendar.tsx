@@ -6,6 +6,8 @@ import { supabase } from "@/utils/supabase";
 import { toZonedTime, format } from "date-fns-tz";
 import { useUser } from "@/UserContext";
 
+// TODO: Sort Events
+// TODO:
 interface Event {
   id: string;
   event_name: string;

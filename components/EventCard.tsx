@@ -1,15 +1,10 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { MonoText } from './StyledText'; 
+import { MonoText } from "./StyledText";
 import { useNavigation } from "expo-router";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 interface EventCardProps {
   eventName: string;
@@ -22,7 +17,7 @@ interface EventCardProps {
   isUserHost: boolean;
   buttonText: string;
   isAttending: boolean;
-  attendees: Array<{ userId: string, photo: string | null }>;
+  attendees: Array<{ userId: string; photo: string | null }>;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -46,22 +41,30 @@ const EventCard: React.FC<EventCardProps> = ({
       <View style={styles.leftSide}>
         <View style={[styles.verticalLine, { backgroundColor: theme.dark }]} />
         <View style={styles.textContainer}>
-          <MonoText useUltra={true} style={styles.primaryText}>{eventName}</MonoText>
+          <MonoText useUltra={true} style={styles.primaryText}>
+            {eventName}
+          </MonoText>
           <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
           <View style={styles.bottomTextContainer}>
             <View style={styles.hostContainer}>
-              <MonoText useMedium={true} style={styles.hostText}>Hosted by: </MonoText>
-              <MonoText style={[styles.secondaryText, { color: 'black' }]}>{host}</MonoText>
+              <MonoText useMedium={true} style={styles.hostText}>
+                Hosted by:
+              </MonoText>
+              <MonoText style={[styles.secondaryText, { color: "black" }]}>
+                {host}
+              </MonoText>
             </View>
             <View style={styles.attendeesContainer}>
               {attendees.map((attendee, index) => (
                 <Image
                   key={index}
-                  source={{ uri: attendee.photo || 'default_image_url' }} // Replace 'default_image_url' with an actual URL
+                  source={{ uri: attendee.photo || "default_image_url" }} // Replace 'default_image_url' with an actual URL
                   style={styles.attendeePhoto}
                 />
               ))}
-              <MonoText style={[styles.secondaryText, { color: 'gray' }]}>{signups}</MonoText>
+              <MonoText style={[styles.secondaryText, { color: "gray" }]}>
+                {signups}
+              </MonoText>
             </View>
           </View>
         </View>
@@ -71,19 +74,25 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
-        {isUserHost && <MonoText style={styles.attendingText}>Your event</MonoText>}
-        {isAttending && <MonoText style={styles.attendingText}>You're attending!</MonoText>}
+        {isUserHost && (
+          <MonoText style={styles.attendingText}>Your event</MonoText>
+        )}
+        {isAttending && (
+          <MonoText style={styles.attendingText}>You're attending!</MonoText>
+        )}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.dark }]}
-          onPress={() => onNavigate({
-            eventName,
-            eventTime,
-            location,
-            host,
-            signups,
-            colorScheme,
-            isUserHost
-          })}
+          onPress={() =>
+            onNavigate({
+              eventName,
+              eventTime,
+              location,
+              host,
+              signups,
+              colorScheme,
+              isUserHost,
+            })
+          }
         >
           <MonoText style={styles.buttonText}>{buttonText}</MonoText>
         </TouchableOpacity>
@@ -108,14 +117,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   leftSide: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     width: "55%",
   },
   textContainer: {
     marginLeft: 10,
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingRight: 10,
   },
   primaryText: {
@@ -129,19 +138,19 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   bottomTextContainer: {
-    marginTop: 'auto',
+    marginTop: "auto",
     paddingTop: 8,
   },
   hostContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   hostText: {
     fontSize: 14,
     lineHeight: 18,
   },
   attendeesContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 8,
   },
   attendeePhoto: {
@@ -150,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginRight: 4,
     marginBottom: 2,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   rightSide: {
     width: "40%",
@@ -171,7 +180,7 @@ const styles = StyleSheet.create({
   },
   verticalLine: {
     width: 4,
-    height: '100%',
+    height: "100%",
     borderRadius: 5,
     backgroundColor: "#54577C",
   },
@@ -181,11 +190,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   attendingText: {
-    color: 'black',
+    color: "black",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 1,
-    textAlign: 'center'
+    textAlign: "center",
   },
 });
 
