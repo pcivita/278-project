@@ -195,7 +195,7 @@ const Feed = ({ navigation }) => {
               })
             }
             isUserHost={event.creator_id === userId}
-            buttonText={event.isAttending ? "Attending" : "View Event"}
+            buttonText={"View Event"}
             isAttending={event.isAttending}
             attendees={event.attendees}
           />
