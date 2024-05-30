@@ -7,7 +7,7 @@ import { toZonedTime, format } from "date-fns-tz";
 import { useUser } from "@/UserContext";
 
 // TODO: Sort Events
-// TODO:
+// TODO: Click on event
 interface Event {
   id: string;
   event_name: string;
@@ -120,6 +120,20 @@ const Calendar = () => {
       eventsByMonth[eventMonth][eventDate].push(formattedEvent);
     });
 
+    // Sort the events within each month and date
+    Object.keys(eventsByMonth).forEach((month) => {
+      const dates = Object.keys(eventsByMonth[month]).sort();
+      const sortedEventsByDate: Record<string, Event[]> = {};
+      dates.forEach((date) => {
+        sortedEventsByDate[date] = eventsByMonth[month][date].sort(
+          (a, b) =>
+            new Date(a.event_start).getTime() -
+            new Date(b.event_start).getTime()
+        );
+      });
+      eventsByMonth[month] = sortedEventsByDate;
+    });
+
     return eventsByMonth;
   };
 
@@ -149,6 +163,11 @@ const Calendar = () => {
               newEventsByMonth[month][date] = [];
             }
             newEventsByMonth[month][date].push(...formattedEvent[month][date]);
+            newEventsByMonth[month][date].sort(
+              (a, b) =>
+                new Date(a.event_start).getTime() -
+                new Date(b.event_start).getTime()
+            );
           });
         });
 
