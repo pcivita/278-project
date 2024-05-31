@@ -80,7 +80,8 @@ const Feed = ({ navigation }) => {
     const { data: eventsData, error: eventsError } = await supabase
       .from("event")
       .select("*")
-      .in("creator_id", allIds);
+      .in("creator_id", allIds)
+      .eq('max_signup', false);
   
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
