@@ -42,6 +42,8 @@ const Feed = ({ navigation }) => {
       setUserId(data.user.id);
       console.log("User ID is", userId);
       await fetchEvents(data.user.id);
+    } else {
+      console.log("No user data found");
     }
   };
 
@@ -82,6 +84,11 @@ const Feed = ({ navigation }) => {
   
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
+      return;
+    }
+    if (!eventsData || eventsData.length === 0) {
+      console.log("No events found");
+      setEvents([]);
       return;
     }
   
@@ -147,11 +154,21 @@ const Feed = ({ navigation }) => {
           photo: attendee.photo,
         }));
   
-        const timeZone = "America/Los_Angeles";
-        const eventStartPST = toZonedTime(event.event_start, timeZone);
-        const eventEndPST = toZonedTime(event.event_end, timeZone);
-        const eventStartFormatted = format(eventStartPST, "M/d h:mm a", { timeZone });
-        const eventEndFormatted = format(eventEndPST, "h:mm a", { timeZone });
+        let eventStartFormatted = "Invalid date";
+        let eventEndFormatted = "Invalid date";
+        try {
+          const timeZone = "America/Los_Angeles";
+          if (event.event_start && event.event_end) {
+            const eventStartPST = toZonedTime(new Date(event.event_start), timeZone);
+            const eventEndPST = toZonedTime(new Date(event.event_end), timeZone);
+            eventStartFormatted = format(eventStartPST, "M/d h:mm a", { timeZone });
+            eventEndFormatted = format(eventEndPST, "h:mm a", { timeZone });
+          } else {
+            console.error("Invalid or missing event start/end dates.");
+          }
+        } catch (error) {
+          console.error("Error formatting event dates:", error);
+        }
   
         return {
           ...event,
