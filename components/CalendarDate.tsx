@@ -13,7 +13,7 @@ interface Event {
   max_people: number;
   signups: number;
   current_signups: number;
-  //group_id: string;
+  group_id: string;
   creator_id: string;
   isAttending: boolean;
   event_date: string;
