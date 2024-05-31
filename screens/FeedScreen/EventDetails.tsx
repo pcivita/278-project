@@ -120,17 +120,53 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     }
 
     try {
+      // insert signup data
       const { data, error } = await supabase
         .from("event_signup")
         .insert([{ user_id: userId, event_id: eventId }]);
 
       if (error) {
         console.error("Error inserting data:", error);
+        return;
+      
       } else {
         console.log("Data inserted successfully:", data);
-        setIsAttending(true);
-        fetchAttendees(); // Refresh attendees list
+      } 
+
+      // Fetch the current event details
+      const { data: eventData, error: eventError } = await supabase
+        .from('events')
+        .select('current_signups, max_people')
+        .eq('id', eventId)
+        .single();
+
+      if (eventError) {
+        console.error('Error fetching event data:', eventError);
+        return;
       }
+
+      const { current_signups, max_people } = eventData;
+      const updatedSignups = current_signups + 1;
+      const maxSignupReached = (updatedSignups >= max_people);
+
+      // Update the event with the new signup count and max_signup status
+      const { error: updateEventError } = await supabase
+        .from('events')
+        .update({
+          current_signups: updatedSignups,
+          max_signup: maxSignupReached
+        })
+        .eq('id', eventId);
+
+      if (updateEventError) {
+        console.error("Error updating event data:", updateEventError);
+        return;
+      }
+      console.log("User signed up and event updated successfully");
+
+      setIsAttending(true);
+      fetchAttendees(); // Refresh attendees list
+    
     } catch (error) {
       console.error("Error joining event:", error);
     }
