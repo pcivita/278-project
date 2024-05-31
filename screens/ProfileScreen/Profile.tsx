@@ -1,9 +1,13 @@
 import { supabase } from "@/utils/supabase";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ProfileCard from "../../components/ProfileCard";
 import Colors from "@/constants/Colors";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import {
+  useNavigation,
+  NavigationProp,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { MonoText } from "@/components/StyledText";
 import { RootStackParamList, UserProfile } from "./types"; // Adjust the path as needed
 
@@ -12,34 +16,36 @@ const ProfileScreen = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
   const fetchUserProfile = async () => {
     setLoading(true);
     const { data, error } = await supabase.auth.getUser();
     if (error) {
-      console.error('Error fetching user:', error);
+      console.error("Error fetching user:", error);
       setLoading(false);
       return;
     }
 
     const userId = data.user.id;
     const { data: profileData, error: profileError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
+      .from("users")
+      .select("*")
+      .eq("id", userId)
       .single();
 
     if (profileError) {
-      console.error('Error fetching user profile:', profileError);
+      console.error("Error fetching user profile:", profileError);
     } else {
-      console.log('Profile data fetched:', profileData);
+      console.log("Profile data fetched:", profileData);
       setUserProfile(profileData);
     }
     setLoading(false);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserProfile();
+    }, [])
+  );
 
   const goToFriends = () => {
     navigation.navigate("Friends");
@@ -73,23 +79,27 @@ const ProfileScreen = () => {
       <View style={styles.profileImageWrapper}>
         <View style={styles.profileImageContainer}>
           <Image
-            source={{ uri: userProfile.photo || "https://via.placeholder.com/150" }} 
+            source={{
+              uri: userProfile.photo || "https://via.placeholder.com/150",
+            }}
             style={styles.profileImage}
-            onError={(error) => console.error('Image load error:', error)}
+            onError={(error) => console.error("Image load error:", error)}
           />
         </View>
         <MonoText useUltra={true} style={styles.username}>
-          @{userProfile.username || 'Username'}
+          @{userProfile.username || "Username"}
         </MonoText>
         <TouchableOpacity onPress={goToFriends}>
-          <MonoText style={styles.mutualFriends}>{userProfile.friend_count || 0} friends</MonoText>
+          <MonoText style={styles.mutualFriends}>
+            {userProfile.friend_count || 0} friends
+          </MonoText>
         </TouchableOpacity>
       </View>
       <View style={styles.profileCardContainer}>
         <ProfileCard
-          name={userProfile.name || 'Full Name'}
-          location={'Location'}
-          bio={userProfile.bio || 'Bio'}
+          name={userProfile.name || "Full Name"}
+          location={"Location"}
+          bio={userProfile.bio || "Bio"}
           colorScheme="color2"
         />
       </View>
@@ -115,7 +125,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     paddingBottom: 20,
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   header: {
     width: "100%",
@@ -159,7 +169,7 @@ const styles = StyleSheet.create({
   profileCardContainer: {
     paddingHorizontal: 10,
     width: "100%",
-    alignItems: "center"
+    alignItems: "center",
   },
   buttonsContainer: {
     width: "90%",

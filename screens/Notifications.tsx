@@ -136,22 +136,28 @@ const NotificationsScreen = () => {
     return <Text>Error: {error}</Text>;
   }
 
+  const isEmpty = Object.keys(friendRequestsByDate).length === 0;
+
   return (
     <ScrollView contentContainerStyle={{ padding: 20 }}>
       <View>
-        {Object.keys(friendRequestsByDate).map((date) => (
-          <View key={date}>
-            <Text style={{ fontSize: 24, marginTop: 20 }}>{date}</Text>
-            {friendRequestsByDate[date].map((request) => (
-              <NotificationItem
-                type={"friend_request"}
-                message={request.userName + " wants to be your friend."}
-                requestId={request.id}
-                key={request.id}
-              />
-            ))}
-          </View>
-        ))}
+        {isEmpty ? (
+          <Text>No Notifications</Text>
+        ) : (
+          Object.keys(friendRequestsByDate).map((date) => (
+            <View key={date}>
+              <Text style={{ fontSize: 24, marginTop: 20 }}>{date}</Text>
+              {friendRequestsByDate[date].map((request) => (
+                <NotificationItem
+                  type={"friend_request"}
+                  message={request.userName + " wants to be your friend."}
+                  requestId={request.id}
+                  key={request.id}
+                />
+              ))}
+            </View>
+          ))
+        )}
       </View>
     </ScrollView>
   );
