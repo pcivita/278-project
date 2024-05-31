@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import EventCard from "../../components/EventCard";
 import { supabase } from "@/utils/supabase";
-import { toZonedTime, format } from "date-fns-tz";
+import { toZonedTime, format, ZonedTime } from "date-fns-tz";
 
 interface Event {
   event_name: string;
@@ -77,11 +77,18 @@ const Feed = ({ navigation }) => {
       return;
     }
   
+    const nowUTC = new Date();
+    const nowPST = toZonedTime(nowUTC, 'America/Los_Angeles').toISOString();
+    //const nowPSTISOString = zonedTimeToUtc(nowPST, 'America/Los_Angeles').toISOString();
+
+
     const { data: eventsData, error: eventsError } = await supabase
       .from("event")
       .select("*")
       .in("creator_id", allIds)
-      .eq('max_signup', false);
+      .eq('max_signup', false)
+      .gte('event_end', nowPST); // Filter events that have event_end in the future based on PST
+
   
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
