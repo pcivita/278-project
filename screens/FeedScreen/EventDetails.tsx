@@ -135,7 +135,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
 
       // Fetch the current event details
       const { data: eventData, error: eventError } = await supabase
-        .from('events')
+        .from('event')
         .select('current_signups, max_people')
         .eq('id', eventId)
         .single();
@@ -151,7 +151,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
 
       // Update the event with the new signup count and max_signup status
       const { error: updateEventError } = await supabase
-        .from('events')
+        .from('event')
         .update({
           current_signups: updatedSignups,
           max_signup: maxSignupReached
