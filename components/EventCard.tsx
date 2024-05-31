@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     marginRight: -8, // Overlapping effect
   },
   backPhoto: {
-    opacity: 0.7, // Darken the back photo
+    opacity: 0.6, // Darken the back photo
   },
   attendingTextContainer: {
     flexDirection: "row",
