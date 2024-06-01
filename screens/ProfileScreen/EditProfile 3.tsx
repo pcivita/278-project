@@ -3,20 +3,15 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } fro
 import { supabase } from "@/utils/supabase";
 import * as ImagePicker from 'expo-image-picker';
 import Colors from "@/constants/Colors";
-import { useNavigation, NavigationProp, useRoute, RouteProp } from "@react-navigation/native";
-import { RootStackParamList, UserProfile } from "./types"; // Adjust the path as needed
-
-type EditProfileScreenRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "./types";
 
 const EditProfileScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const route = useRoute<EditProfileScreenRouteProp>();
-  const { userProfile } = route.params;
-
-  const [name, setName] = useState<string>(userProfile.name || '');
-  const [bio, setBio] = useState<string>(userProfile.bio || '');
-  const [username, setUsername] = useState<string>(userProfile.username || '');
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(userProfile.photo || null);
+  const [name, setName] = useState<string>('');
+  const [bio, setBio] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
   const handleImagePick = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -46,10 +41,10 @@ const EditProfileScreen = () => {
       console.log("User ID:", userId);
 
       let profilePhotoUrl = profilePhoto;
-      if (profilePhoto && profilePhoto !== userProfile.photo) {
+      if (profilePhoto) {
         try {
           console.log("Profile photo selected:", profilePhoto);
-
+          
           // Fetch the file data and convert to Blob
           const response = await fetch(profilePhoto);
           const blob = await response.blob();
@@ -60,15 +55,15 @@ const EditProfileScreen = () => {
             uri: profilePhoto,
             name: `${Date.now()}.jpg`,
             type: 'image/jpeg',
-          } as any);  // 'any' type assertion to bypass TypeScript error
+          });
 
           const filePath = `${userId}/${Date.now()}.jpg`;
           console.log("File path for upload:", filePath);
 
-          // Upload the FormData using the Supabase storage API
+          // Upload the Blob using the Supabase storage API
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('profile_photos')
-            .upload(filePath, formData as any, {
+            .upload(filePath, formData, {
               cacheControl: '3600',
               upsert: false,
             });

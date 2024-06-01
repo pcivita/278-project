@@ -8,7 +8,6 @@ interface ProfileCardProps {
   name: string;
   location: string;
   bio: string;
-  //wants: string;
   colorScheme: string;
 }
 
@@ -16,21 +15,18 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
   location,
   bio,
-  //wants,
   colorScheme,
 }) => {
   const theme = Colors[colorScheme];
 
   return (
     <View style={[styles.card, { backgroundColor: theme.light }]}>
+      <View style={styles.header}>
+        <MonoText useUltra={true} style={styles.primaryText}>{name}</MonoText>
+      </View>
       <View style={styles.leftSide}>
         <View style={[styles.verticalLine, { backgroundColor: theme.dark }]} />
         <View style={styles.textContainer}>
-          <MonoText useUltra={true} style={styles.primaryText}>{name}</MonoText>
-          <View style={styles.location}>
-            <Ionicons name="location-sharp" size={20} color="black" />
-            <MonoText style={styles.secondaryText}>{location}</MonoText>
-          </View>
           <MonoText style={styles.secondaryText}>{bio}</MonoText>
         </View>
       </View>
@@ -50,13 +46,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 2,
+    flexDirection: "column",
+  },
+  header: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   leftSide: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center', // Adjust this to control vertical alignment
     width: "100%",
+    marginTop: 10,
   },
   textContainer: {
     marginLeft: 10,
@@ -66,7 +68,6 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 8, // Increase bottom margin to give more space below the headline
     lineHeight: 32, // Adjust line height for better vertical spacing
   },
   secondaryText: {
@@ -76,7 +77,6 @@ const styles = StyleSheet.create({
   location: {
     flexDirection: "row",
     gap: 2,
-    paddingRight: 5,
     alignItems: "center",
   },
   verticalLine: {

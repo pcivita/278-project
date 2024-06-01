@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import EventCard from "@/components/EventCard";
-import Colors from "@/constants/Colors";
 import EventDetailsCard from "@/components/EventDetailsCard";
+import Colors from "@/constants/Colors";
 import { MonoText } from "@/components/StyledText";
 import { Dimensions } from "react-native";
 import { supabase } from "@/utils/supabase";
@@ -26,6 +25,7 @@ interface EventDetailsProps {
   };
 }
 
+// EventDetails component: a functional component taking in a route prop
 const EventDetails = ({ route }: EventDetailsProps) => {
   const {
     eventName,
@@ -37,20 +37,21 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     isUserHost,
     eventId,
   } = route.params;
-  const theme = Colors[colorScheme];
+  const theme = Colors[colorScheme]; // Gets theme from event's colour scheme
   const [userId, setUserId] = useState('');
-  const [isAttending, setIsAttending] = useState(false)
+  const [isAttending, setIsAttending] = useState(false);
+  const [attendees, setAttendees] = useState<Array<{ userId: string, name: string, photo: string | null }>>([]);
 
   useEffect(() => {
     fetchUserId();
   }, []);
 
-
   useEffect(() => {
     if (userId) {
       checkAttendanceStatus();
+      fetchAttendees();
     }
-  }, [userId])
+  }, [userId]);
 
   const fetchUserId = async () => {
     const { data, error } = await supabase.auth.getUser();
@@ -61,9 +62,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     } else {
       console.error('User data is invalid:', data);
     }
-    
   };
-
 
   const checkAttendanceStatus = async () => {
     if (!userId || userId.trim() === '') {
@@ -83,6 +82,37 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     }
   };
 
+  const fetchAttendees = async () => {
+    const { data: signupData, error: signupError } = await supabase
+      .from('event_signup')
+      .select('user_id')
+      .eq('event_id', eventId);
+
+    if (signupError) {
+      console.error('Error fetching signups:', signupError);
+      return;
+    }
+
+    const attendeeIds = signupData.map(signup => signup.user_id);
+    const { data: usersData, error: usersError } = await supabase
+      .from('users')
+      .select('id, name, photo')
+      .in('id', attendeeIds);
+
+    if (usersError) {
+      console.error('Error fetching user details:', usersError);
+      return;
+    }
+
+    const attendeesList = usersData.map(user => ({
+      userId: user.id,
+      name: user.name,
+      photo: user.photo,
+    }));
+
+    setAttendees(attendeesList);
+  };
+
   const joinEvent = async () => {
     if (!userId) {
       console.error("User ID not found");
@@ -90,16 +120,53 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     }
 
     try {
+      // insert signup data
       const { data, error } = await supabase
         .from("event_signup")
         .insert([{ user_id: userId, event_id: eventId }]);
 
       if (error) {
         console.error("Error inserting data:", error);
+        return;
+      
       } else {
         console.log("Data inserted successfully:", data);
-        setIsAttending(true);
+      } 
+
+      // Fetch the current event details
+      const { data: eventData, error: eventError } = await supabase
+        .from('event')
+        .select('current_signups, max_people')
+        .eq('id', eventId)
+        .single();
+
+      if (eventError) {
+        console.error('Error fetching event data:', eventError);
+        return;
       }
+
+      const { current_signups, max_people } = eventData;
+      const updatedSignups = current_signups + 1;
+      const maxSignupReached = (updatedSignups >= max_people);
+
+      // Update the event with the new signup count and max_signup status
+      const { error: updateEventError } = await supabase
+        .from('event')
+        .update({
+          current_signups: updatedSignups,
+          max_signup: maxSignupReached
+        })
+        .eq('id', eventId);
+
+      if (updateEventError) {
+        console.error("Error updating event data:", updateEventError);
+        return;
+      }
+      console.log("User signed up and event updated successfully");
+
+      setIsAttending(true);
+      fetchAttendees(); // Refresh attendees list
+    
     } catch (error) {
       console.error("Error joining event:", error);
     }
@@ -123,34 +190,15 @@ const EventDetails = ({ route }: EventDetailsProps) => {
           Going
         </MonoText>
         <View style={styles.attendees}>
-          <View style={styles.user}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
-              style={styles.profileImage}
-            />
-            <MonoText style={styles.secondaryText}>Defne</MonoText>
-          </View>
-          <View style={styles.user}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
-              style={styles.profileImage}
-            />
-            <MonoText style={styles.secondaryText}>Elena</MonoText>
-          </View>
-          <View style={styles.user}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
-              style={styles.profileImage}
-            />
-            <MonoText style={styles.secondaryText}>Pedro</MonoText>
-          </View>
-          <View style={styles.user}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
-              style={styles.profileImage}
-            />
-            <MonoText style={styles.secondaryText}>Malina</MonoText>
-          </View>
+          {attendees.map((attendee, index) => (
+            <View key={index} style={styles.user}>
+              <Image
+                source={{ uri: attendee.photo || 'default_image_url' }} // Replace 'default_image_url' with an actual URL
+                style={styles.profileImage}
+              />
+              <MonoText style={styles.secondaryText}>{attendee.name}</MonoText>
+            </View>
+          ))}
         </View>
         <View style={styles.horizontalLine} />
       </View>

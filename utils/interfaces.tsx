@@ -5,6 +5,8 @@ export interface User {
   name: string;
   username: string;
   status: string;
+  bio: string;
+  photo: string;
 }
 
 // Define a type for the friend request
@@ -13,4 +15,7 @@ export interface FriendRequest {
   user_requested: string;
   user_accepted: string;
   created_at: Date;
+  user: {
+    name: string;
+  };
 }

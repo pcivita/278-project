@@ -1,12 +1,8 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { MonoText } from './StyledText'; 
+import { MonoText } from "./StyledText";
 import { useNavigation } from "expo-router";
 
 interface EventCardProps {
@@ -20,6 +16,7 @@ interface EventCardProps {
   isUserHost: boolean;
   buttonText: string;
   isAttending: boolean;
+  attendees: Array<{ userId: string; name: string; photo: string | null }>;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -33,6 +30,7 @@ const EventCard: React.FC<EventCardProps> = ({
   isUserHost,
   buttonText,
   isAttending,
+  attendees,
 }) => {
   const theme = Colors[colorScheme];
   const navigation = useNavigation();
@@ -42,14 +40,50 @@ const EventCard: React.FC<EventCardProps> = ({
       <View style={styles.leftSide}>
         <View style={[styles.verticalLine, { backgroundColor: theme.dark }]} />
         <View style={styles.textContainer}>
-          <MonoText useUltra={true} style={styles.primaryText}>{eventName}</MonoText>
+          <MonoText useUltra={true} style={styles.primaryText}>
+            {eventName}
+          </MonoText>
           <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
           <View style={styles.bottomTextContainer}>
             <View style={styles.hostContainer}>
-              <MonoText useMedium={true} style={styles.hostText}>Hosted by: </MonoText>
-              <MonoText style={styles.secondaryText}>{host}</MonoText>
+              <MonoText useMedium={true} style={styles.hostText}>
+                Hosted by:
+              </MonoText>
+              <MonoText style={[styles.secondaryText, { color: "gray" }]}>
+                {host}
+              </MonoText>
             </View>
-            <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
+            <View style={styles.attendeesContainer}>
+              <View style={styles.imagesContainer}>
+                {attendees.slice(0, 2).map((attendee, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: attendee.photo || "default_image_url" }} // Replace 'default_image_url' with an actual URL
+                    style={[
+                      styles.attendeePhoto,
+                      { zIndex: attendees.length - index },
+                      index === 1 && styles.backPhoto,
+                    ]}
+                  />
+                ))}
+              </View>
+              {attendees.length > 0 && attendees[0].name ? (
+                <View style={styles.attendingTextContainer}>
+                  <MonoText style={[styles.attendingNameText, { color: "black", fontWeight: "bold" }]}>
+                    {attendees[0].name}
+                  </MonoText>
+                  <MonoText style={[styles.secondaryText, { color: "gray" }]}>
+                    {attendees.length > 1
+                      ? ` +${attendees.length - 1} more attending`
+                      : " attending"}
+                  </MonoText>
+                </View>
+              ) : (
+                <MonoText style={[styles.secondaryText, { color: "gray", marginTop: 4 }]}>
+                  No attendees yet
+                </MonoText>
+              )}
+            </View>
           </View>
         </View>
       </View>
@@ -58,22 +92,27 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
-        {isUserHost && <MonoText style={styles.attendingText}>Your event</MonoText>}
-        {isAttending && <MonoText style={styles.attendingText}>You're attending!</MonoText>}
+        {isUserHost && (
+          <MonoText style={styles.attendingText}>Your event</MonoText>
+        )}
+        {isAttending && (
+          <MonoText style={styles.attendingText}>You're attending!</MonoText>
+        )}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.dark }]}
-          onPress={() => onNavigate({
-            eventName,
-            eventTime,
-            location,
-            host,
-            signups,
-            colorScheme,
-            isUserHost
-          })}
+          onPress={() =>
+            onNavigate({
+              eventName,
+              eventTime,
+              location,
+              host,
+              signups,
+              colorScheme,
+              isUserHost,
+            })
+          }
         >
-
-          <MonoText style={styles.buttonText}>View Event</MonoText>
+          <MonoText style={styles.buttonText}>{buttonText}</MonoText>
         </TouchableOpacity>
       </View>
     </View>
@@ -96,20 +135,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   leftSide: {
-    flexDirection: 'row',
-    alignItems: 'flex-start', // Align to top
-    width: "55%",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    width: "60%",
   },
   textContainer: {
     marginLeft: 10,
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingRight: 10,
   },
   primaryText: {
     fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 4, // Space between event name and time
+    marginBottom: 4,
     lineHeight: 32,
   },
   secondaryText: {
@@ -117,13 +156,40 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   bottomTextContainer: {
-    marginTop: 'auto', // Push this container to the bottom
-    paddingTop: 8, // Add space above hosted by and signups
+    marginTop: "auto",
+    paddingTop: 8,
   },
   hostContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   hostText: {
+    fontSize: 14,
+    lineHeight: 18,
+  },
+  attendeesContainer: {
+    alignItems: "flex-start", // Align items to the start (left)
+    marginTop: 8,
+  },
+  imagesContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  attendeePhoto: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginRight: -8, // Overlapping effect
+  },
+  backPhoto: {
+    opacity: 0.6, // Darken the back photo
+  },
+  attendingTextContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginTop: 4,
+  },
+  attendingNameText: {
     fontSize: 14,
     lineHeight: 18,
   },
@@ -146,7 +212,7 @@ const styles = StyleSheet.create({
   },
   verticalLine: {
     width: 4,
-    height: '100%',
+    height: "100%",
     borderRadius: 5,
     backgroundColor: "#54577C",
   },
@@ -156,11 +222,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   attendingText: {
-    color: 'black',
+    color: "black",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 1,
-    textAlign: 'center'
+    textAlign: "center",
   },
 });
 

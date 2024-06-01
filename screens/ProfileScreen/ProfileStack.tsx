@@ -6,6 +6,7 @@ import EditProfileScreen from "./EditProfile"; // Adjust the path as needed
 import { MonoText } from "@/components/StyledText";
 import Colors from "@/constants/Colors";
 import { RootStackParamList } from "./types"; // Adjust the path as needed
+import UserProfile from "../UserProfile";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -37,6 +38,13 @@ function ProfileStack() {
         component={EditProfileScreen}
         options={{
           headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Edit Profile</MonoText>,
+        }}
+      />
+        <Stack.Screen
+        name="userProfile"
+        component={UserProfile}
+        options={{
+          headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>User</MonoText>,
         }}
       />
     </Stack.Navigator>
