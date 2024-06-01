@@ -86,11 +86,6 @@ export default function Onboarding() {
         return (
           <Text>tutorial 4</Text>
         );
-      default:
-        return (
-          <Text>finalScreen</Text>
-
-        );
     }
   };
 
@@ -204,86 +199,29 @@ export default function Onboarding() {
               }}
             />
           )}
-          {onboardingScreenNumber < 5 ? (
-            <>
-              <View style={styles.dotsContainer}>
-                {DOTS.map((dot, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={[
-                        styles.dot, index + 1 === onboardingScreenNumber && { backgroundColor: Colors.color1.dark },
-                      ]}
-                    />
-                  );
-                })}
-              </View>
-              {onboardingScreenNumber === 4 ? (
-                <TouchableOpacity
-                  style={styles.onboardingButton}
-                  onPress={() => {setOnboardingScreenNumber(5)}}
-                >
-                  <Text style={styles.onBoardingButtonText}>Continue</Text>
-                </TouchableOpacity>
-              ) : (
-                <View style={[styles.onboardingButton, {backgroundColor: "white"} ]}>
-                  <Text style={styles.onBoardingButtonText}>Continue</Text>
-                </View>
-              )}
-            </>
-          ) : (
-            <View
-              style={{
-                alignItems: "center",
-              }}
+          <View style={styles.dotsContainer}>
+            {DOTS.map((dot, index) => {
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot, index + 1 === onboardingScreenNumber && { backgroundColor: Colors.color1.dark },
+                  ]}
+                />
+              );
+            })}
+          </View>
+          {onboardingScreenNumber === 4 ? (
+            <TouchableOpacity
+              style={styles.onboardingButton}
+              // onPress={() => {setOnboardingScreenNumber(5)}}
+              onPress={() => setCurrentScreen("sign up")}
             >
-              <Text
-                style={{
-                  fontSize: 30,
-                  fontWeight: "bold",
-                  fontFamily: "Poppins-Bold",
-                  color: "black",
-                  textAlign: "center",
-                  marginTop: 36,
-                }}
-              >
-                Flock
-              </Text>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontFamily: "Poppins-Regular",
-                  color: "black",
-                  marginTop: 24,
-                  textAlign: "center",
-                }}
-              >
-                Get rolling on making hard decisions
-              </Text>
-              <TouchableOpacity
-                style={{
-                  borderColor: "pink",
-                  padding: 12,
-                  borderRadius: 999,
-                  width: windowWidth * 0.8,
-                  alignItems: "center",
-                  marginTop: 48,
-                  borderWidth: 1,
-                }}
-                onPress={() => setCurrentScreen("log in")}
-              >
-                <Text
-                  style={[styles.onBoardingButtonText, { color: "black" }]}
-                >
-                  Log in
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={() => setCurrentScreen("sign up")}
-              >
-                <Text style={styles.onBoardingButtonText}>Sign up</Text>
-              </TouchableOpacity>
+              <Text style={styles.onBoardingButtonText}>Continue</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={[styles.onboardingButton, {backgroundColor: "white"} ]}>
+              <Text style={styles.onBoardingButtonText}>Continue</Text>
             </View>
           )}
         </View>
@@ -447,10 +385,8 @@ export default function Onboarding() {
 
   switch (currentScreen) {
     case "log in":
-      // return renderLogIn();
       return <Login setCurrentScreen={setCurrentScreen} />;
     case "sign up":
-      // return renderSignUp();
       return <SignUp setCurrentScreen={setCurrentScreen} />;
     default:
       return renderOnboarding();

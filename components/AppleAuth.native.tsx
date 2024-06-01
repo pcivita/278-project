@@ -70,11 +70,9 @@ export function Auth({ navigation, signup = false }: AuthProps) {
 const styles = StyleSheet.create({
   appleButton: {
     width: windowWidth * 0.8,
-    height: 50,
+    height: 45,
     borderRadius: 100,
-    backgroundColor: "#9AA899",
     justifyContent: "center",
     alignItems: "center",
-    // padding: 10,
   },
 });
