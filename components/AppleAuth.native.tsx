@@ -6,11 +6,22 @@ import { StyleSheet, Dimensions } from "react-native";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-export function Auth({ navigation, signup = false }) {
+type AuthProps = {
+  navigation: {
+    replace: (route: string) => void;
+  };
+  signup?: boolean;
+};
+
+export function Auth({ navigation, signup = false }: AuthProps) {
   if (Platform.OS === "ios")
     return (
       <AppleAuthentication.AppleAuthenticationButton
-        buttonType={signup ? AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP : AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+        buttonType={
+          signup
+            ? AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP
+            : AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+        }
         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
         cornerRadius={20}
         style={styles.appleButton}
@@ -55,7 +66,6 @@ export function Auth({ navigation, signup = false }) {
     );
   return <>{/* Implement Android Auth options. */}</>;
 }
-
 
 const styles = StyleSheet.create({
   appleButton: {
