@@ -25,6 +25,7 @@ import * as ImagePicker from "expo-image-picker";
 // import { storage } from "../firebase";
 import Login from "./Login"
 import SignUp from "./SignUp";
+import Colors from "@/constants/Colors";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -44,24 +45,24 @@ export default function Onboarding() {
 
   const ONBOARDING_SCREENS = [
     {
-      title: "Create hangouts with friends",
+      title: "Welcome to Flock",
       description:
-        "Whether it’s lunch at your dorm, going on a hike, or a game night, create hangouts and invite your friends to join along.",
+        "Swipe to get started.",
     },
     {
-      title: "Sign up for friends' hangouts",
+      title: "Create events to invite your friends to",
       description:
-        "blah blah blah",
+       "For example, lunch at a local restaurant, a hike, a movie night, or anything else!",
     },
     {
-      title: "Have fun!",
+      title: "Browse friends' events and join them",
       description:
-        "blah blah blah",
+        "Make more time for your good friends and make new friends",
     },
     {
-      title: "Celebrate all the choices being made",
+      title: "View your upcoming events by date and month",
       description:
-        "Engage with your friends on Turno to learn about their lives.",
+        "Never miss an upcoming event with your friends",
     },
   ];
 
@@ -183,6 +184,7 @@ export default function Onboarding() {
               pagingEnabled
               snapToInterval={windowWidth * 0.8}
               scrollEventThrottle={16}
+              style={styles.flatlist}
               onScroll={(event) => {
                 const contentOffsetX = event.nativeEvent.contentOffset.x;
                 const currentIndex = Math.round(
@@ -192,9 +194,7 @@ export default function Onboarding() {
               }}
               renderItem={({ item }) => {
                 return (
-                  <View
-                    style={styles.bottomSheetContent}
-                  >
+                  <View style={styles.bottomSheetContent}>
                     <Text style={styles.onboardingTitle}>{item.title}</Text>
                     <Text style={styles.onboardingDescription}>
                       {item.description}
@@ -202,63 +202,31 @@ export default function Onboarding() {
                   </View>
                 );
               }}
-              style={{
-                width: windowWidth * 0.8,
-                marginTop: 48,
-              }}
             />
           )}
           {onboardingScreenNumber < 5 ? (
             <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 48,
-                }}
-              >
+              <View style={styles.dotsContainer}>
                 {DOTS.map((dot, index) => {
                   return (
                     <View
                       key={index}
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        backgroundColor:
-                          index + 1 === onboardingScreenNumber
-                            ? "blue"
-                            : "lightgrey",
-                        marginHorizontal: 4,
-                      }}
+                      style={[
+                        styles.dot, index + 1 === onboardingScreenNumber && { backgroundColor: Colors.color1.dark },
+                      ]}
                     />
                   );
                 })}
               </View>
               {onboardingScreenNumber === 4 ? (
                 <TouchableOpacity
-                  style={[
-                    styles.primaryButton,
-                    { marginTop: 24, marginBottom: 36 },
-                  ]}
-                  onPress={() => {
-                    setOnboardingScreenNumber(5);
-                  }}
+                  style={styles.onboardingButton}
+                  onPress={() => {setOnboardingScreenNumber(5)}}
                 >
                   <Text style={styles.onBoardingButtonText}>Continue</Text>
                 </TouchableOpacity>
               ) : (
-                <View
-                  style={[
-                    styles.primaryButton,
-                    {
-                      backgroundColor: "white",
-                      marginTop: 24,
-                      marginBottom: 36,
-                    },
-                  ]}
-                >
+                <View style={[styles.onboardingButton, {backgroundColor: "white"} ]}>
                   <Text style={styles.onBoardingButtonText}>Continue</Text>
                 </View>
               )}
@@ -515,12 +483,32 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
   },
+  flatlist: {
+    width: windowWidth * 0.8,
+    marginTop: 48,
+  },
   bottomSheetContent: {
     width: windowWidth * 0.8,
     flex: 1,
     alignItems: "center",
     paddingTop: 10,
   },
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 48,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "lightgrey",
+    marginHorizontal: 4,
+  },
+
+
+
   whiteContainer: {
     flex: 1,
     alignItems: "center",
@@ -576,6 +564,15 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.8,
     alignItems: "center",
     marginTop: 12,
+  },
+  onboardingButton: {
+    backgroundColor: "pink",
+    padding: 10,
+    borderRadius: 999,
+    width: windowWidth * 0.8,
+    alignItems: "center",
+    marginTop: 24, 
+    marginBottom: 36
   },
   secondaryButton: {
     backgroundColor: "pink",
