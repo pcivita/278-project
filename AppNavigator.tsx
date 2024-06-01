@@ -7,6 +7,7 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "./utils/supabase";
 import Onboarding from "./screens/Onboarding";
 import Login from "./screens/Login";
+import SignUp from "./screens/SignUp";
 import LoginWithUsername from "./screens/LoginWithUsername";
 import SignUpManually from "./screens/SignUpManually";
 
@@ -35,6 +36,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Onboarding" component={Onboarding} />
         )}
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="LoginWithUsername" component={LoginWithUsername} />
         <Stack.Screen name="SignUpManually" component={SignUpManually} />
       </Stack.Navigator>

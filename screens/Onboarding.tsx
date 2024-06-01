@@ -47,7 +47,7 @@ export default function Onboarding() {
         "For example, lunch at a local restaurant, a hike, a movie night, or anything else!",
     },
     {
-      title: "Browse friends' events and join them",
+      title: "Browse friends' events and join in on the fun",
       description: "Make more time for your good friends and make new friends",
     },
     {
@@ -63,9 +63,24 @@ export default function Onboarding() {
       case 1:
         return <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />;
       case 2:
-        return <Image source={require("../assets/images/OnboardingImage1.png")} resizeMode="contain" style={styles.onboardingImage}/>;
+        return (
+          <View style={styles.onboardingImageContainer}>
+            <Image 
+              source={require("../assets/images/OnboardingImage1.png")} 
+              resizeMode="contain" 
+              style={styles.onboardingImage}/>
+          </View>
+        )
       case 3:
-        return <Text>tutorial 3</Text>;
+        return (
+          <View style={styles.onboardingImageContainer}>
+            <Image 
+              source={require("../assets/images/OnboardingImage2.png")} 
+              resizeMode="contain" 
+              style={[styles.onboardingImage, { bottom: 140 }]}
+            />
+          </View>
+        )
       case 4:
         return <Text>tutorial 4</Text>;
     }
@@ -433,9 +448,15 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgrey",
     marginHorizontal: 4,
   },
+  onboardingImageContainer: {
+    height: windowHeight * 0.5,
+    flexDirection: "row",
+    width: windowWidth * 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
   onboardingImage: {
     width: windowWidth * 0.9,
-
   },
 
 
