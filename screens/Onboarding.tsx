@@ -1,31 +1,24 @@
 import { Link, router } from "expo-router";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  Button,
   Dimensions,
   Image,
-  ScrollView,
   FlatList,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-// import { Themes } from "../assets/Themes";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useFonts } from "expo-font";
-import ProfileCard from "../components/ProfileCard";
-// import { Profile } from "../components/Profile";
 import * as ImagePicker from "expo-image-picker";
 // import { UserContext } from "../contexts/UserContext";
 // import { ActivityIndicator } from "react-native-paper";
-// Removed Firebase storage imports
-// import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-// import { storage } from "../firebase";
-import Login from "./Login"
+import Login from "./Login";
 import SignUp from "./SignUp";
 import Colors from "@/constants/Colors";
+import { MonoText } from "@/components/StyledText";
+import EventCard from "@/components/EventCard";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -46,23 +39,20 @@ export default function Onboarding() {
   const ONBOARDING_SCREENS = [
     {
       title: "Welcome to Flock",
-      description:
-        "Swipe to get started.",
+      description: "Swipe to get started.",
     },
     {
       title: "Create events to invite your friends to",
       description:
-       "For example, lunch at a local restaurant, a hike, a movie night, or anything else!",
+        "For example, lunch at a local restaurant, a hike, a movie night, or anything else!",
     },
     {
       title: "Browse friends' events and join them",
-      description:
-        "Make more time for your good friends and make new friends",
+      description: "Make more time for your good friends and make new friends",
     },
     {
       title: "View your upcoming events by date and month",
-      description:
-        "Never miss an upcoming event with your friends",
+      description: "Never miss an upcoming event with your friends",
     },
   ];
 
@@ -71,21 +61,13 @@ export default function Onboarding() {
   const renderOnboardingImage = () => {
     switch (onboardingScreenNumber) {
       case 1:
-        return (
-          <Text>tutorial 1</Text>
-        );
+        return <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />;
       case 2:
-        return (
-          <Text>tutorial 2</Text>
-        );
+        return <Image source={require("../assets/images/OnboardingImage1.png")} resizeMode="contain" style={styles.onboardingImage}/>;
       case 3:
-        return (
-          <Text>tutorial 3</Text>
-        );
+        return <Text>tutorial 3</Text>;
       case 4:
-        return (
-          <Text>tutorial 4</Text>
-        );
+        return <Text>tutorial 4</Text>;
     }
   };
 
@@ -98,7 +80,7 @@ export default function Onboarding() {
   //   }, [user]);
 
   const handleLogIn = () => {
-    console.log("login")
+    console.log("login");
     // logIn(email, password);
   };
 
@@ -134,7 +116,6 @@ export default function Onboarding() {
   const handleSignUp = async () => {
     console.log("sign up");
 
-
     // setLoading(true);
     // if (email && password) {
     //   try {
@@ -164,7 +145,7 @@ export default function Onboarding() {
 
   const renderOnboarding = () => {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, onboardingScreenNumber === 1 && { backgroundColor: Colors.color2.light }]}>
         <View style={styles.onboardingSpacing} />
         {renderOnboardingImage()}
         <View style={styles.bottomSheet}>
@@ -190,10 +171,12 @@ export default function Onboarding() {
               renderItem={({ item }) => {
                 return (
                   <View style={styles.bottomSheetContent}>
-                    <Text style={styles.onboardingTitle}>{item.title}</Text>
-                    <Text style={styles.onboardingDescription}>
+                    <MonoText useUltra={true} style={styles.onboardingTitle}>
+                      {item.title}
+                    </MonoText>
+                    <MonoText style={styles.onboardingDescription}>
                       {item.description}
-                    </Text>
+                    </MonoText>
                   </View>
                 );
               }}
@@ -205,7 +188,10 @@ export default function Onboarding() {
                 <View
                   key={index}
                   style={[
-                    styles.dot, index + 1 === onboardingScreenNumber && { backgroundColor: Colors.color1.dark },
+                    styles.dot,
+                    index + 1 === onboardingScreenNumber && {
+                      backgroundColor: Colors.color1.dark,
+                    },
                   ]}
                 />
               );
@@ -217,11 +203,15 @@ export default function Onboarding() {
               // onPress={() => {setOnboardingScreenNumber(5)}}
               onPress={() => setCurrentScreen("sign up")}
             >
-              <Text style={styles.onBoardingButtonText}>Continue</Text>
+              <MonoText useUltra={true} style={styles.onBoardingButtonText}>
+                Continue
+              </MonoText>
             </TouchableOpacity>
           ) : (
-            <View style={[styles.onboardingButton, {backgroundColor: "white"} ]}>
-              <Text style={styles.onBoardingButtonText}>Continue</Text>
+            <View
+              style={[styles.onboardingButton, { backgroundColor: "white" }]}
+            >
+              <MonoText style={styles.onBoardingButtonText}>Continue</MonoText>
             </View>
           )}
         </View>
@@ -405,7 +395,7 @@ const styles = StyleSheet.create({
   bottomSheet: {
     position: "absolute",
     bottom: 0,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     alignItems: "center",
     width: windowWidth,
     borderTopLeftRadius: 20,
@@ -427,6 +417,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.8,
     flex: 1,
     alignItems: "center",
+    // justifyContent: "center",
     paddingTop: 10,
   },
   dotsContainer: {
@@ -442,6 +433,10 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgrey",
     marginHorizontal: 4,
   },
+  onboardingImage: {
+    width: windowWidth * 0.9,
+
+  },
 
 
 
@@ -453,8 +448,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 250,
+    height: 250,
+    marginTop: 100,
   },
   firstScreenContainer: {
     alignItems: "center",
@@ -502,13 +498,13 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   onboardingButton: {
-    backgroundColor: "pink",
+    backgroundColor: Colors.color2.dark,
     padding: 10,
     borderRadius: 999,
     width: windowWidth * 0.8,
     alignItems: "center",
-    marginTop: 24, 
-    marginBottom: 36
+    marginTop: 24,
+    marginBottom: 36,
   },
   secondaryButton: {
     backgroundColor: "pink",
@@ -519,20 +515,19 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   onBoardingButtonText: {
-    fontSize: 16,
-    // fontFamily: "Poppins-SemiBold",
+    fontSize: 18,
     color: "white",
   },
   onboardingTitle: {
     fontSize: 24,
-    // fontFamily: "Poppins-SemiBold",
-    width: windowWidth * 0.8,
+    width: windowWidth * 0.75,
+    textAlign: "center",
   },
   onboardingDescription: {
     fontSize: 16,
-    // fontFamily: "Poppins-Regular",
     marginTop: 16,
-    width: windowWidth * 0.8,
+    width: windowWidth * 0.75,
+    textAlign: "center",
   },
   backCaret: {
     alignSelf: "flex-start",
@@ -551,6 +546,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   blueText: {
-    color: "blue"
+    color: "blue",
   },
 });
