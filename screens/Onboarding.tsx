@@ -39,7 +39,7 @@ export default function Onboarding() {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [fullName, setFullName] = useState("");
 
-  const [onboardingScreenNumber, setOnboardingScreenNumber] = useState(0);
+  const [onboardingScreenNumber, setOnboardingScreenNumber] = useState(1);
   const flatListRef = useRef(null);
 
   const ONBOARDING_SCREENS = [
@@ -69,17 +69,6 @@ export default function Onboarding() {
 
   const renderOnboardingImage = () => {
     switch (onboardingScreenNumber) {
-      case 0:
-        return (
-          <Text>flock start</Text>
-          // <Image
-          //   source={require("../assets/images/adaptive-icon.png")}
-          //   style={{
-          //     width: windowWidth,
-          //     resizeMode: "contain",
-          //   }}
-          // />
-        );
       case 1:
         return (
           <Text>tutorial 1</Text>
@@ -181,192 +170,153 @@ export default function Onboarding() {
     return (
       <View style={styles.container}>
         <View style={styles.onboardingSpacing} />
-        {onboardingScreenNumber !== 0 && (
-          <Text
-            style={{
-              fontSize: 36,
-              fontWeight: "bold",
-              fontFamily: "Poppins-Bold",
-              color: "white",
-              marginBottom: 24,
-            }}
-          >
-            Flock
-          </Text>
-        )}
         {renderOnboardingImage()}
-        <View
-          style={styles.bottomSheet}
-        >
-          {onboardingScreenNumber === 0 ? (
-            <View style={styles.firstScreenContainer}>
-              <Text style={styles.title}>Flock</Text>
-              <Text style={styles.subtitle}>
-                Spend time with your friends
-              </Text>
-              <TouchableOpacity
-                style={[styles.primaryButton, { marginTop: 60 }]}
-                onPress={() =>
-                  setOnboardingScreenNumber(onboardingScreenNumber + 1)
-                }
-              >
-                <Text style={styles.onBoardingButtonText}>Get started</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <>
-              {onboardingScreenNumber < 5 && (
-                <FlatList
-                  data={ONBOARDING_SCREENS}
-                  keyExtractor={(item, index) => index.toString()}
-                  horizontal
-                  decelerationRate="fast"
-                  showsHorizontalScrollIndicator={false}
-                  ref={flatListRef}
-                  pagingEnabled
-                  snapToInterval={windowWidth * 0.8}
-                  scrollEventThrottle={16}
-                  onScroll={(event) => {
-                    const contentOffsetX = event.nativeEvent.contentOffset.x;
-                    const currentIndex = Math.round(
-                      contentOffsetX / (windowWidth * 0.8)
-                    );
-                    setOnboardingScreenNumber(currentIndex + 1);
-                  }}
-                  renderItem={({ item }) => {
-                    return (
-                      <View
-                        style={{
-                          width: windowWidth * 0.8,
-                          flex: 1,
-                          alignItems: "center",
-                          paddingTop: 10,
-                        }}
-                      >
-                        <Text style={styles.onboardingTitle}>{item.title}</Text>
-                        <Text style={styles.onboardingDescription}>
-                          {item.description}
-                        </Text>
-                      </View>
-                    );
-                  }}
-                  style={{
-                    width: windowWidth * 0.8,
-                    marginTop: 48,
-                  }}
-                />
-              )}
-              {onboardingScreenNumber < 5 ? (
-                <>
+        <View style={styles.bottomSheet}>
+          {onboardingScreenNumber < 5 && (
+            <FlatList
+              data={ONBOARDING_SCREENS}
+              keyExtractor={(item, index) => index.toString()}
+              horizontal
+              decelerationRate="fast"
+              showsHorizontalScrollIndicator={false}
+              ref={flatListRef}
+              pagingEnabled
+              snapToInterval={windowWidth * 0.8}
+              scrollEventThrottle={16}
+              onScroll={(event) => {
+                const contentOffsetX = event.nativeEvent.contentOffset.x;
+                const currentIndex = Math.round(
+                  contentOffsetX / (windowWidth * 0.8)
+                );
+                setOnboardingScreenNumber(currentIndex + 1);
+              }}
+              renderItem={({ item }) => {
+                return (
                   <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 48,
-                    }}
+                    style={styles.bottomSheetContent}
                   >
-                    {DOTS.map((dot, index) => {
-                      return (
-                        <View
-                          key={index}
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: 4,
-                            backgroundColor:
-                              index + 1 === onboardingScreenNumber
-                                ? "blue"
-                                : "lightgrey",
-                            marginHorizontal: 4,
-                          }}
-                        />
-                      );
-                    })}
+                    <Text style={styles.onboardingTitle}>{item.title}</Text>
+                    <Text style={styles.onboardingDescription}>
+                      {item.description}
+                    </Text>
                   </View>
-                  {onboardingScreenNumber === 4 ? (
-                    <TouchableOpacity
-                      style={[
-                        styles.primaryButton,
-                        { marginTop: 24, marginBottom: 36 },
-                      ]}
-                      onPress={() => {
-                        setOnboardingScreenNumber(5);
-                      }}
-                    >
-                      <Text style={styles.onBoardingButtonText}>Continue</Text>
-                    </TouchableOpacity>
-                  ) : (
+                );
+              }}
+              style={{
+                width: windowWidth * 0.8,
+                marginTop: 48,
+              }}
+            />
+          )}
+          {onboardingScreenNumber < 5 ? (
+            <>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 48,
+                }}
+              >
+                {DOTS.map((dot, index) => {
+                  return (
                     <View
-                      style={[
-                        styles.primaryButton,
-                        {
-                          backgroundColor: "white",
-                          marginTop: 24,
-                          marginBottom: 36,
-                        },
-                      ]}
-                    >
-                      <Text style={styles.onBoardingButtonText}>Continue</Text>
-                    </View>
-                  )}
-                </>
-              ) : (
-                <View
-                  style={{
-                    alignItems: "center",
+                      key={index}
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: 4,
+                        backgroundColor:
+                          index + 1 === onboardingScreenNumber
+                            ? "blue"
+                            : "lightgrey",
+                        marginHorizontal: 4,
+                      }}
+                    />
+                  );
+                })}
+              </View>
+              {onboardingScreenNumber === 4 ? (
+                <TouchableOpacity
+                  style={[
+                    styles.primaryButton,
+                    { marginTop: 24, marginBottom: 36 },
+                  ]}
+                  onPress={() => {
+                    setOnboardingScreenNumber(5);
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 30,
-                      fontWeight: "bold",
-                      fontFamily: "Poppins-Bold",
-                      color: "black",
-                      textAlign: "center",
-                      marginTop: 36,
-                    }}
-                  >
-                    Flock
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 24,
-                      fontFamily: "Poppins-Regular",
-                      color: "black",
+                  <Text style={styles.onBoardingButtonText}>Continue</Text>
+                </TouchableOpacity>
+              ) : (
+                <View
+                  style={[
+                    styles.primaryButton,
+                    {
+                      backgroundColor: "white",
                       marginTop: 24,
-                      textAlign: "center",
-                    }}
-                  >
-                    Get rolling on making hard decisions
-                  </Text>
-                  <TouchableOpacity
-                    style={{
-                      borderColor: "pink",
-                      padding: 12,
-                      borderRadius: 999,
-                      width: windowWidth * 0.8,
-                      alignItems: "center",
-                      marginTop: 48,
-                      borderWidth: 1,
-                    }}
-                    onPress={() => setCurrentScreen("log in")}
-                  >
-                    <Text
-                      style={[styles.onBoardingButtonText, { color: "black" }]}
-                    >
-                      Log in
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.primaryButton}
-                    onPress={() => setCurrentScreen("sign up")}
-                  >
-                    <Text style={styles.onBoardingButtonText}>Sign up</Text>
-                  </TouchableOpacity>
+                      marginBottom: 36,
+                    },
+                  ]}
+                >
+                  <Text style={styles.onBoardingButtonText}>Continue</Text>
                 </View>
               )}
             </>
+          ) : (
+            <View
+              style={{
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 30,
+                  fontWeight: "bold",
+                  fontFamily: "Poppins-Bold",
+                  color: "black",
+                  textAlign: "center",
+                  marginTop: 36,
+                }}
+              >
+                Flock
+              </Text>
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontFamily: "Poppins-Regular",
+                  color: "black",
+                  marginTop: 24,
+                  textAlign: "center",
+                }}
+              >
+                Get rolling on making hard decisions
+              </Text>
+              <TouchableOpacity
+                style={{
+                  borderColor: "pink",
+                  padding: 12,
+                  borderRadius: 999,
+                  width: windowWidth * 0.8,
+                  alignItems: "center",
+                  marginTop: 48,
+                  borderWidth: 1,
+                }}
+                onPress={() => setCurrentScreen("log in")}
+              >
+                <Text
+                  style={[styles.onBoardingButtonText, { color: "black" }]}
+                >
+                  Log in
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={() => setCurrentScreen("sign up")}
+              >
+                <Text style={styles.onBoardingButtonText}>Sign up</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
       </View>
@@ -565,10 +515,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
   },
+  bottomSheetContent: {
+    width: windowWidth * 0.8,
+    flex: 1,
+    alignItems: "center",
+    paddingTop: 10,
+  },
   whiteContainer: {
     flex: 1,
     alignItems: "center",
-    justifyCofntent: "flex-start",
+    justifyContent: "flex-start",
     padding: 20,
     backgroundColor: "white",
   },
