@@ -5,10 +5,10 @@ import { Auth } from "@/components/AppleAuth.native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { OnboardingStackParamList } from "@/types";
-import Colors from "@/constants/Colors";
 import { MonoText } from "@/components/StyledText";
+import Colors from "@/constants/Colors";
 
-interface LoginProps {
+interface SignUpProps {
   // navigation: any;
   setCurrentScreen: (screen: string) => void;
 }
@@ -16,7 +16,7 @@ interface LoginProps {
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
+const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
   const navigation = useNavigation<StackNavigationProp<OnboardingStackParamList>>();
 
   return (
@@ -31,23 +31,23 @@ const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
       <View style={styles.header} />
       <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />
       <MonoText useUltra={true} style={styles.title}>
-        Log in to your Flock account
+        Get started with Flock today
       </MonoText>
       <View style={styles.buttonsContainer}>
-        <Auth navigation={navigation} />
+        <Auth navigation={navigation} signup={true} />
         <TouchableOpacity
           onPress={() => navigation.navigate("SignUpManually")}
           style={styles.button}
         >
-          <MonoText style={styles.buttonText}>Sign in with Email</MonoText>
+          <MonoText style={styles.buttonText}>Sign Up with Email</MonoText>
         </TouchableOpacity>
       </View>
       
       <MonoText
         style={styles.submessageText}
-        onPress={() => navigation.replace("SignUp")}
+        onPress={() => navigation.replace("Login")}
       >
-        Don't have an account?<Text style={styles.coloredText}> Create one here</Text>
+        Already have an account?<Text style={styles.coloredText}> Log in instead</Text>
       </MonoText>
     </View>
   );
@@ -112,4 +112,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default Login;
+export default SignUp;

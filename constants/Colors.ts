@@ -8,25 +8,25 @@ interface ColorSchemes {
 }
 
 const Colors: ColorSchemes = {
-  color1: {  // Blue
-    dark: "#A40E5F",
-    light: "#FFE5F3",
-  },
-  color2: {  // Moss
-    dark: "#9AA899",
-    light: "#E7F0E6",
-  },
-  color3: {  // Yellow
-    dark: "#C6A5CF",
-    light: "#F9EBFD",
-  },
-  color4: {  // Slate Grey
-    dark: "#2A2D12",
+  color1: {  // Purple
+    dark: "#757BBA",
     light: "#E6E8FF",
   },
-  color5: {  // Lavender
-    dark: "#4A7B9D",
-    light: "#E1F3FF",
+  color2: {  // Moss
+    dark: "#7B917A",
+    light: "#E0EDDF",
+  },
+  color3: {  // Lavender
+    dark: "#B58FBF",
+    light: "#F0E2F3",
+  },
+  color4: {  // Blue
+    dark: "#5A8CAD",
+    light: "#DBF1FF",
+  },
+  color5: {  // Pink
+    dark: "#B3578A",
+    light: "#FFE5F3",
   },
 };
 
