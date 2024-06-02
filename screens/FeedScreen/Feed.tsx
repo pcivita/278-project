@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, Text } from "react-native";
 import EventCard from "../../components/EventCard";
 import { supabase } from "@/utils/supabase";
 import { toZonedTime, format } from "date-fns-tz";
@@ -28,7 +28,7 @@ interface User {
   photo: string | null;
 }
 
-const formatDate = (date: Date) => {
+const formatDate = (date) => {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -57,6 +57,9 @@ const formatDate = (date: Date) => {
 const Feed = ({ navigation }) => {
   const [userId, setUserId] = useState("");
   const [events, setEvents] = useState<Event[]>([]);
+  const [sortedEventObj, setSortedEventObj] = useState<{
+    [key: string]: Event[];
+  }>({});
 
   useEffect(() => {
     fetchUserAndEvents();
@@ -246,6 +249,9 @@ const Feed = ({ navigation }) => {
       };
     });
 
+    const eventsObject = sortEvents(formattedEvents);
+
+    setSortedEventObj(eventsObject);
     setEvents(formattedEvents);
   };
 
@@ -263,38 +269,103 @@ const Feed = ({ navigation }) => {
     });
   };
 
+  const sortEvents = (events: Event[]): { [key: string]: Event[] } => {
+    const eventsSorted: { [key: string]: Event[] } = {};
+
+    const getMonthDay = (dateStr: string): string => {
+      const date = new Date(dateStr);
+      const options: Intl.DateTimeFormatOptions = {
+        month: "long",
+        day: "numeric",
+      };
+      return date.toLocaleDateString("en-US", options);
+    };
+
+    const getDateForSorting = (dateStr: string): Date => {
+      const date = new Date(dateStr);
+      date.setFullYear(2000); // Set a common year to sort by month and day only
+      return date;
+    };
+
+    events.forEach((event) => {
+      const monthDay = getMonthDay(event.event_start_date);
+
+      if (!eventsSorted[monthDay]) {
+        eventsSorted[monthDay] = [];
+      }
+
+      eventsSorted[monthDay].push(event);
+    });
+
+    // Sort the events for each day
+    for (const monthDay in eventsSorted) {
+      eventsSorted[monthDay].sort(
+        (a, b) =>
+          new Date(a.event_start_date).getTime() -
+          new Date(b.event_start_date).getTime()
+      );
+    }
+
+    // Sort the keys (month days)
+    const sortedKeys = Object.keys(eventsSorted).sort(
+      (a, b) => getDateForSorting(a).getTime() - getDateForSorting(b).getTime()
+    );
+
+    // Create a new sorted object
+    const sortedEvents: { [key: string]: Event[] } = {};
+    sortedKeys.forEach((key) => {
+      sortedEvents[key] = eventsSorted[key];
+    });
+
+    return sortedEvents;
+  };
+
+  let colorIndex = 0; // Declare colorIndex outside of the map functions
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={{ alignItems: "center", paddingBottom: 100 }}
     >
-      {events.map((event, index) => (
-        <View key={index} style={styles.dateSection}>
-          <EventCard
-            eventName={event.event_name}
-            eventTime={`${event.event_start} - ${event.event_end}`}
-            location={event.location}
-            host={event.host}
-            signups={`${event.current_signups}/${event.max_people}`}
-            colorScheme={`color${(index % 5) + 1}`}
-            onNavigate={() =>
-              handleNavigateToEventDetails({
-                eventName: event.event_name,
-                eventTime: `${event.event_start} - ${event.event_end}`,
-                location: event.location,
-                host: event.host,
-                signups: event.signupsText,
-                colorScheme: `color${(index % 5) + 1}`,
-                isUserHost: event.creator_id === userId,
-                eventId: event.id,
-                description: event.description,
-              })
-            }
-            isUserHost={event.creator_id === userId}
-            buttonText={"View Event"}
-            isAttending={event.isAttending}
-            attendees={event.attendees} // Pass attendees data here
-          />
+      {Object.keys(sortedEventObj).map((date) => (
+        <View key={date} style={styles.dateSection}>
+          <View>
+            <Text style={styles.dateText}>{date}</Text>
+          </View>
+          {sortedEventObj[date].map((event) => {
+            const colorScheme = `color${(colorIndex % 5) + 1}`;
+            colorIndex++; // Increment the colorIndex
+
+            return (
+              <View key={event.id} style={styles.eventSection}>
+                <EventCard
+                  eventName={event.event_name}
+                  eventTime={`${event.event_start} - ${event.event_end}`}
+                  location={event.location}
+                  host={event.host}
+                  signups={`${event.current_signups}/${event.max_people}`}
+                  colorScheme={colorScheme}
+                  onNavigate={() =>
+                    handleNavigateToEventDetails({
+                      eventName: event.event_name,
+                      eventTime: `${event.event_start} - ${event.event_end}`,
+                      location: event.location,
+                      host: event.host,
+                      signups: `${event.current_signups}/${event.max_people}`,
+                      colorScheme: colorScheme,
+                      isUserHost: event.creator_id === userId,
+                      eventId: event.id,
+                      description: event.description,
+                    })
+                  }
+                  isUserHost={event.creator_id === userId}
+                  buttonText="View Event"
+                  isAttending={event.isAttending}
+                  attendees={event.attendees} // Pass attendees data here
+                />
+              </View>
+            );
+          })}
         </View>
       ))}
     </ScrollView>
@@ -307,10 +378,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: 10,
   },
+  eventSection: {
+    marginBottom: 10,
+  },
   dateSection: {
     width: "100%",
     alignItems: "center",
     marginBottom: 8,
+  },
+  dateText: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
