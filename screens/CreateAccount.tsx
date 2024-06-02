@@ -22,8 +22,11 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
   const [bio, setBio] = useState<string>("");
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
-  // console.log(setCurrentScreen)
+  
+  const isFormValid = name !== "" && email !== "" && username !== "" && password.length >= 8;
+  const passwordMessage = password && password.length < 8;
 
+  // console.log(setCurrentScreen)
 
   const handleImagePick = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -47,36 +50,73 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => setCurrentScreen("sign up")}
+        onPress={() => setCurrentScreen("sign up options")}
         style={styles.backCaret}
       >
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
       
       <TouchableOpacity onPress={handleImagePick} style={styles.photoSelection}>
-        <Image source={{ uri: profilePhoto || "https://via.placeholder.com/150" }} style={styles.profileImage} />
-        <MonoText style={styles.changePhotoText}>Change Photo</MonoText>
+        <Image source={{ uri: profilePhoto || "https://via.placeholder.com/100" }} style={styles.profileImage} />
+        <MonoText style={styles.greenText}>Choose Photo</MonoText>
       </TouchableOpacity>
-      <MonoTextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <MonoTextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <MonoTextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
+  
+      <View style={styles.inputContainer}>
+        <MonoText style={styles.text}>Name (First and Last)
+          <MonoText style={styles.pinkText}> *</MonoText>
+        </MonoText>
+        <MonoTextInput
+          style={styles.input}
+          placeholder="Name"
+          value={name}
+          onChangeText={setName}
+        />
+        <MonoText style={styles.text}>Email
+          <MonoText style={styles.pinkText}> *</MonoText>
+        </MonoText>
+        <MonoTextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <MonoText style={styles.text}>Bio</MonoText>
+        <MonoTextInput
+          style={styles.input}
+          placeholder="Tell your friends a little bit about you"
+          value={bio}
+          onChangeText={setBio}
+        />
+      </View>
+      <View style={[styles.inputContainer, { marginTop: 50, height: 200 }]}>
+        <MonoText style={styles.text}>Choose username
+          <MonoText style={styles.pinkText}> *</MonoText>
+        </MonoText>
+        <MonoTextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <MonoText style={styles.text}>Choose password
+          <MonoText style={styles.pinkText}> *</MonoText>
+        </MonoText>
+        <MonoTextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        {passwordMessage && (
+          <MonoText style={styles.redText}>Password must be at least 8 characters</MonoText>
+        )}
+      </View>
+      <TouchableOpacity 
+        style={[styles.button, !isFormValid && { backgroundColor: Colors.color2.light }]}
+        disabled={!isFormValid}
+        onPress={handleCreateAccount}
+      >
         <MonoText style={styles.buttonText}>Create Account</MonoText>
       </TouchableOpacity>
     </View>
@@ -87,28 +127,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    padding: 20,
+    // padding: 20,
     backgroundColor: "white",
   },
   backCaret: {
     alignSelf: "flex-start",
-    marginTop: 50,
-    width: windowWidth * 0.9,
-    height: 50,
+    marginTop: 70,
+    marginLeft: 10,
   },
   photoSelection: {
     alignItems: "center",
-    marginTop: 100,
   },
   profileImage: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     borderRadius: 75,
-    marginBottom: 10,
+    marginBottom: 5,
   },
-  changePhotoText: {
+  greenText: {
     color: Colors.color2.dark,
+    fontSize: 14,
     marginBottom: 20,
+  },
+  pinkText: {
+    color: Colors.color5.dark,
+    fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
+    bottom: 2,
+  },
+  redText: {
+    color: "red",
+  },
+  inputContainer: {
+    width: "90%",
   },
   input: {
     fontSize: 16,
@@ -117,14 +170,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   button: {
-    // width: "100%",
-    // padding: 15,
-    // backgroundColor: Colors.color2.dark,
-    // borderRadius: 5,
-    // alignItems: "center",
     width: windowWidth * 0.8,
     height: 40,
     borderRadius: 100,
@@ -132,8 +180,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.color2.dark,
     flexDirection: "row",
-    gap: 5,
-    paddingRight: 5
+    marginTop: 20,
   },
   buttonText: {
     color: "white",
