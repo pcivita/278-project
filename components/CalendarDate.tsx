@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import EventItem from "./EventItem";
 import { toZonedTime, format } from 'date-fns-tz';
+import Colors from "@/constants/Colors";
 
 interface Event {
   id: string;
@@ -52,10 +53,10 @@ const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
 const styles = StyleSheet.create({
   container: {
     width: "95%",
-    backgroundColor: "#EBF6E5",
+    backgroundColor: Colors.color2.light,
     borderRadius: 10,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 10,
     flexDirection: "row",
     alignItems: "flex-start",
   },

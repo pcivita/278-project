@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
+import { supabase } from "@/utils/supabase"; // Make sure the import path is correct
+import Colors from "@/constants/Colors";
 
 interface Event {
   id: string;
@@ -19,8 +21,15 @@ interface Event {
   event_date: string;
 }
 
+interface User {
+  id: string;
+  name: string;
+  photo: string | null;
+}
+
 interface EventItemProps {
   event: Event;
+  userId: string; // Add userId prop to identify the current user
 }
 
 export type RootStackParamList = {
@@ -42,11 +51,63 @@ type CalendarScreenNavigationProp = StackNavigationProp<
   "EventDetails"
 >;
 
-const EventItem: React.FC<EventItemProps> = ({ event }) => {
-  const [mainTitle, withText] = event.event_name.split(" with ");
+const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
+  const [mainTitle, setMainTitle] = useState<string>(event.event_name);
+  const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string>("");
   const navigation = useNavigation<CalendarScreenNavigationProp>();
 
-  console.log("EVENT", event);
+  useEffect(() => {
+    fetchCreatorAndAttendeeNames();
+  }, []);
+
+  const fetchCreatorAndAttendeeNames = async () => {
+    const { data: creatorData, error: creatorError } = await supabase
+      .from('users')
+      .select('id, name, photo')
+      .eq('id', event.creator_id)
+      .single();
+
+    if (creatorError) {
+      console.error('Error fetching creator details:', creatorError);
+      return;
+    }
+
+    const { data: signupData, error: signupError } = await supabase
+      .from('event_signup')
+      .select('user_id')
+      .eq('event_id', event.id);
+
+    if (signupError) {
+      console.error('Error fetching signups:', signupError);
+      return;
+    }
+
+    const attendeeIds = signupData.map(signup => signup.user_id);
+    const { data: usersData, error: usersError } = await supabase
+      .from('users')
+      .select('id, name')
+      .in('id', attendeeIds);
+
+    if (usersError) {
+      console.error('Error fetching user details:', usersError);
+      return;
+    }
+
+    const isOrganizer = event.creator_id === userId;
+    const attendingUser = usersData.find(user => user.id === userId);
+    const displayName = isOrganizer ? attendingUser?.name || creatorData.name : creatorData.name;
+
+    setCreatorPhoto(creatorData.photo);
+    setDisplayName(displayName);
+    setMainTitle(`${mainTitle} with ${displayName}`);
+  };
+
+  const formatTime = (dateTimeString: string): string => {
+    const time = dateTimeString.substring(dateTimeString.indexOf(' ') + 1);
+    return time;
+  };
+
 
   const navigateToDetails = () => {
     navigation.navigate("EventDetails", {
@@ -64,17 +125,14 @@ const EventItem: React.FC<EventItemProps> = ({ event }) => {
   return (
     <TouchableOpacity style={styles.eventItem} onPress={navigateToDetails}>
       <Image
-        source={{ uri: "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
+        source={{ uri: creatorPhoto || "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
         style={styles.profileImage}
       />
       <View style={styles.eventDetails}>
-        <Text style={styles.title}>
-          {mainTitle} <Text style={styles.regular}>with</Text>{" "}
-          <Text style={styles.ultra}>{withText}</Text>
+        <Text style={styles.title}>{mainTitle}</Text>
+        <Text style={styles.time}>
+          {`${formatTime(event.event_start)} - ${event.event_end}`}
         </Text>
-        <Text
-          style={styles.time}
-        >{`${event.event_start} - ${event.event_end}`}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -85,7 +143,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
-    backgroundColor: "#F7FFF2",
+    backgroundColor: Colors.color2.lightest,
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -101,12 +159,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "TripSans-Ultra", // Ultra font for the main title and Defne
     fontWeight: "bold",
-  },
-  regular: {
-    fontFamily: "TripSans-Regular", // Regular font for "with"
-  },
-  ultra: {
-    fontFamily: "TripSans-Ultra", // Ultra font for "Defne"
   },
   time: {
     color: "#666",

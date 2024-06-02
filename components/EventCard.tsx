@@ -46,16 +46,24 @@ const EventCard: React.FC<EventCardProps> = ({
           <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
           <View style={styles.bottomTextContainer}>
             <View style={styles.hostContainer}>
-              <MonoText useMedium={true} style={styles.hostText}>
-                Hosted by:
-              </MonoText>
-              <MonoText style={[styles.secondaryText, { color: "gray" }]}>
-                {host}
-              </MonoText>
+              {isUserHost ?
+                <MonoText useMedium={true} style={styles.hostText}>
+                  Your Event
+                </MonoText>
+              :
+                <>
+                  <MonoText useMedium={true} style={styles.hostText}>
+                    Hosted by:
+                  </MonoText>
+                  <MonoText style={[styles.secondaryText, { color: "gray" }]}>
+                    {host}
+                  </MonoText>
+                </>
+              }
             </View>
             <View style={styles.attendeesContainer}>
               <View style={styles.imagesContainer}>
-                {attendees.slice(0, 2).map((attendee, index) => (
+                {attendees !== null && attendees.slice(0, 2).map((attendee, index) => (
                   <Image
                     key={index}
                     source={{ uri: attendee.photo || "default_image_url" }} // Replace 'default_image_url' with an actual URL
@@ -67,7 +75,7 @@ const EventCard: React.FC<EventCardProps> = ({
                   />
                 ))}
               </View>
-              {attendees.length > 0 && attendees[0].name ? (
+              {attendees!== null && attendees.length > 0 && attendees[0].name ? (
                 <View style={styles.attendingTextContainer}>
                   <MonoText style={[styles.attendingNameText, { color: "black", fontWeight: "bold" }]}>
                     {attendees[0].name}
@@ -92,12 +100,12 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
-        {isUserHost && (
+        {/* {isUserHost && (
           <MonoText style={styles.attendingText}>Your event</MonoText>
         )}
         {isAttending && (
           <MonoText style={styles.attendingText}>You're attending!</MonoText>
-        )}
+        )} */}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.dark }]}
           onPress={() =>
@@ -161,6 +169,8 @@ const styles = StyleSheet.create({
   },
   hostContainer: {
     flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
   },
   hostText: {
     fontSize: 14,
@@ -182,7 +192,7 @@ const styles = StyleSheet.create({
     marginRight: -8, // Overlapping effect
   },
   backPhoto: {
-    opacity: 0.7, // Darken the back photo
+    opacity: 0.6, // Darken the back photo
   },
   attendingTextContainer: {
     flexDirection: "row",
