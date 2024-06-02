@@ -1,16 +1,13 @@
-import React from "react";
-import { Image, View, Text } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Feed from "./screens/FeedScreen/Feed";
-import FeedStack from "./screens/FeedScreen/FeedStack";
-import Profile from "./screens/ProfileScreen/Profile";
-import ProfileStack from "./screens/ProfileScreen/ProfileStack";
-import Calendar from "./screens/Calendar";
-import Notifications from "./screens/Notifications";
-import CreateEvent from "./screens/CreateEvent";
-import { MonoText } from "./components/StyledText";
-import Colors from "./constants/Colors";
+import React from 'react';
+import { Image, View, Text } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import FeedStack from './screens/FeedScreen/FeedStack';
+import ProfileStack from './screens/ProfileScreen/ProfileStack';
+import Calendar from './screens/Calendar';
+import NotificationsScreen from './screens/Notifications';
+import CreateEvent from './screens/CreateEvent';
+import { MonoText } from './components/StyledText';
+import Colors from './constants/Colors';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,48 +18,46 @@ const TabNavigator = () => {
         tabBarIcon: ({ focused }) => {
           let iconName;
           let iconStyle = { width: 30, height: 30 }; // Default icon size
-          if (route.name === "Create Event") {
+          if (route.name === 'Create Event') {
             iconStyle = { width: 100, height: 100 }; // Larger icon for Create Event
           }
           switch (route.name) {
-            case "FeedTab":
+            case 'FeedTab':
               iconName = focused
-                ? require("./assets/icons/active/home_active.png")
-                : require("./assets/icons/inactive/home_inactive.png");
+                ? require('./assets/icons/active/home_active.png')
+                : require('./assets/icons/inactive/home_inactive.png');
               break;
-            case "ProfileTab":
+            case 'ProfileTab':
               iconName = focused
-                ? require("./assets/icons/active/profile_active.png")
-                : require("./assets/icons/inactive/profile_inactive.png");
+                ? require('./assets/icons/active/profile_active.png')
+                : require('./assets/icons/inactive/profile_inactive.png');
               break;
-            case "Calendar":
+            case 'Calendar':
               iconName = focused
-                ? require("./assets/icons/active/calendar_active.png")
-                : require("./assets/icons/inactive/calendar_inactive.png");
+                ? require('./assets/icons/active/calendar_active.png')
+                : require('./assets/icons/inactive/calendar_inactive.png');
               break;
-            case "Notifications":
+            case 'Notifications':
               iconName = focused
-                ? require("./assets/icons/active/notif_active.png")
-                : require("./assets/icons/inactive/notif_inactive.png");
+                ? require('./assets/icons/active/notif_active.png')
+                : require('./assets/icons/inactive/notif_inactive.png');
               break;
-            case "Create Event":
-              iconName = require("./assets/icons/plus_icon.png");
+            case 'Create Event':
+              iconName = require('./assets/icons/plus_icon.png');
               break;
           }
           return (
-            <View
-              style={{ marginTop: route.name === "Create Event" ? -15 : 0 }}
-            >
+            <View style={{ marginTop: route.name === 'Create Event' ? -15 : 0 }}>
               <Image source={iconName} style={iconStyle} resizeMode="contain" />
             </View>
           );
         },
         tabBarLabel: ({ focused }) => {
-          return route.name === "Create Event" ? null : (
+          return route.name === 'Create Event' ? null : (
             <Text
               style={{
                 fontSize: 12,
-                color: focused ? "green" : "gray",
+                color: focused ? 'green' : 'gray',
                 marginBottom: 10, // Increased space between text and icon
               }}
             >
@@ -70,21 +65,21 @@ const TabNavigator = () => {
             </Text>
           );
         },
-        tabBarActiveTintColor: "#000",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: '#000',
+        tabBarInactiveTintColor: 'gray',
         tabBarLabelStyle: { fontSize: 12 },
         tabBarStyle: {
           padding: 10,
           height: 90, // Increased height
-          backgroundColor: "#fff", // White background
+          backgroundColor: '#fff', // White background
           borderTopRightRadius: 20, // Rounded top corners
           borderTopLeftRadius: 20,
-          position: "absolute",
+          position: 'absolute',
           bottom: 0, // Position above the bottom
           left: 10,
           right: 10, // Padding from the sides
           elevation: 20, // Android shadow
-          shadowColor: "#000", // iOS shadow
+          shadowColor: '#000', // iOS shadow
           shadowOffset: { width: 0, height: -1 },
           shadowOpacity: 0.1,
           shadowRadius: 10,
@@ -94,13 +89,13 @@ const TabNavigator = () => {
       <Tab.Screen
         name="FeedTab"
         component={FeedStack}
-        options={{ tabBarLabel: "Home", headerShown: false }}
+        options={{ tabBarLabel: 'Home', headerShown: false }}
       />
       <Tab.Screen
         name="Calendar"
         component={Calendar}
         options={{
-          tabBarLabel: "Calendar",
+          tabBarLabel: 'Calendar',
           headerTitle: () => (
             <MonoText useUltra={true} style={{ fontSize: 22 }}>
               Calendar
@@ -111,13 +106,13 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Create Event"
         component={CreateEvent}
-        options={{ tabBarLabel: "" }}
+        options={{ tabBarLabel: '' }}
       />
       <Tab.Screen
         name="Notifications"
-        component={Notifications}
+        component={NotificationsScreen}
         options={{
-          tabBarLabel: "Notifications",
+          tabBarLabel: 'Notifications',
           headerTitle: () => (
             <MonoText useUltra={true} style={{ fontSize: 22 }}>
               Notifications
@@ -129,11 +124,12 @@ const TabNavigator = () => {
         name="ProfileTab"
         component={ProfileStack}
         options={{
-          tabBarLabel: "Profile",
+          tabBarLabel: 'Profile',
           headerShown: false,
         }}
       />
     </Tab.Navigator>
   );
 };
+
 export default TabNavigator;

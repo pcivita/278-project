@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
-import { FriendRequest } from "@/utils/interfaces";
 import { useUser } from "@/UserContext";
+import { useNavigation } from "@react-navigation/native";
 
 const formatDate = (date) => {
   const today = new Date();
@@ -33,6 +33,7 @@ const formatDate = (date) => {
 
 const NotificationsScreen = () => {
   const { userId } = useUser();
+  const navigation = useNavigation();
   const [friendRequestsByDate, setFriendRequestsByDate] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -144,7 +145,12 @@ const NotificationsScreen = () => {
     <ScrollView contentContainerStyle={styles.contentContainer}>
       <View style={styles.container}>
         {isEmpty ? (
-          <Text>No Notifications</Text>
+          <View style={styles.noNotificationsContainer}>
+            <Text style={styles.noNotificationsText}>No Notifications</Text>
+            <TouchableOpacity style={styles.addFriendsButton} onPress={() => navigation.navigate('Friends')}>
+              <Text style={styles.addFriendsButtonText}>Add Friends</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           Object.keys(friendRequestsByDate).map((date) => (
             <View key={date}>
@@ -170,6 +176,7 @@ const NotificationsScreen = () => {
 const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 10,
+    flexGrow: 1,
   },
   container: {
     flex: 1,
@@ -180,6 +187,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
+  },
+  noNotificationsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "0%",
+  },
+  noNotificationsText: {
+    color: "grey",
+    fontSize: 16,
+  },
+  addFriendsButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#9AA899",
+    borderRadius: 5,
+  },
+  addFriendsButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
