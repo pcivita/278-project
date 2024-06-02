@@ -1,6 +1,7 @@
 interface ColorScheme {
   light: string;
   dark: string;
+  lightest?: string;
 }
 
 interface ColorSchemes {
@@ -14,7 +15,8 @@ const Colors: ColorSchemes = {
   },
   color2: {  // Moss
     dark: "#7B917A",
-    light: "#E0EDDF",
+    light: "#E2F5DA",
+    lightest: "#F7FFF2",
   },
   color3: {  // Lavender
     dark: "#B58FBF",

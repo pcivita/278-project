@@ -252,6 +252,7 @@ const styles = StyleSheet.create({
   dateSection: {
     width: "100%",
     alignItems: "center",
+    marginBottom: 5
   },
 });
 
