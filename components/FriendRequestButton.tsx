@@ -50,7 +50,7 @@ const sendFriendRequest = async (userOneId: string, userTwoId: string) => {
 const acceptFriendRequest = async (userOneId: string, userTwoId: string) => {
   const { data, error } = await supabase
     .from("friends")
-    .update({ status: "accepted" })
+    .update({ status: "friends" })
     .match({
       user_requested: userOneId,
       user_accepted: userTwoId,
