@@ -3,11 +3,9 @@ import { View, StyleSheet, ScrollView, Text } from "react-native";
 import CalendarDate from "../components/CalendarDate";
 import EmptyCalendarDate from "../components/EmptyCalendarDate";
 import { supabase } from "@/utils/supabase";
-import { toZonedTime, format } from "date-fns-tz";
+import { format } from "date-fns";
 import { useUser } from "@/UserContext";
 
-// TODO: Sort Events
-// TODO: Click on event
 interface Event {
   id: string;
   event_name: string;
@@ -22,7 +20,7 @@ interface Event {
   creator_id: string;
   isAttending: boolean;
   event_date: string;
-  event_month: string; // Add event_month to the Event interface
+  event_month: string;
 }
 
 const Calendar = () => {
@@ -102,18 +100,17 @@ const Calendar = () => {
   };
 
   const formatEvents = (eventsData: Event[]) => {
-    const timeZone = "America/Los_Angeles";
     const eventsByMonth: Record<string, Record<string, Event[]>> = {};
 
     eventsData.forEach((event) => {
-      const eventStartPST = toZonedTime(new Date(event.event_start), timeZone);
-      const eventEndPST = toZonedTime(new Date(event.event_end), timeZone);
-      const eventStartFormatted = format(eventStartPST, "yyyy-MM-dd h:mm a", {
-        timeZone,
-      });
-      const eventEndFormatted = format(eventEndPST, "h:mm a", { timeZone });
-      const eventDate = format(eventStartPST, "yyyy-MM-dd", { timeZone });
-      const eventMonth = format(eventStartPST, "MMMM", { timeZone });
+      const eventStart = new Date(event.event_start);
+      const eventEnd = new Date(event.event_end);
+
+      // Format dates using local time without time zone conversions
+      const eventStartFormatted = format(eventStart, "yyyy-MM-dd h:mm a");
+      const eventEndFormatted = format(eventEnd, "h:mm a");
+      const eventDate = format(eventStart, "yyyy-MM-dd");
+      const eventMonth = format(eventStart, "MMMM");
 
       const formattedEvent = {
         ...event,
