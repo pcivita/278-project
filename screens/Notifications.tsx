@@ -139,7 +139,7 @@ const NotificationsScreen = () => {
   const isEmpty = Object.keys(friendRequestsByDate).length === 0;
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
+    <ScrollView contentContainerStyle={styles.container} style={{ backgroundColor: "white" }}>
       <View>
         {isEmpty ? (
           <Text>No Notifications</Text>
@@ -166,7 +166,8 @@ const NotificationsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
+    // backgroundColor: "#f0f0f0",
+    padding: 10
   },
   contentContainer: {
     flexGrow: 1,

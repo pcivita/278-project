@@ -5,10 +5,11 @@ import { Auth } from "@/components/AppleAuth.native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { OnboardingStackParamList } from "@/types";
-import { MonoText } from "@/components/StyledText";
 import Colors from "@/constants/Colors";
+import { MonoText } from "@/components/StyledText";
+import { Ionicons } from '@expo/vector-icons';
 
-interface SignUpProps {
+interface LoginProps {
   // navigation: any;
   setCurrentScreen: (screen: string) => void;
 }
@@ -16,7 +17,7 @@ interface SignUpProps {
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
+const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
   const navigation = useNavigation<StackNavigationProp<OnboardingStackParamList>>();
 
   return (
@@ -31,23 +32,28 @@ const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
       <View style={styles.header} />
       <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />
       <MonoText useUltra={true} style={styles.title}>
-        Get started with Flock today
+        Log in to your Flock account
       </MonoText>
       <View style={styles.buttonsContainer}>
-        <Auth navigation={navigation} signup={true} />
+        <Auth navigation={navigation} />
         <TouchableOpacity
-          onPress={() => navigation.navigate("SignUpManually")}
+          // onPress={() => navigation.navigate("SignUpManually")}
+          onPress={() => setCurrentScreen("create account")}
           style={styles.button}
         >
-          <MonoText style={styles.buttonText}>Sign Up with Email</MonoText>
+          <Ionicons name="mail" size={15} color="white" />
+          <MonoText style={styles.buttonText}>Sign in with Email</MonoText>
         </TouchableOpacity>
       </View>
       
-      <MonoText
-        style={styles.submessageText}
-        onPress={() => navigation.replace("Login")}
-      >
-        Already have an account?<Text style={styles.coloredText}> Log in instead</Text>
+      <MonoText style={styles.submessageText} >
+        Don't have an account?{" "} 
+        <MonoText 
+          style={styles.coloredText} 
+          onPress={() => setCurrentScreen("sign up options")}
+        > 
+          Create one here
+        </MonoText>
       </MonoText>
     </View>
   );
@@ -92,6 +98,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: Colors.color2.dark,
+    flexDirection: "row",
+    gap: 5,
+    paddingRight: 5
   },
   buttonText: {
     fontSize: 40 * 0.43,
@@ -112,4 +121,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default SignUp;
+export default Login;

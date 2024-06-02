@@ -6,10 +6,10 @@ import { useState, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "./utils/supabase";
 import Onboarding from "./screens/Onboarding";
-import Login from "./screens/Login";
-import SignUp from "./screens/SignUp";
+import Login from "./screens/LoginOptions";
+import SignUp from "./screens/SignUpOptions";
 import LoginWithUsername from "./screens/LoginWithUsername";
-import SignUpManually from "./screens/SignUpManually";
+import CreateAccount from "./screens/CreateAccount";
 
 const Stack = createStackNavigator();
 
@@ -33,12 +33,17 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Main" component={TabNavigator} />
         ) : (
           // No session, navigate to Login
-          <Stack.Screen name="Onboarding" component={Onboarding} />
+          <>
+            <Stack.Screen name="Onboarding" component={Onboarding} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen
+              name="LoginWithUsername"
+              component={LoginWithUsername}
+            />
+            <Stack.Screen name="CreateAccount" component={CreateAccount} />
+          </>
         )}
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="LoginWithUsername" component={LoginWithUsername} />
-        <Stack.Screen name="SignUpManually" component={SignUpManually} />
       </Stack.Navigator>
     </NavigationContainer>
   );
