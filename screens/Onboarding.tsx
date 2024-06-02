@@ -163,7 +163,15 @@ export default function Onboarding() {
       <View style={[styles.container]}>
         <View style={styles.onboardingSpacing} />
         {renderOnboardingImage()}
-        <View style={[styles.bottomSheet, onboardingScreenNumber === 1 && {backgroundColor: Colors.color2.light}, onboardingScreenNumber === 2 && {backgroundColor: Colors.color1.light},]}>
+        <View 
+          style={[
+            styles.bottomSheet, 
+            onboardingScreenNumber === 1 && {backgroundColor: Colors.color1.light}, 
+            onboardingScreenNumber === 2 && {backgroundColor: Colors.color5.light},
+            onboardingScreenNumber === 3 && {backgroundColor: Colors.color3.light},
+            onboardingScreenNumber === 4 && {backgroundColor: Colors.color2.light},
+          ]}
+        >
           {onboardingScreenNumber < 5 && (
             <FlatList
               data={ONBOARDING_SCREENS}
@@ -411,7 +419,7 @@ const styles = StyleSheet.create({
     width: windowWidth,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    height: windowHeight * 0.45,
+    height: windowHeight * 0.4,
     paddingBottom: 10,
 
     elevation: 20, // Android shadow
@@ -422,8 +430,8 @@ const styles = StyleSheet.create({
   },
   flatlist: {
     width: windowWidth * 0.8,
-    minHeight: 170,
-    maxHeight: 170,
+    minHeight: 150,
+    maxHeight: 150,
     marginTop: 48,
     // backgroundColor: "pink"
   },
@@ -438,7 +446,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 60,
+    marginTop: 50,
     marginBottom: -10,
   },
   dot: {
