@@ -4,12 +4,18 @@ import Colors from "../constants/Colors";
 import { supabase } from "@/utils/supabase";
 import { format } from "date-fns";
 
-const NotificationItem = ({ type, message, time, requestId, profilePictureUrl }) => {
+const NotificationItem = ({
+  type,
+  message,
+  time,
+  requestId,
+  profilePictureUrl,
+}) => {
   const acceptRequest = async () => {
     try {
       const { data, error } = await supabase
         .from("friends")
-        .update({ status: "Accepted" })
+        .update({ status: "Friends" })
         .eq("id", requestId);
 
       if (error) {

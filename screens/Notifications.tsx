@@ -62,10 +62,18 @@ const NotificationsScreen = () => {
 
             if (userError) {
               console.error(userError);
-              return { ...request, userName: "Unknown", profilePictureUrl: null };
+              return {
+                ...request,
+                userName: "Unknown",
+                profilePictureUrl: null,
+              };
             }
 
-            return { ...request, userName: userData.name, profilePictureUrl: userData.photo };
+            return {
+              ...request,
+              userName: userData.name,
+              profilePictureUrl: userData.photo,
+            };
           })
         );
 
@@ -171,10 +179,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 10,
   },
-  container: {
-    flex: 1,
-    backgroundColor: "#f0f0f0",
-  },
+  container: {},
   dateHeader: {
     fontSize: 24,
     fontWeight: "bold",

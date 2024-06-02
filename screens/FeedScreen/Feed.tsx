@@ -7,7 +7,7 @@ import { toZonedTime, format } from "date-fns-tz";
 interface Event {
   event_name: string;
   event_start: string; // Updated from Date to string
-  event_end: string;   // Updated from Date to string
+  event_end: string; // Updated from Date to string
   location: string;
   description: string;
   host: string;
@@ -19,7 +19,7 @@ interface Event {
   isAttending: boolean;
   attendees: Array<{ userId: string; photo: string | null }>;
   event_start_date: Date; // Added for sorting
-  event_end_date: Date;   // Added for sorting
+  event_end_date: Date; // Added for sorting
 }
 
 interface User {
@@ -27,6 +27,32 @@ interface User {
   name: string;
   photo: string | null;
 }
+
+const formatDate = (date: Date) => {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const inputDate = new Date(date);
+  if (
+    inputDate.getFullYear() === today.getFullYear() &&
+    inputDate.getMonth() === today.getMonth() &&
+    inputDate.getDate() === today.getDate()
+  ) {
+    return "Today";
+  } else if (
+    inputDate.getFullYear() === yesterday.getFullYear() &&
+    inputDate.getMonth() === yesterday.getMonth() &&
+    inputDate.getDate() === yesterday.getDate()
+  ) {
+    return "Yesterday";
+  } else {
+    return inputDate.toLocaleDateString(undefined, {
+      month: "long",
+      day: "numeric",
+    });
+  }
+};
 
 const Feed = ({ navigation }) => {
   const [userId, setUserId] = useState("");
@@ -69,7 +95,10 @@ const Feed = ({ navigation }) => {
     }
 
     const friendIds = friendsData.reduce(
-      (acc: string[], friend: { user_requested: string; user_accepted: string }) => {
+      (
+        acc: string[],
+        friend: { user_requested: string; user_accepted: string }
+      ) => {
         if (friend.user_requested !== userId) acc.push(friend.user_requested);
         if (friend.user_accepted !== userId) acc.push(friend.user_accepted);
         return acc;
@@ -93,8 +122,8 @@ const Feed = ({ navigation }) => {
       .from("event")
       .select("*")
       .in("creator_id", allIds)
-      .eq('max_signup', false)
-      .gte('event_end', nowUTC); // Filter events that have event_end in the future based on UTC
+      .eq("max_signup", false)
+      .gte("event_end", nowUTC); // Filter events that have event_end in the future based on UTC
 
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
@@ -106,7 +135,9 @@ const Feed = ({ navigation }) => {
       return;
     }
 
-    const creatorIds = [...new Set(eventsData.map((event) => event.creator_id))];
+    const creatorIds = [
+      ...new Set(eventsData.map((event) => event.creator_id)),
+    ];
     const { data: usersData, error: usersError } = await supabase
       .from("users")
       .select("id, name")
@@ -143,7 +174,9 @@ const Feed = ({ navigation }) => {
           };
         }
 
-        const isAttending = signupData.some((signup) => signup.user_id == userId);
+        const isAttending = signupData.some(
+          (signup) => signup.user_id == userId
+        );
 
         const attendeeIds = signupData.map((signup) => signup.user_id);
         const { data: attendeesData, error: attendeesError } = await supabase
@@ -171,7 +204,7 @@ const Feed = ({ navigation }) => {
         return {
           ...event,
           event_start_date: new Date(event.event_start), // Ensure we have the Date object for sorting
-          event_end_date: new Date(event.event_end),     // Ensure we have the Date object for sorting
+          event_end_date: new Date(event.event_end), // Ensure we have the Date object for sorting
           current_signups: signupData.length,
           host: userIdToNameMap[event.creator_id] || "Unknown",
           isAttending,
@@ -185,13 +218,15 @@ const Feed = ({ navigation }) => {
     //console.log("Events before sorting:", eventsWithSignupsAndHosts);
 
     // Sort events by event_start_date in ascending order
-    eventsWithSignupsAndHosts.sort((a, b) => a.event_start_date.getTime() - b.event_start_date.getTime());
+    eventsWithSignupsAndHosts.sort(
+      (a, b) => a.event_start_date.getTime() - b.event_start_date.getTime()
+    );
 
     // Log after sorting
     //console.log("Events after sorting:", eventsWithSignupsAndHosts);
 
     // Format the dates after sorting
-    const formattedEvents = eventsWithSignupsAndHosts.map(event => {
+    const formattedEvents = eventsWithSignupsAndHosts.map((event) => {
       let eventStartFormatted = "Invalid date";
       let eventEndFormatted = "Invalid date";
       try {
@@ -215,7 +250,6 @@ const Feed = ({ navigation }) => {
   };
 
   const handleNavigateToEventDetails = (params: any) => {
-    
     navigation.push("EventDetails", {
       eventName: params.eventName,
       eventTime: params.eventTime,
@@ -276,7 +310,7 @@ const styles = StyleSheet.create({
   dateSection: {
     width: "100%",
     alignItems: "center",
-    marginBottom: 8
+    marginBottom: 8,
   },
 });
 
