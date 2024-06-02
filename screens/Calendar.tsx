@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "left",
     marginBottom: 10,
-    marginLeft: 20,
+    marginLeft: 5,
     marginTop: 20,
     alignSelf: "flex-start",
   },
