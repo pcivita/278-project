@@ -12,7 +12,6 @@ interface Event {
   event_start: string;
   event_end: string;
   location: string;
-  host: string;
   max_people: number;
   signups: number;
   current_signups: number;
@@ -28,6 +27,7 @@ const Calendar = () => {
     Record<string, Record<string, Event[]>>
   >({});
   const { userId } = useUser();
+  const nowUTC = new Date().toISOString();
 
   useEffect(() => {
     fetchEvents();
@@ -65,10 +65,8 @@ const Calendar = () => {
       (signup) => signup.event_id
     );
 
-    const { data: createdEventsData, error: createdEventsError } = await supabase
-      .from("event")
-      .select("id")
-      .eq("creator_id", userId);
+    const { data: createdEventsData, error: createdEventsError } =
+      await supabase.from("event").select("id").eq("creator_id", userId);
     if (createdEventsError) {
       console.error("Error fetching created events:", createdEventsError);
       return;
@@ -88,7 +86,8 @@ const Calendar = () => {
     const { data: eventsData, error: eventsError } = await supabase
       .from("event")
       .select("*")
-      .in("id", allEventIds);
+      .in("id", allEventIds)
+      .gte("event_end", nowUTC);
 
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
@@ -231,7 +230,11 @@ const Calendar = () => {
   );
 
   if (Object.keys(eventsByMonth).length === 0) {
-    return <Text>No events found</Text>;
+    return (
+      <View style={{ backgroundColor: "white", flex: 1 }}>
+        <Text>No events found</Text>
+      </View>
+    );
   }
 
   return (
@@ -268,6 +271,7 @@ const Calendar = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    paddingBottom: 200, // Add paddin
     alignItems: "center",
   },
   title: {
