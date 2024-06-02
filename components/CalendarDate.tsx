@@ -26,20 +26,37 @@ interface CalendarDateProps {
 }
 
 const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
+  console.log("date: ", date);
+  const string_date = date.toString();
+  // const month = string_date.slice(5,7);
+  // const date_of_month = string_date.slice(8,10);
+  const month = parseInt(string_date.slice(5, 7), 10).toString();
+  const date_of_month = parseInt(string_date.slice(8, 10), 10).toString();
+  console.log("stringify:", date.toString());
+  console.log("month: ", month);
+  console.log("day: ", date_of_month);
   const timeZone = 'America/Los_Angeles';
 
+
   // Parse the date string in the given time zone
-  const parsedDate = toZonedTime(new Date(date), timeZone);
+  // console.log("parsed Date: ", parsedDate)
+  //const string_date = parsedDate.toString()
+  
 
   // Format the day of the week and date
-  const dayOfWeek = format(parsedDate, 'EEE', { timeZone });
-  const dayOfMonth = format(parsedDate, 'd', { timeZone });
+  // const dayOfWeek = format(parsedDate, 'EEE');
+  // const dayOfMonth = format(parsedDate, 'd');
+  // console.log("parsed day of week: ", dayOfWeek);
+  // console.log("parsed DATE", dayOfMonth);
+  // console.log("parsed string: ", string_date);
+  // console.log("parsed date: ", string_date.slice(8,10));
+
 
   return (
     <View style={styles.container}>
       <View style={styles.dateContainer}>
-        <Text style={styles.dayOfWeek}>{dayOfWeek}</Text>
-        <Text style={styles.date}>{dayOfMonth}</Text>
+        {/* <Text style={styles.dayOfWeek}>{dayOfWeek}</Text> */}
+        <Text style={styles.date}>{date_of_month}</Text>
       </View>
       <View style={styles.eventList}>
         {events.map(event => (
@@ -78,3 +95,6 @@ const styles = StyleSheet.create({
 });
 
 export default CalendarDate;
+
+
+

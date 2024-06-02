@@ -182,13 +182,13 @@ const Feed = ({ navigation }) => {
     );
 
     // Log before sorting
-    console.log("Events before sorting:", eventsWithSignupsAndHosts);
+    //console.log("Events before sorting:", eventsWithSignupsAndHosts);
 
     // Sort events by event_start_date in ascending order
     eventsWithSignupsAndHosts.sort((a, b) => a.event_start_date.getTime() - b.event_start_date.getTime());
 
     // Log after sorting
-    console.log("Events after sorting:", eventsWithSignupsAndHosts);
+    //console.log("Events after sorting:", eventsWithSignupsAndHosts);
 
     // Format the dates after sorting
     const formattedEvents = eventsWithSignupsAndHosts.map(event => {
