@@ -58,7 +58,6 @@ const Calendar = () => {
       .from("event_signup")
       .select("event_id")
       .eq("user_id", userId);
-
     if (eventSignupError) {
       console.error("Error fetching event signups:", eventSignupError);
       return;
@@ -68,7 +67,22 @@ const Calendar = () => {
       (signup) => signup.event_id
     );
 
-    if (eventIds.length === 0) {
+    const { data: createdEventsData, error: createdEventsError } = await supabase
+      .from("event")
+      .select("id")
+      .eq("creator_id", userId);
+    if (createdEventsError) {
+      console.error("Error fetching created events:", createdEventsError);
+      return;
+    }
+
+    const createdEventIds = (createdEventsData as { id: string }[]).map(
+      (event) => event.id
+    );
+
+    const allEventIds = [...new Set([...eventIds, ...createdEventIds])];
+
+    if (allEventIds.length === 0) {
       setEventsByMonth({});
       return;
     }
@@ -76,7 +90,7 @@ const Calendar = () => {
     const { data: eventsData, error: eventsError } = await supabase
       .from("event")
       .select("*")
-      .in("id", eventIds);
+      .in("id", allEventIds);
 
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
@@ -232,6 +246,8 @@ const Calendar = () => {
         <View key={`month-${month}`}>
           <Text style={styles.title}>{month}</Text>
           {Object.keys(eventsByMonth[month]).map((date) => {
+            console.log("month:", month);
+            console.log("date", date);
             const dateEvents = eventsByMonth[month][date];
             return dateEvents.length > 0 ? (
               <CalendarDate
