@@ -14,6 +14,7 @@ interface EventCardProps {
   eventName: string;
   eventTime: string;
   location: string;
+  description: string;
   host: string;
   signups: string;
   colorScheme: string;

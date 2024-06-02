@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import EventDetailsCard from "@/components/EventDetailsCard";
 import Colors from "@/constants/Colors";
@@ -6,15 +6,31 @@ import { MonoText } from "@/components/StyledText";
 import { Dimensions } from "react-native";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@/UserContext";
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+
+type RootStackParamList = {
+  EditEvent: {
+    eventId: string;
+    eventName: string;
+    eventTime: string;
+    location: string;
+    host: string;
+    signups: string;
+    colorScheme: string;
+    description: string;
+  };
+};
 
 interface EventDetailsProps {
   route: {
     params: {
       eventName: string;
       eventTime: string;
+      description: string;
       location: string;
       host: string;
       signups: string;
@@ -23,10 +39,11 @@ interface EventDetailsProps {
       eventId: string;
     };
   };
+  navigation: StackNavigationProp<RootStackParamList, 'EditEvent'>;
 }
 
 // EventDetails component: a functional component taking in a route prop
-const EventDetails = ({ route }: EventDetailsProps) => {
+const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
   const {
     eventName,
     eventTime,
@@ -36,6 +53,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     colorScheme,
     isUserHost,
     eventId,
+    description,
   } = route.params;
   const theme = Colors[colorScheme]; // Gets theme from event's colour scheme
   const [userId, setUserId] = useState('');
@@ -170,6 +188,51 @@ const EventDetails = ({ route }: EventDetailsProps) => {
     } catch (error) {
       console.error("Error joining event:", error);
     }
+
+    console.log(description)
+  };
+
+  const handleDeleteEvent = async () => {
+    try {
+      // Delete event_signups entries
+      const { error: signupError } = await supabase
+        .from('event_signup')
+        .delete()
+        .eq('event_id', eventId);
+
+      if (signupError) {
+        throw signupError;
+      }
+
+      // Delete the event
+      const { error: eventError } = await supabase
+        .from('event')
+        .delete()
+        .eq('id', eventId);
+
+      if (eventError) {
+        throw eventError;
+      }
+
+      Alert.alert("Event deleted successfully");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      Alert.alert("Error deleting event");
+    }
+  };
+
+  const handleEditEvent = () => {
+    navigation.navigate('EditEvent', {
+      eventId,
+      eventName,
+      eventTime,
+      location,
+      host,
+      signups,
+      colorScheme,
+      description,
+    });
   };
 
   return (
@@ -178,6 +241,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
         eventName={eventName}
         eventTime={eventTime}
         location={location}
+        description={description}
         host={host}
         signups={signups}
         colorScheme={colorScheme}
@@ -208,8 +272,7 @@ const EventDetails = ({ route }: EventDetailsProps) => {
         </MonoText>
         <View style={styles.notes}>
           <MonoText style={styles.secondaryText}>
-            Meet me at Lake Lag by the fire pit! Wear sunscreen and text me at
-            4157996842 if you are running late.
+            {description}
           </MonoText>
         </View>
         <View style={styles.horizontalLine} />
@@ -226,6 +289,16 @@ const EventDetails = ({ route }: EventDetailsProps) => {
             </View>
           </TouchableOpacity>
         ))}
+      {isUserHost && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleEditEvent} style={styles.buttonTwo}>
+            <Text style={styles.buttonTextTwo}>Edit Event</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDeleteEvent} style={styles.buttonTwo}>
+            <Text style={styles.buttonTextTwo}>Delete Event</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -284,6 +357,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "green",
     marginTop: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  buttonTwo: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonTextTwo: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
