@@ -3,6 +3,9 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { supabase } from "@/utils/supabase"; // Make sure the import path is correct
+// import { toZonedTime, format } from "date-fns-tz";
+import { parseISO } from "date-fns";
+import { format, parse } from "date-fns";
 
 interface Event {
   id: string;
@@ -102,6 +105,12 @@ const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
     setMainTitle(`${mainTitle} with ${displayName}`);
   };
 
+  const formatTime = (dateTimeString: string): string => {
+    const time = dateTimeString.substring(dateTimeString.indexOf(' ') + 1);
+    return time;
+  };
+
+
   const navigateToDetails = () => {
     navigation.navigate("EventDetails", {
       eventName: event.event_name,
@@ -124,7 +133,7 @@ const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
       <View style={styles.eventDetails}>
         <Text style={styles.title}>{mainTitle}</Text>
         <Text style={styles.time}>
-          {`${event.event_start} - ${event.event_end}`}
+          {`${formatTime(event.event_start)} - ${event.event_end}`}
         </Text>
       </View>
     </TouchableOpacity>
