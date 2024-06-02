@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-interface LoginWithUsernameProps {
+interface LoginProps {
   navigation: any;
 }
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const LoginWithUsername: React.FC<LoginWithUsernameProps> = ({ navigation }) => {
+const Login: React.FC<LoginProps> = ({ navigation }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginWithUsername;
+export default Login;

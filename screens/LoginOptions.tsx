@@ -37,8 +37,7 @@ const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
       <View style={styles.buttonsContainer}>
         <Auth navigation={navigation} />
         <TouchableOpacity
-          // onPress={() => navigation.navigate("SignUpManually")}
-          onPress={() => setCurrentScreen("create account")}
+          onPress={() => setCurrentScreen("log in")}
           style={styles.button}
         >
           <Ionicons name="mail" size={15} color="white" />

@@ -15,11 +15,11 @@ import * as ImagePicker from "expo-image-picker";
 // import { UserContext } from "../contexts/UserContext";
 // import { ActivityIndicator } from "react-native-paper";
 import LoginOptions from "./LoginOptions";
+import Login from "./Login";
 import SignUpOptions from "./SignUpOptions";
 import CreateAccount from "./CreateAccount";
 import Colors from "@/constants/Colors";
 import { MonoText } from "@/components/StyledText";
-import EventCard from "@/components/EventCard";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -429,8 +429,8 @@ export default function Onboarding() {
       return <SignUpOptions setCurrentScreen={setCurrentScreen} />;
     case "create account":
       return <CreateAccount setCurrentScreen={setCurrentScreen} />;
-    case "create account":
-      return <CreateAccount setCurrentScreen={setCurrentScreen} />;
+    case "log in":
+      return <Login setCurrentScreen={setCurrentScreen} />;
     default:
       return renderOnboarding();
   }

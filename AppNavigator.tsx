@@ -6,9 +6,11 @@ import { useState, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "./utils/supabase";
 import Onboarding from "./screens/Onboarding";
-import Login from "./screens/LoginOptions";
-import SignUp from "./screens/SignUpOptions";
-import LoginWithUsername from "./screens/LoginWithUsername";
+
+import LoginOptions from "./screens/LoginOptions";
+import Login from "./screens/Login";
+
+import SignUpOptions from "./screens/SignUpOptions";
 import CreateAccount from "./screens/CreateAccount";
 
 const Stack = createStackNavigator();
@@ -35,12 +37,9 @@ const AppNavigator: React.FC = () => {
           // No session, navigate to Login
           <>
             <Stack.Screen name="Onboarding" component={Onboarding} />
+            <Stack.Screen name="LoginOptions" component={LoginOptions} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen
-              name="LoginWithUsername"
-              component={LoginWithUsername}
-            />
+            <Stack.Screen name="SignUpOptions" component={SignUpOptions} />
             <Stack.Screen name="CreateAccount" component={CreateAccount} />
           </>
         )}
