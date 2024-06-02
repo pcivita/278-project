@@ -160,10 +160,10 @@ export default function Onboarding() {
 
   const renderOnboarding = () => {
     return (
-      <View style={[styles.container, onboardingScreenNumber === 1 && { backgroundColor: Colors.color2.light }]}>
+      <View style={[styles.container]}>
         <View style={styles.onboardingSpacing} />
         {renderOnboardingImage()}
-        <View style={styles.bottomSheet}>
+        <View style={[styles.bottomSheet, onboardingScreenNumber === 1 && {backgroundColor: Colors.color2.light}, onboardingScreenNumber === 2 && {backgroundColor: Colors.color1.light},]}>
           {onboardingScreenNumber < 5 && (
             <FlatList
               data={ONBOARDING_SCREENS}
@@ -223,11 +223,7 @@ export default function Onboarding() {
               </MonoText>
             </TouchableOpacity>
           ) : (
-            <View
-              style={[styles.onboardingButton, { backgroundColor: "white" }]}
-            >
-              <MonoText style={styles.onBoardingButtonText}>Continue</MonoText>
-            </View>
+            <View style={styles.onboardingButtonPlaceholder} />
           )}
         </View>
       </View>
@@ -413,8 +409,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     width: windowWidth,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
     height: windowHeight * 0.45,
     paddingBottom: 10,
 
@@ -426,7 +422,10 @@ const styles = StyleSheet.create({
   },
   flatlist: {
     width: windowWidth * 0.8,
+    minHeight: 170,
+    maxHeight: 170,
     marginTop: 48,
+    // backgroundColor: "pink"
   },
   bottomSheetContent: {
     width: windowWidth * 0.8,
@@ -439,7 +438,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 48,
+    marginTop: 60,
+    marginBottom: -10,
   },
   dot: {
     width: 8,
@@ -518,6 +518,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 12,
   },
+  spacing: {
+    marginTop: 24,
+    marginBottom: 36,
+    height: 45,
+  },
   onboardingButton: {
     backgroundColor: Colors.color2.dark,
     padding: 10,
@@ -526,6 +531,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 24,
     marginBottom: 36,
+    height: 45,
+  },
+  onboardingButtonPlaceholder: {
+    width: 200,
+    height: 50,
+    backgroundColor: 'transparent',
   },
   secondaryButton: {
     backgroundColor: "pink",
@@ -557,9 +568,9 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.9,
     height: 50,
   },
-  spacing: {
-    height: windowHeight * 0.05,
-  },
+  // spacing: {
+  //   height: windowHeight * 0.05,
+  // },
   onboardingSpacing: {
     height: windowHeight * 0.05,
   },
