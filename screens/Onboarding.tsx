@@ -65,24 +65,36 @@ export default function Onboarding() {
       case 2:
         return (
           <View style={styles.onboardingImageContainer}>
+            <MonoText useUltra={true} style={styles.onboardingTitle}>Flock</MonoText>
             <Image 
               source={require("../assets/images/OnboardingImage1.png")} 
               resizeMode="contain" 
-              style={styles.onboardingImage}/>
+              style={[styles.onboardingImage, { top: 20 }]} 
+            />
           </View>
         )
       case 3:
         return (
           <View style={styles.onboardingImageContainer}>
+            <MonoText useUltra={true} style={styles.onboardingTitle}>Flock</MonoText>
             <Image 
               source={require("../assets/images/OnboardingImage2.png")} 
               resizeMode="contain" 
-              style={[styles.onboardingImage, { bottom: 140 }]}
+              style={[styles.onboardingImage, { top: 19 }]}
             />
           </View>
         )
       case 4:
-        return <Text>tutorial 4</Text>;
+        return (
+          <View style={styles.onboardingImageContainer}>
+            <MonoText useUltra={true} style={styles.onboardingTitle}>Flock</MonoText>
+            <Image 
+              source={require("../assets/images/OnboardingImage3.png")} 
+              resizeMode="contain" 
+              style={[styles.onboardingImage, { bottom: 60 }]}
+            />
+          </View>
+        )
     }
   };
 
@@ -166,7 +178,7 @@ export default function Onboarding() {
         <View 
           style={[
             styles.bottomSheet, 
-            onboardingScreenNumber === 1 && {backgroundColor: Colors.color1.light}, 
+            onboardingScreenNumber === 1 && {backgroundColor: "white"}, 
             onboardingScreenNumber === 2 && {backgroundColor: Colors.color5.light},
             onboardingScreenNumber === 3 && {backgroundColor: Colors.color3.light},
             onboardingScreenNumber === 4 && {backgroundColor: Colors.color2.light},
@@ -213,7 +225,7 @@ export default function Onboarding() {
                   style={[
                     styles.dot,
                     index + 1 === onboardingScreenNumber && {
-                      backgroundColor: Colors.color1.dark,
+                      backgroundColor: "black",
                     },
                   ]}
                 />
@@ -453,15 +465,14 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "lightgrey",
+    backgroundColor: "lightgray",
     marginHorizontal: 4,
   },
   onboardingImageContainer: {
     height: windowHeight * 0.5,
-    flexDirection: "row",
     width: windowWidth * 1,
-    justifyContent: "center",
-    alignItems: "flex-start",
+    // justifyContent: "center",
+    alignItems: "center",
   },
   onboardingImage: {
     width: windowWidth * 0.9,
