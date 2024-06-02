@@ -40,7 +40,6 @@ const EventCard: React.FC<EventCardProps> = ({
           </MonoText>
           <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
           <MonoText style={styles.secondaryText}>Hosted by: {host}</MonoText>
-          <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
         </View>
       </View>
       <View style={styles.rightSide}>

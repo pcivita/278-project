@@ -198,7 +198,7 @@ const Feed = ({ navigation }) => {
         const timeZone = "America/Los_Angeles";
         const eventStartPST = toZonedTime(event.event_start_date, timeZone);
         const eventEndPST = toZonedTime(event.event_end_date, timeZone);
-        eventStartFormatted = format(eventStartPST, "M/d h:mm a", { timeZone });
+        eventStartFormatted = format(eventStartPST, "h:mm a", { timeZone });
         eventEndFormatted = format(eventEndPST, "h:mm a", { timeZone });
       } catch (error) {
         console.error("Error formatting event dates:", error);
