@@ -23,6 +23,7 @@ const CreateEvent = () => {
   const [eventEndShow, setEventEndShow] = useState("");
   const [creatorId, setCreatorId] = useState("");
   const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isEndDateVisible, setIsEndDateVisible] = useState(false);
 
@@ -119,6 +120,7 @@ const CreateEvent = () => {
         event_start: new Date(eventStart).toISOString(),
         event_end: new Date(eventEnd).toISOString(),
         location: location,
+        description: description,
       },
     ]);
     if (error) {
@@ -138,6 +140,7 @@ const CreateEvent = () => {
             setEventStartShow("");
             setEventEndShow("");
             setLocation("");
+            setDescription("");
             navigation.navigate("Feed"); // Navigate to Feed screen
           },
         },
@@ -165,6 +168,12 @@ const CreateEvent = () => {
         placeholder="Location"
         value={location}
         onChangeText={setLocation}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Notes"
+        value={description}
+        onChangeText={setDescription}
         style={styles.input}
       />
       {/* <TextInput
