@@ -3,9 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { supabase } from "@/utils/supabase"; // Make sure the import path is correct
-// import { toZonedTime, format } from "date-fns-tz";
-import { parseISO } from "date-fns";
-import { format, parse } from "date-fns";
+import Colors from "@/constants/Colors";
 
 interface Event {
   id: string;
@@ -145,7 +143,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
-    backgroundColor: "#F7FFF2",
+    backgroundColor: Colors.color2.lightest,
     borderRadius: 10,
     marginBottom: 10,
   },

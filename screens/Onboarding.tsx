@@ -42,17 +42,17 @@ export default function Onboarding() {
       description: "Swipe to get started.",
     },
     {
-      title: "Create events to invite your friends to",
+      title: "Create events and invite your friends",
       description:
-        "For example, lunch at a local restaurant, a hike, a movie night, or anything else!",
+        "For example, lunch at a local restaurant, a hike, a movie night, or anything else",
     },
     {
-      title: "Browse friends' events and join in on the fun",
-      description: "Make more time for your good friends and make new friends",
+      title: "Browse events and join in on the fun",
+      description: "Easily see what your friends are up to and get involved",
     },
     {
       title: "View your upcoming events by date and month",
-      description: "Never miss an upcoming event with your friends",
+      description: "Never forget about your upcoming events!",
     },
   ];
 

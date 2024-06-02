@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import EventCard from "../../components/EventCard";
 import { supabase } from "@/utils/supabase";
-import { toZonedTime, format, ZonedTime } from "date-fns-tz";
+import { toZonedTime, format } from "date-fns-tz";
 
 interface Event {
   event_name: string;
@@ -271,10 +271,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    paddingTop: 10,
   },
   dateSection: {
     width: "100%",
     alignItems: "center",
+    marginBottom: 8
   },
 });
 
