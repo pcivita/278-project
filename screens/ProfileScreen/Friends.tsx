@@ -35,42 +35,48 @@ const Friends: React.FC = () => {
   }, []);
 
   const handleAddFriend = async (friendId: string) => {
+    console.log("Handling friend request for:", friendId);
+  
     // Check if a request already exists
     const { data: existingRequests, error } = await supabase
       .from("friends")
       .select("*")
-      .eq("user_requested", userId)
-      .eq("user_accepted", friendId);
-
+      .or(`user_requested.eq.${userId},user_accepted.eq.${userId}`)
+      .or(`user_requested.eq.${friendId},user_accepted.eq.${friendId}`);
+  
     if (error) {
       console.error("Error checking friendship status:", error);
       return;
     }
-
-    if (existingRequests.length > 0) {
-      // Assume handling the first entry if multiple; adjust logic if needed
-      const existingRequest = existingRequests[0];
-      if (
-        existingRequest.status === "Requested" ||
-        existingRequest.status === "Friends"
-      ) {
-        // Delete the request if it's pending
+  
+    console.log("Existing requests:", existingRequests);
+  
+    const existingRequest = existingRequests.find(
+      (request) =>
+        (request.user_requested === userId && request.user_accepted === friendId) ||
+        (request.user_requested === friendId && request.user_accepted === userId)
+    );
+  
+    if (existingRequest) {
+      console.log("Existing request found:", existingRequest);
+  
+      if (existingRequest.status === "Requested" || existingRequest.status === "Friends") {
+        // Delete the request if it's pending or already friends
         const { error: deleteError } = await supabase
           .from("friends")
           .delete()
-          .match({ id: existingRequest.id });
-
+          .eq("id", existingRequest.id);
+  
         if (!deleteError) {
-          setUsers(
-            users.map((user) =>
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
               user.id === friendId ? { ...user, status: "Add Friend" } : user
             )
           );
+          console.log("Request deleted");
         } else {
           console.error("Error deleting friend request:", deleteError);
         }
-      } else if (existingRequest.status === "Friends") {
-        // Delete Friend from table
       }
     } else {
       // No existing request, create a new one
@@ -81,18 +87,20 @@ const Friends: React.FC = () => {
           status: "Requested",
         },
       ]);
-
+  
       if (!insertError) {
-        setUsers(
-          users.map((user) =>
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
             user.id === friendId ? { ...user, status: "Requested" } : user
           )
         );
+        console.log("Request created");
       } else {
         console.error("Error creating friend request:", insertError);
       }
     }
   };
+  
 
   // const handleAddFriend = async (userId: any) => {
   //   console.log("Added Friend: ", userId);

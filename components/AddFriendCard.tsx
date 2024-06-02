@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { User } from "@/utils/interfaces";
 import { useUser } from "@/UserContext";
 import { MonoText } from "./StyledText";
@@ -25,77 +25,107 @@ const AddFriendCard: React.FC<AddFriendCardProps> = ({
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const goToUserProfile = () => {
-    // TODO: Must Check if I'm Clicking on my Own Profile
     navigation.navigate("userProfile", { user: user });
   };
 
   const { userId } = useUser();
+
   const getStatusStyle = (status: string) => {
     switch (status) {
       case "Friends":
-        return styles.accepted;
+        return styles.friendsButton;
       case "Add Friend":
-        return styles.add;
+        return styles.addButton;
       case "Requested":
-        return styles.pending;
+        return styles.requestedButton;
     }
   };
-  return (
-    <TouchableOpacity style={styles.container} onPress={goToUserProfile}>
-      <MonoText useUltra={true} style={styles.username}>
 
-        {user.username}
-      </MonoText>
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "Friends":
+        return "Friends!";
+      case "Add Friend":
+        return "Add Friend";
+      case "Requested":
+        return "Requested";
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.profileSection} onPress={goToUserProfile}>
+        <Image source={{ uri: user.photo || 'https://via.placeholder.com/50' }} style={styles.profileImage} />
+        <View>
+          <MonoText useUltra={true} style={styles.username}>
+            {user.name}
+          </MonoText>
+          <Text style={styles.userHandle}>@{user.username}</Text>
+        </View>
+      </TouchableOpacity>
       {user.id !== userId && (
         <TouchableOpacity
           onPress={onAddFriend}
           style={[styles.friendButton, getStatusStyle(status)]}
         >
-          <Text style={{ color: "black", fontWeight: "bold" }}> {status} </Text>
+          <Text style={styles.friendButtonText}> {getStatusText(status)} </Text>
         </TouchableOpacity>
       )}
-    </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 80,
-    flex: 1,
-    marginBottom: 10,
-    marginHorizontal: 20,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    backgroundColor: Colors.color2.light,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
-    alignItems: "center",
-  },
-  userText: {
-    fontSize: 17,
-    color: "white",
-  },
-  friendButton: {
+    backgroundColor: "#F5F7F7",
+    borderRadius: 10,
     padding: 10,
-    width: "40%",
-    borderRadius: 5,
+    marginVertical: 5,
+    marginHorizontal: 20,
+  },
+  profileSection: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  accepted: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: Colors.color2.dark,
-  },
-  add: {
-    backgroundColor: Colors.color2.dark,
-  },
-  pending: {
-    backgroundColor: "orange",
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
   },
   username: {
-    fontSize: 17,
-    marginTop: 10,
-    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  userHandle: {
+    fontSize: 14,
+    color: "#666",
+  },
+  friendButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  friendsButton: {
+    backgroundColor: "#D3E3D8",
+  },
+  addButton: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+  },
+  requestedButton: {
+    backgroundColor: "#E0E0E0",
+  },
+  friendButtonText: {
+    color: "black",
+    fontWeight: "bold",
   },
 });
+
 export default AddFriendCard;

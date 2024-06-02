@@ -242,7 +242,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
         isUserHost={isUserHost}
         eventId={eventId}
       />
-      <MonoText style={styles.secondaryText}>Expires Sunday 11:59pm</MonoText>
       <View style={styles.section}>
         <MonoText useUltra={true} style={styles.primaryText}>
           Going
@@ -347,8 +346,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.color2.dark,
   },
   attendingText: {
-    fontSize: 20,
-    color: "green",
+    fontSize: 18,
+    color: "gray",
+    fontWeight: "bold",
     marginTop: 20,
   },
   buttonContainer: {
