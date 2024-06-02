@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import EventItem from "./EventItem";
-import { toZonedTime, format } from 'date-fns-tz';
+import { toZonedTime, format } from "date-fns-tz";
 import Colors from "@/constants/Colors";
 
 interface Event {
@@ -26,7 +26,6 @@ interface CalendarDateProps {
 }
 
 const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
-  console.log("date: ", date);
   const string_date = date.toString();
   // const month = string_date.slice(5,7);
   // const date_of_month = string_date.slice(8,10);
@@ -35,13 +34,11 @@ const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
   console.log("stringify:", date.toString());
   console.log("month: ", month);
   console.log("day: ", date_of_month);
-  const timeZone = 'America/Los_Angeles';
-
+  const timeZone = "America/Los_Angeles";
 
   // Parse the date string in the given time zone
   // console.log("parsed Date: ", parsedDate)
   //const string_date = parsedDate.toString()
-  
 
   // Format the day of the week and date
   // const dayOfWeek = format(parsedDate, 'EEE');
@@ -51,7 +48,6 @@ const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
   // console.log("parsed string: ", string_date);
   // console.log("parsed date: ", string_date.slice(8,10));
 
-
   return (
     <View style={styles.container}>
       <View style={styles.dateContainer}>
@@ -59,7 +55,7 @@ const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
         <Text style={styles.date}>{date_of_month}</Text>
       </View>
       <View style={styles.eventList}>
-        {events.map(event => (
+        {events.map((event) => (
           <EventItem key={event.id} event={event} />
         ))}
       </View>
@@ -95,6 +91,3 @@ const styles = StyleSheet.create({
 });
 
 export default CalendarDate;
-
-
-

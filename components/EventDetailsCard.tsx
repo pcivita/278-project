@@ -1,13 +1,9 @@
 // EventCard.tsx
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { MonoText } from './StyledText'; 
+import { MonoText } from "./StyledText";
 import { useNavigation } from "expo-router";
 
 interface EventCardProps {
@@ -32,13 +28,16 @@ const EventCard: React.FC<EventCardProps> = ({
 }) => {
   const theme = Colors[colorScheme];
   const navigation = useNavigation();
+  console.log("host", host);
 
   return (
     <View style={[styles.card, { backgroundColor: theme.light }]}>
       <View style={styles.leftSide}>
         <View style={[styles.verticalLine, { backgroundColor: theme.dark }]} />
         <View style={styles.textContainer}>
-          <MonoText useUltra={true} style={styles.primaryText}>{eventName}</MonoText>
+          <MonoText useUltra={true} style={styles.primaryText}>
+            {eventName}
+          </MonoText>
           <MonoText style={styles.secondaryText}>{eventTime}</MonoText>
           <MonoText style={styles.secondaryText}>Hosted by: {host}</MonoText>
           <MonoText style={styles.secondaryText}>{signups} signups</MonoText>
@@ -53,7 +52,6 @@ const EventCard: React.FC<EventCardProps> = ({
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   card: {
@@ -72,14 +70,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   leftSide: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center', // Adjust this to control vertical alignment
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center", // Adjust this to control vertical alignment
     width: "70%",
   },
   textContainer: {
     marginLeft: 10,
-    justifyContent: 'space-around', // This will help distribute the text vertically
+    justifyContent: "space-around", // This will help distribute the text vertically
     flex: 1, // Takes up all available space after accounting for the vertical line
   },
   rightSide: {
@@ -88,10 +86,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   primaryText: {
-  fontSize: 28,
-  fontWeight: "bold",
-  marginBottom: 8, // Increase bottom margin to give more space below the headline
-  lineHeight: 32, // Adjust line height for better vertical spacing
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 8, // Increase bottom margin to give more space below the headline
+    lineHeight: 32, // Adjust line height for better vertical spacing
   },
   secondaryText: {
     fontSize: 14,
@@ -111,9 +109,9 @@ const styles = StyleSheet.create({
   },
   verticalLine: {
     width: 4,
-    height: '100%',
+    height: "100%",
     borderRadius: 5,
-    backgroundColor: "#54577C",  // Default color, will be overwritten dynamically
+    backgroundColor: "#54577C", // Default color, will be overwritten dynamically
   },
   buttonText: {
     color: "white",

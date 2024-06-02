@@ -56,47 +56,60 @@ const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
   const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string>("");
   const navigation = useNavigation<CalendarScreenNavigationProp>();
-
+  const [hostName, setHostName] = useState("");
   useEffect(() => {
     fetchCreatorAndAttendeeNames();
   }, []);
 
   const fetchCreatorAndAttendeeNames = async () => {
     const { data: creatorData, error: creatorError } = await supabase
-      .from('users')
-      .select('id, name, photo')
-      .eq('id', event.creator_id)
+      .from("users")
+      .select("id, name, photo")
+      .eq("id", event.creator_id)
       .single();
 
     if (creatorError) {
-      console.error('Error fetching creator details:', creatorError);
+      console.error("Error fetching creator details:", creatorError);
       return;
     }
 
     const { data: signupData, error: signupError } = await supabase
-      .from('event_signup')
-      .select('user_id')
-      .eq('event_id', event.id);
+      .from("event_signup")
+      .select("user_id")
+      .eq("event_id", event.id);
 
     if (signupError) {
-      console.error('Error fetching signups:', signupError);
+      console.error("Error fetching signups:", signupError);
       return;
     }
 
-    const attendeeIds = signupData.map(signup => signup.user_id);
+    const attendeeIds = signupData.map((signup) => signup.user_id);
     const { data: usersData, error: usersError } = await supabase
-      .from('users')
-      .select('id, name')
-      .in('id', attendeeIds);
+      .from("users")
+      .select("id, name")
+      .in("id", attendeeIds);
 
     if (usersError) {
-      console.error('Error fetching user details:', usersError);
+      console.error("Error fetching user details:", usersError);
       return;
+    }
+
+    const { data: nameData, error: nameError } = await supabase
+      .from("users")
+      .select("name")
+      .eq("id", event.creator_id);
+
+    if (nameError) {
+      console.error(nameError);
+    } else if (nameData && nameData.length > 0) {
+      setHostName(nameData[0].name); // Assuming nameData is an array and you need the first item
     }
 
     const isOrganizer = event.creator_id === userId;
-    const attendingUser = usersData.find(user => user.id === userId);
-    const displayName = isOrganizer ? attendingUser?.name || creatorData.name : creatorData.name;
+    const attendingUser = usersData.find((user) => user.id === userId);
+    const displayName = isOrganizer
+      ? attendingUser?.name || creatorData.name
+      : creatorData.name;
 
     setCreatorPhoto(creatorData.photo);
     setDisplayName(displayName);
@@ -104,17 +117,16 @@ const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
   };
 
   const formatTime = (dateTimeString: string): string => {
-    const time = dateTimeString.substring(dateTimeString.indexOf(' ') + 1);
+    const time = dateTimeString.substring(dateTimeString.indexOf(" ") + 1);
     return time;
   };
-
 
   const navigateToDetails = () => {
     navigation.navigate("EventDetails", {
       eventName: event.event_name,
       eventTime: event.event_start + event.event_end,
       location: event.location,
-      host: event.creator_id,
+      host: hostName,
       signups: 5,
       colorScheme: `color${1}`,
       isUserHost: true,
