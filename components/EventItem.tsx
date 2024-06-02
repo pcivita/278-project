@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { supabase } from "@/utils/supabase"; // Make sure the import path is correct
+import { supabase } from "@/utils/supabase";
 import Colors from "@/constants/Colors";
 
 interface Event {
@@ -29,7 +29,7 @@ interface User {
 
 interface EventItemProps {
   event: Event;
-  userId: string; // Add userId prop to identify the current user
+  userId: string;
 }
 
 export type RootStackParamList = {
@@ -52,20 +52,19 @@ type CalendarScreenNavigationProp = StackNavigationProp<
 >;
 
 const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
-  const [mainTitle, setMainTitle] = useState<string>(event.event_name);
   const [creatorPhoto, setCreatorPhoto] = useState<string | null>(null);
-  const [displayName, setDisplayName] = useState<string>("");
   const navigation = useNavigation<CalendarScreenNavigationProp>();
   const [hostName, setHostName] = useState("");
   useEffect(() => {
-    fetchCreatorAndAttendeeNames();
+    fetchCreatorPhoto();
   }, []);
 
-  const fetchCreatorAndAttendeeNames = async () => {
+  const fetchCreatorPhoto = async () => {
     const { data: creatorData, error: creatorError } = await supabase
-      .from("users")
-      .select("id, name, photo")
-      .eq("id", event.creator_id)
+
+      .from('users')
+      .select('photo')
+      .eq('id', event.creator_id)
       .single();
 
     if (creatorError) {
@@ -112,8 +111,6 @@ const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
       : creatorData.name;
 
     setCreatorPhoto(creatorData.photo);
-    setDisplayName(displayName);
-    setMainTitle(`${mainTitle} with ${displayName}`);
   };
 
   const formatTime = (dateTimeString: string): string => {
@@ -137,11 +134,11 @@ const EventItem: React.FC<EventItemProps> = ({ event, userId }) => {
   return (
     <TouchableOpacity style={styles.eventItem} onPress={navigateToDetails}>
       <Image
-        source={{ uri: creatorPhoto || "https://via.placeholder.com/150" }} // Placeholder image, replace with actual image URI
+        source={{ uri: creatorPhoto || "https://via.placeholder.com/150" }}
         style={styles.profileImage}
       />
       <View style={styles.eventDetails}>
-        <Text style={styles.title}>{mainTitle}</Text>
+        <Text style={styles.title}>{event.event_name}</Text>
         <Text style={styles.time}>
           {`${formatTime(event.event_start)} - ${event.event_end}`}
         </Text>
@@ -169,7 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontFamily: "TripSans-Ultra", // Ultra font for the main title and Defne
+    fontFamily: "TripSans-Ultra",
     fontWeight: "bold",
   },
   time: {
