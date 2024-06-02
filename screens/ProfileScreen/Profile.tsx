@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    width: "45%",
+    width: "49%",
     backgroundColor: Colors.color2.dark,
     padding: 10,
     borderRadius: 10,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     backgroundColor: "#fff",
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: Colors.color2.dark,
   },
   buttonText: {
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   signOutButtonText: {
-    color: Colors.color2.dark,
+    color: 'black',
   },
 });
 
