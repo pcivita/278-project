@@ -56,16 +56,16 @@ const NotificationsScreen = () => {
           requests.map(async (request) => {
             const { data: userData, error: userError } = await supabase
               .from("users")
-              .select("name")
+              .select("name, photo") // Include photo URL
               .eq("id", request.user_requested)
               .single();
 
             if (userError) {
               console.error(userError);
-              return { ...request, userName: "Unknown" };
+              return { ...request, userName: "Unknown", profilePictureUrl: null };
             }
 
-            return { ...request, userName: userData.name };
+            return { ...request, userName: userData.name, profilePictureUrl: userData.photo };
           })
         );
 
@@ -97,11 +97,12 @@ const NotificationsScreen = () => {
             const fetchUserName = async () => {
               const { data: userData, error: userError } = await supabase
                 .from("users")
-                .select("name")
+                .select("name, photo") // Include photo URL
                 .eq("id", payload.new.user_requested)
                 .single();
 
               const userName = userError ? "Unknown" : userData.name;
+              const profilePictureUrl = userError ? null : userData.photo;
 
               const date = formatDate(new Date(payload.new.created_at));
               setFriendRequestsByDate((prevRequests) => {
@@ -112,6 +113,7 @@ const NotificationsScreen = () => {
                 updatedRequests[date].push({
                   ...payload.new,
                   userName,
+                  profilePictureUrl,
                 });
                 return updatedRequests;
               });
@@ -139,20 +141,22 @@ const NotificationsScreen = () => {
   const isEmpty = Object.keys(friendRequestsByDate).length === 0;
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
-      <View>
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      <View style={styles.container}>
         {isEmpty ? (
           <Text>No Notifications</Text>
         ) : (
           Object.keys(friendRequestsByDate).map((date) => (
             <View key={date}>
-              <Text style={{ fontSize: 24, marginTop: 20 }}>{date}</Text>
+              <Text style={styles.dateHeader}>{date}</Text>
               {friendRequestsByDate[date].map((request) => (
                 <NotificationItem
                   type={"friend_request"}
                   message={request.userName + " wants to be your friend."}
                   requestId={request.id}
                   key={request.id}
+                  profilePictureUrl={request.profilePictureUrl} // Pass profile picture URL
+                  time={request.created_at}
                 />
               ))}
             </View>
@@ -164,23 +168,18 @@ const NotificationsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    paddingHorizontal: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: "#f0f0f0",
   },
-  contentContainer: {
-    flexGrow: 1,
-    paddingBottom: 20,
-  },
-  section: {
-    marginTop: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
+  dateHeader: {
+    fontSize: 24,
     fontWeight: "bold",
-    paddingLeft: 10,
-    paddingTop: 10,
-    paddingBottom: 5,
+    marginTop: 20,
+    marginBottom: 10,
   },
 });
 
