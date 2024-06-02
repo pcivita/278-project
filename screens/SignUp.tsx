@@ -45,7 +45,7 @@ const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
       
       <MonoText
         style={styles.submessageText}
-        onPress={() => navigation.navigate("Login")}
+        onPress={() => navigation.replace("Login")}
       >
         Already have an account?<Text style={styles.coloredText}> Log in instead</Text>
       </MonoText>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: Colors.color2.light,
     alignItems: "center",
-    height: 200,
+    height: 300,
   },
   logo: {
     width: 150,
@@ -73,10 +73,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    marginTop: 80,
+    marginTop: 100,
   },
   buttonsContainer: {
-    marginTop: 20,
+    marginTop: 50,
     gap: 10,
   },
   subtitle: {
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   submessageText: {
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 10,
   },
   coloredText: {

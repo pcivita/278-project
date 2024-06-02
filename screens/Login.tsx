@@ -1,10 +1,12 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Auth } from "@/components/AppleAuth.native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { OnboardingStackParamList } from "@/types";
+import Colors from "@/constants/Colors";
+import { MonoText } from "@/components/StyledText";
 
 interface LoginProps {
   // navigation: any;
@@ -19,38 +21,34 @@ const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => setCurrentScreen("onboarding")}
         style={styles.backCaret}
       >
         <FontAwesome5 name="arrow-left" size={24} color="black" />
-      </TouchableOpacity>
-      <View style={styles.spacing} />
-      <Text>flock logo</Text>
-      <Text style={styles.title}>Flock</Text>
-      <Text
-        style={[
-          styles.subtitle,
-          { width: 220, fontSize: 20, marginTop: 6, marginBottom: 30 },
-        ]}
-      >
-        Hang out with your friends
-      </Text>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("LoginWithUsername")}
-        style={styles.primaryButton}
-      >
-        <Text style={styles.loginText}>Log In with Username</Text>
-      </TouchableOpacity>
-      <View style={{ alignItems: "center", marginTop: 20 }}>
+      </TouchableOpacity> */}
+      {/* <Text style={styles.title}>Get started with Flock today</Text> */}
+      <View style={styles.header} />
+      <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />
+      <MonoText useUltra={true} style={styles.title}>
+        Log in to your Flock account
+      </MonoText>
+      <View style={styles.buttonsContainer}>
         <Auth navigation={navigation} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("SignUpManually")}
+          style={styles.button}
+        >
+          <MonoText style={styles.buttonText}>Sign in with Email</MonoText>
+        </TouchableOpacity>
       </View>
-      <Text
+      
+      <MonoText
         style={styles.submessageText}
-        onPress={() => navigation.navigate("SignUp")}
+        onPress={() => navigation.replace("SignUp")}
       >
-        Don't have an account?<Text style={styles.blueText}>Sign Up</Text>
-      </Text>
+        Don't have an account?<Text style={styles.coloredText}> Create one here</Text>
+      </MonoText>
     </View>
   );
 };
@@ -60,17 +58,26 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    padding: 20,
     backgroundColor: "white",
   },
+  header: {
+    width: "100%",
+    backgroundColor: Colors.color2.light,
+    alignItems: "center",
+    height: 300,
+  },
   logo: {
-    width: 50,
-    height: 50,
+    width: 150,
+    height: 150,
+    marginTop: -75,
   },
   title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    marginTop: 16,
+    fontSize: 24,
+    marginTop: 100,
+  },
+  buttonsContainer: {
+    marginTop: 50,
+    gap: 10,
   },
   subtitle: {
     fontSize: 24,
@@ -78,27 +85,31 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.7,
     textAlign: "center",
   },
-  primaryButton: {
-    backgroundColor: "pink",
-    padding: 10,
-    borderRadius: 999,
+  button: {
     width: windowWidth * 0.8,
+    height: 40,
+    borderRadius: 100,
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 12,
+    backgroundColor: Colors.color2.dark,
   },
-  loginText: {
-    fontSize: 16,
+  buttonText: {
+    fontSize: 40 * 0.43,
     color: "white",
   },
-  backCaret: {
-    alignSelf: "flex-start",
-    marginTop: 50,
-    width: windowWidth * 0.9,
-    height: 50,
+  submessageText: {
+    fontSize: 16,
+    marginTop: 10,
   },
-  spacing: {
-    height: windowHeight * 0.05,
-  },
+  coloredText: {
+    color: Colors.color1.dark,
+  }
+  // backCaret: {
+  //   alignSelf: "flex-start",
+  //   marginTop: 50,
+  //   width: windowWidth * 0.9,
+  //   height: 50,
+  // },
 });
 
 export default Login;
