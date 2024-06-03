@@ -120,11 +120,11 @@ const ProfileScreen = () => {
         <TouchableOpacity style={styles.button} onPress={goToEditProfile}>
           <Text style={styles.buttonText}>Edit Profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.signOutButton]}>
-          <Text
-            style={[styles.buttonText, styles.signOutButtonText]}
-            onPress={() => supabase.auth.signOut()}
-          >
+        <TouchableOpacity 
+          style={[styles.button, styles.signOutButton]}
+          onPress={() => supabase.auth.signOut()}
+        >
+          <Text style={[styles.buttonText, styles.signOutButtonText]}>
             Sign Out
           </Text>
         </TouchableOpacity>
