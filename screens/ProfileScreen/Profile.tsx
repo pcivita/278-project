@@ -1,20 +1,17 @@
-import { supabase } from "@/utils/supabase";
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ProfileCard from "../../components/ProfileCard";
 import Colors from "@/constants/Colors";
-import {
-  useNavigation,
-  NavigationProp,
-  useFocusEffect,
-} from "@react-navigation/native";
+import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { MonoText } from "@/components/StyledText";
-import { RootStackParamList, UserProfile } from "./types"; // Adjust the path as needed
+import { RootStackParamList, UserProfile } from "./types";
+import { supabase } from "@/utils/supabase";
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [friendCount, setFriendCount] = useState<number>(0);
 
   const fetchUserProfile = async () => {
     setLoading(true);
@@ -37,8 +34,24 @@ const ProfileScreen = () => {
     } else {
       console.log("Profile data fetched:", profileData);
       setUserProfile(profileData);
+      fetchFriendCount(userId); // Fetch friend count when user profile is fetched
     }
     setLoading(false);
+  };
+
+  const fetchFriendCount = async (userId: string) => {
+    const { count, error } = await supabase
+      .from("friends")
+      .select("*", { count: "exact" })
+      .or(`user_requested.eq.${userId},user_accepted.eq.${userId}`)
+      .eq("status", "Friends");
+
+    if (error) {
+      console.error("Error fetching friend count:", error);
+    } else {
+      console.log("Friend count fetched:", count);
+      setFriendCount(count || 0);
+    }
   };
 
   useFocusEffect(
@@ -91,7 +104,7 @@ const ProfileScreen = () => {
         </MonoText>
         <TouchableOpacity onPress={goToFriends}>
           <MonoText style={styles.mutualFriends}>
-            {userProfile.friend_count || 0} friends
+            {friendCount} friends
           </MonoText>
         </TouchableOpacity>
       </View>
@@ -178,7 +191,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    width: "45%",
+    width: "49%",
     backgroundColor: Colors.color2.dark,
     padding: 10,
     borderRadius: 10,
@@ -186,7 +199,7 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     backgroundColor: "#fff",
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: Colors.color2.dark,
   },
   buttonText: {
@@ -194,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   signOutButtonText: {
-    color: Colors.color2.dark,
+    color: "black",
   },
 });
 

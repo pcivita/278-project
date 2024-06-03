@@ -3,18 +3,15 @@ import { View, StyleSheet, ScrollView, Text } from "react-native";
 import CalendarDate from "../components/CalendarDate";
 import EmptyCalendarDate from "../components/EmptyCalendarDate";
 import { supabase } from "@/utils/supabase";
-import { toZonedTime, format } from "date-fns-tz";
+import { format } from "date-fns";
 import { useUser } from "@/UserContext";
 
-// TODO: Sort Events
-// TODO: Click on event
 interface Event {
   id: string;
   event_name: string;
   event_start: string;
   event_end: string;
   location: string;
-  host: string;
   max_people: number;
   signups: number;
   current_signups: number;
@@ -22,7 +19,7 @@ interface Event {
   creator_id: string;
   isAttending: boolean;
   event_date: string;
-  event_month: string; // Add event_month to the Event interface
+  event_month: string;
 }
 
 const Calendar = () => {
@@ -30,6 +27,7 @@ const Calendar = () => {
     Record<string, Record<string, Event[]>>
   >({});
   const { userId } = useUser();
+  const nowUTC = new Date().toISOString();
 
   useEffect(() => {
     fetchEvents();
@@ -67,10 +65,8 @@ const Calendar = () => {
       (signup) => signup.event_id
     );
 
-    const { data: createdEventsData, error: createdEventsError } = await supabase
-      .from("event")
-      .select("id")
-      .eq("creator_id", userId);
+    const { data: createdEventsData, error: createdEventsError } =
+      await supabase.from("event").select("id").eq("creator_id", userId);
     if (createdEventsError) {
       console.error("Error fetching created events:", createdEventsError);
       return;
@@ -90,7 +86,8 @@ const Calendar = () => {
     const { data: eventsData, error: eventsError } = await supabase
       .from("event")
       .select("*")
-      .in("id", allEventIds);
+      .in("id", allEventIds)
+      .gte("event_end", nowUTC);
 
     if (eventsError) {
       console.error("Error fetching events:", eventsError);
@@ -102,18 +99,17 @@ const Calendar = () => {
   };
 
   const formatEvents = (eventsData: Event[]) => {
-    const timeZone = "America/Los_Angeles";
     const eventsByMonth: Record<string, Record<string, Event[]>> = {};
 
     eventsData.forEach((event) => {
-      const eventStartPST = toZonedTime(new Date(event.event_start), timeZone);
-      const eventEndPST = toZonedTime(new Date(event.event_end), timeZone);
-      const eventStartFormatted = format(eventStartPST, "yyyy-MM-dd h:mm a", {
-        timeZone,
-      });
-      const eventEndFormatted = format(eventEndPST, "h:mm a", { timeZone });
-      const eventDate = format(eventStartPST, "yyyy-MM-dd", { timeZone });
-      const eventMonth = format(eventStartPST, "MMMM", { timeZone });
+      const eventStart = new Date(event.event_start);
+      const eventEnd = new Date(event.event_end);
+
+      // Format dates using local time without time zone conversions
+      const eventStartFormatted = format(eventStart, "yyyy-MM-dd h:mm a");
+      const eventEndFormatted = format(eventEnd, "h:mm a");
+      const eventDate = format(eventStart, "yyyy-MM-dd");
+      const eventMonth = format(eventStart, "MMMM");
 
       const formattedEvent = {
         ...event,
@@ -234,7 +230,11 @@ const Calendar = () => {
   );
 
   if (Object.keys(eventsByMonth).length === 0) {
-    return <Text>No events found</Text>;
+    return (
+      <View style={{ backgroundColor: "white", flex: 1 }}>
+        <Text>No events found</Text>
+      </View>
+    );
   }
 
   return (
@@ -271,6 +271,7 @@ const Calendar = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    paddingBottom: 200, // Add paddin
     alignItems: "center",
   },
   title: {

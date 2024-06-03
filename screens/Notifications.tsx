@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
-import { FriendRequest } from "@/utils/interfaces";
 import { useUser } from "@/UserContext";
+import { useNavigation } from "@react-navigation/native";
 
 const formatDate = (date) => {
   const today = new Date();
@@ -33,6 +33,7 @@ const formatDate = (date) => {
 
 const NotificationsScreen = () => {
   const { userId } = useUser();
+  const navigation = useNavigation();
   const [friendRequestsByDate, setFriendRequestsByDate] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,16 +57,24 @@ const NotificationsScreen = () => {
           requests.map(async (request) => {
             const { data: userData, error: userError } = await supabase
               .from("users")
-              .select("name")
+              .select("name, photo") // Include photo URL
               .eq("id", request.user_requested)
               .single();
 
             if (userError) {
               console.error(userError);
-              return { ...request, userName: "Unknown" };
+              return {
+                ...request,
+                userName: "Unknown",
+                profilePictureUrl: null,
+              };
             }
 
-            return { ...request, userName: userData.name };
+            return {
+              ...request,
+              userName: userData.name,
+              profilePictureUrl: userData.photo,
+            };
           })
         );
 
@@ -97,11 +106,12 @@ const NotificationsScreen = () => {
             const fetchUserName = async () => {
               const { data: userData, error: userError } = await supabase
                 .from("users")
-                .select("name")
+                .select("name, photo") // Include photo URL
                 .eq("id", payload.new.user_requested)
                 .single();
 
               const userName = userError ? "Unknown" : userData.name;
+              const profilePictureUrl = userError ? null : userData.photo;
 
               const date = formatDate(new Date(payload.new.created_at));
               setFriendRequestsByDate((prevRequests) => {
@@ -112,6 +122,7 @@ const NotificationsScreen = () => {
                 updatedRequests[date].push({
                   ...payload.new,
                   userName,
+                  profilePictureUrl,
                 });
                 return updatedRequests;
               });
@@ -139,20 +150,27 @@ const NotificationsScreen = () => {
   const isEmpty = Object.keys(friendRequestsByDate).length === 0;
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
-      <View>
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      <View style={styles.container}>
         {isEmpty ? (
-          <Text>No Notifications</Text>
+          <View style={styles.noNotificationsContainer}>
+            <Text style={styles.noNotificationsText}>No Notifications</Text>
+            <TouchableOpacity style={styles.addFriendsButton} onPress={() => navigation.navigate('Friends')}>
+              <Text style={styles.addFriendsButtonText}>Add Friends</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           Object.keys(friendRequestsByDate).map((date) => (
             <View key={date}>
-              <Text style={{ fontSize: 24, marginTop: 20 }}>{date}</Text>
+              <Text style={styles.dateHeader}>{date}</Text>
               {friendRequestsByDate[date].map((request) => (
                 <NotificationItem
                   type={"friend_request"}
                   message={request.userName + " wants to be your friend."}
                   requestId={request.id}
                   key={request.id}
+                  profilePictureUrl={request.profilePictureUrl} // Pass profile picture URL
+                  time={request.created_at}
                 />
               ))}
             </View>
@@ -164,23 +182,38 @@ const NotificationsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f0f0f0",
-  },
   contentContainer: {
+    paddingHorizontal: 10,
     flexGrow: 1,
-    paddingBottom: 20,
   },
-  section: {
-    marginTop: 10,
+  container: {},
+  dateHeader: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
   },
-  sectionTitle: {
+  noNotificationsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "0%",
+  },
+  noNotificationsText: {
+    color: "grey",
+    fontSize: 16,
+  },
+  addFriendsButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#9AA899",
+    borderRadius: 5,
+  },
+  addFriendsButtonText: {
+    color: "white",
     fontSize: 16,
     fontWeight: "bold",
-    paddingLeft: 10,
-    paddingTop: 10,
-    paddingBottom: 5,
   },
 });
 
