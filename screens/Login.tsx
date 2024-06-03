@@ -20,8 +20,6 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
   const [password, setPassword] = useState<string>("");
 
   
-  // const isFormValid = email !== "" && password != "";
-  // const wrongLogin = true; // TODO: 
 
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -89,9 +87,6 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
           onChangeText={setPassword}
           autoCapitalize="none"
         />
-        {/* {wrongLogin && (
-          <MonoText style={styles.redText}>The email/username or password you entered is incorrect.</MonoText>
-        )} */}
       </View>
       <TouchableOpacity 
         style={styles.button}

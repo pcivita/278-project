@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Image, ActivityIndicator } from "react-native";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { MonoText, MonoTextInput } from "@/components/StyledText";
+import { supabase } from "@/utils/supabase";
+import Alert from "@/components/Alert";
+
 
 interface CreateAccountProps {
   // navigation: any;
@@ -26,6 +29,14 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
   const isFormValid = name !== "" && email !== "" && username !== "" && password.length >= 8;
   const passwordMessage = password && password.length < 8;
 
+  const [loading, setLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
+
   // console.log(setCurrentScreen)
 
   const handleImagePick = async () => {
@@ -42,13 +53,43 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
     }
   };
 
-  const handleCreateAccount = () => {
-    console.log("creating account")
+  const onSignUpPress = async () => {
+    setLoading(true);
+
+    const { error, data: { session } } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    // if (name === "" || email === "" || username === "" || password.length < 8) {
+    if (email === "" || password.length < 8) {
+      setAlertMessage("Please fill in all fields");
+      setAlertVisible(true);
+    }
+    else if (error) {
+      setAlertMessage("Check your email for the confirmation link."); // todo: change
+      setAlertVisible(true);
+    }
+    if (!session) {
+      
+    }
+    setLoading(false);
   }
 
 
   return (
     <View style={styles.container}>
+      <Alert
+        visible={alertVisible}
+        message={alertMessage}
+        onClose={closeAlert}
+      />
+      {loading && (
+        <View style={styles.overlay}>
+          <ActivityIndicator  size="large" color="white" />
+          <MonoText style={styles.overlayText}>Loading...</MonoText>
+        </View>
+      )}
       <TouchableOpacity
         onPress={() => setCurrentScreen("sign up options")}
         style={styles.backCaret}
@@ -79,6 +120,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
+          autoCapitalize="none"
         />
         <MonoText style={styles.text}>Bio</MonoText>
         <MonoTextInput
@@ -97,6 +139,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
           placeholder="Username"
           value={username}
           onChangeText={setUsername}
+          autoCapitalize="none"
         />
         <MonoText style={styles.text}>Choose password
           <MonoText style={styles.pinkText}> *</MonoText>
@@ -107,15 +150,15 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          autoCapitalize="none"
         />
         {passwordMessage && (
           <MonoText style={styles.redText}>Password must be at least 8 characters</MonoText>
         )}
       </View>
       <TouchableOpacity 
-        style={[styles.button, !isFormValid && { backgroundColor: Colors.color2.light }]}
-        disabled={!isFormValid}
-        onPress={handleCreateAccount}
+        style={styles.button}
+        onPress={onSignUpPress}
       >
         <MonoText style={styles.buttonText}>Create Account</MonoText>
       </TouchableOpacity>
@@ -186,6 +229,20 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
   },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
+    elevation: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    gap: 5,
+    paddingTop: 100,
+  },
+  overlayText: {
+    color: "white",
+    fontSize: 16,
+  }
 });
 
 
