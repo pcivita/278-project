@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { MonoText, MonoTextInput } from "@/components/StyledText";
 import { supabase } from "@/utils/supabase";
+import Alert from "@/components/Alert";
 
 interface LoginProps {
   setCurrentScreen: (screen: string) => void;
@@ -15,22 +16,44 @@ const windowHeight = Dimensions.get("window").height;
 
 const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
 
-  const [emailOrUsername, setEmailOrUsername] = useState<string>("");
+  const [email, setemail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   
-  const isFormValid = emailOrUsername !== "" && password != "";
-  const wrongLogin = true; // TODO: 
+  // const isFormValid = email !== "" && password != "";
+  // const wrongLogin = true; // TODO: 
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   
   const [loading, setLoading] = useState(false);
   const onLoginPress = async () => {
     setLoading(true);
-    
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setAlertMessage(error.message);
+      setAlertVisible(true);
+    }
+    setLoading(false);
   }
+
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
 
   return (
     <View style={styles.container}>
+      <Alert
+        visible={alertVisible}
+        message={alertMessage}
+        onClose={closeAlert}
+      />
       {loading && (
         <View style={styles.overlay}>
           <ActivityIndicator  size="large" color="white" />
@@ -47,18 +70,14 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
         <MonoText useUltra={true} style={styles.headerText}>Log in to your account</MonoText>
       </View>
       <View style={styles.inputContainer}>
-        <MonoText style={styles.text}>Email or username
-          <MonoText style={styles.pinkText}> *</MonoText>
-        </MonoText>
+        <MonoText style={styles.text}>Email</MonoText>
         <MonoTextInput
           style={styles.input}
-          placeholder="Email or username"
-          value={emailOrUsername}
-          onChangeText={setEmailOrUsername}
+          placeholder="Email"
+          value={email}
+          onChangeText={setemail}
         />
-                <MonoText style={styles.text}>Choose password
-          <MonoText style={styles.pinkText}> *</MonoText>
-        </MonoText>
+        <MonoText style={styles.text}>Password</MonoText>
         <MonoTextInput
           style={styles.input}
           placeholder="Password"
@@ -66,16 +85,15 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
           value={password}
           onChangeText={setPassword}
         />
-        {wrongLogin && (
+        {/* {wrongLogin && (
           <MonoText style={styles.redText}>The email/username or password you entered is incorrect.</MonoText>
-        )}
+        )} */}
       </View>
       <TouchableOpacity 
-        style={[styles.button, !isFormValid && { backgroundColor: Colors.color2.light }]}
-        disabled={!isFormValid}
+        style={styles.button}
         onPress={onLoginPress}
       >
-        <MonoText style={styles.buttonText}>Create Account</MonoText>
+        <MonoText style={styles.buttonText}>Sign In</MonoText>
       </TouchableOpacity>
     </View>
   );
@@ -159,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 1,
     elevation: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     gap: 5,
     paddingTop: 100,
   },
