@@ -1,54 +1,99 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Auth } from "@/components/AppleAuth.native";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { OnboardingStackParamList } from "@/types";
+import React, { useState } from "react";
+import { View, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator } from "react-native";
 import Colors from "@/constants/Colors";
-import { MonoText } from "@/components/StyledText";
+import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
+import { MonoText, MonoTextInput } from "@/components/StyledText";
+import { supabase } from "@/utils/supabase";
+import Alert from "@/components/Alert";
 
 interface LoginProps {
-  // navigation: any;
   setCurrentScreen: (screen: string) => void;
 }
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
-  const navigation = useNavigation<StackNavigationProp<OnboardingStackParamList>>();
+const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
+
+  const [email, setemail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
+
+  
+  const [loading, setLoading] = useState(false);
+  const onLoginPress = async () => {
+    setLoading(true);
+
+    const { error, data: { session } } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setAlertMessage(error.message);
+      setAlertVisible(true);
+    }
+    if (!session) {
+
+    }
+    setLoading(false);
+  }
 
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity
-        onPress={() => setCurrentScreen("onboarding")}
+      <Alert
+        visible={alertVisible}
+        message={alertMessage}
+        onClose={closeAlert}
+      />
+      {loading && (
+        <View style={styles.overlay}>
+          <ActivityIndicator  size="large" color="white" />
+          <MonoText style={styles.overlayText}>Loading...</MonoText>
+        </View>
+      )}
+      <TouchableOpacity
+        onPress={() => setCurrentScreen("log in options")}
         style={styles.backCaret}
       >
-        <FontAwesome5 name="arrow-left" size={24} color="black" />
-      </TouchableOpacity> */}
-      {/* <Text style={styles.title}>Get started with Flock today</Text> */}
-      <View style={styles.header} />
-      <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />
-      <MonoText useUltra={true} style={styles.title}>
-        Log in to your Flock account
-      </MonoText>
-      <View style={styles.buttonsContainer}>
-        <Auth navigation={navigation} />
-        <TouchableOpacity
-          onPress={() => navigation.navigate("SignUpManually")}
-          style={styles.button}
-        >
-          <MonoText style={styles.buttonText}>Sign in with Email</MonoText>
-        </TouchableOpacity>
+        <Ionicons name="chevron-back" size={24} color="black" />
+      </TouchableOpacity>  
+      <View style={styles.header}>
+        <MonoText useUltra={true} style={styles.headerText}>Log in to your account</MonoText>
       </View>
-      
-      <MonoText
-        style={styles.submessageText}
-        onPress={() => navigation.replace("SignUp")}
+      <View style={styles.inputContainer}>
+        <MonoText style={styles.text}>Email</MonoText>
+        <MonoTextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setemail}
+          autoCapitalize="none"
+        />
+        <MonoText style={styles.text}>Password</MonoText>
+        <MonoTextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          autoCapitalize="none"
+        />
+      </View>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={onLoginPress}
       >
-        Don't have an account?<Text style={styles.coloredText}> Create one here</Text>
-      </MonoText>
+        <MonoText style={styles.buttonText}>Sign In</MonoText>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -57,33 +102,59 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
+    // padding: 20,
     backgroundColor: "white",
   },
+  backCaret: {
+    alignSelf: "flex-start",
+    marginTop: 70,
+    marginLeft: 10,
+  },
   header: {
-    width: "100%",
-    backgroundColor: Colors.color2.light,
-    alignItems: "center",
-    height: 300,
-  },
-  logo: {
-    width: 150,
-    height: 150,
-    marginTop: -75,
-  },
-  title: {
-    fontSize: 24,
     marginTop: 100,
+    width: "90%"
   },
-  buttonsContainer: {
-    marginTop: 50,
-    gap: 10,
-  },
-  subtitle: {
+  headerText: {
     fontSize: 24,
-    marginTop: 14,
-    width: windowWidth * 0.7,
-    textAlign: "center",
+  },
+  photoSelection: {
+    alignItems: "center",
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 75,
+    marginBottom: 5,
+  },
+  greenText: {
+    color: Colors.color2.dark,
+    fontSize: 14,
+    marginBottom: 20,
+  },
+  pinkText: {
+    color: Colors.color5.dark,
+    fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
+    bottom: 2,
+  },
+  redText: {
+    color: "red",
+  },
+  inputContainer: {
+    width: "90%",
+    marginTop: 50,
+    height: 200,
+  },
+  input: {
+    fontSize: 16,
+    width: "100%",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
+    marginBottom: 10,
   },
   button: {
     width: windowWidth * 0.8,
@@ -92,24 +163,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: Colors.color2.dark,
+    flexDirection: "row",
+    marginTop: 20,
   },
   buttonText: {
-    fontSize: 40 * 0.43,
     color: "white",
-  },
-  submessageText: {
     fontSize: 16,
-    marginTop: 10,
   },
-  coloredText: {
-    color: Colors.color1.dark,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
+    elevation: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    gap: 5,
+    paddingTop: 100,
+  },
+  overlayText: {
+    color: "white",
+    fontSize: 16,
   }
-  // backCaret: {
-  //   alignSelf: "flex-start",
-  //   marginTop: 50,
-  //   width: windowWidth * 0.9,
-  //   height: 50,
-  // },
 });
+
 
 export default Login;

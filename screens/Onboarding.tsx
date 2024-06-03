@@ -14,11 +14,12 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 // import { UserContext } from "../contexts/UserContext";
 // import { ActivityIndicator } from "react-native-paper";
+import LoginOptions from "./LoginOptions";
 import Login from "./Login";
-import SignUp from "./SignUp";
+import SignUpOptions from "./SignUpOptions";
+import CreateAccount from "./CreateAccount";
 import Colors from "@/constants/Colors";
 import { MonoText } from "@/components/StyledText";
-import EventCard from "@/components/EventCard";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -61,40 +62,51 @@ export default function Onboarding() {
   const renderOnboardingImage = () => {
     switch (onboardingScreenNumber) {
       case 1:
-        return <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />;
+        return (
+          <Image
+            source={require("../assets/icons/FlockIcon.png")}
+            style={styles.logo}
+          />
+        );
       case 2:
         return (
           <View style={styles.onboardingImageContainer}>
-            <MonoText useUltra={true} style={styles.onboardingTitle}>Flock</MonoText>
-            <Image 
-              source={require("../assets/images/OnboardingImage1.png")} 
-              resizeMode="contain" 
-              style={[styles.onboardingImage, { top: 20 }]} 
+            <MonoText useUltra={true} style={styles.onboardingTitle}>
+              Flock
+            </MonoText>
+            <Image
+              source={require("../assets/images/OnboardingImage1.png")}
+              resizeMode="contain"
+              style={[styles.onboardingImage, { top: 20 }]}
             />
           </View>
-        )
+        );
       case 3:
         return (
           <View style={styles.onboardingImageContainer}>
-            <MonoText useUltra={true} style={styles.onboardingTitle}>Flock</MonoText>
-            <Image 
-              source={require("../assets/images/OnboardingImage2.png")} 
-              resizeMode="contain" 
+            <MonoText useUltra={true} style={styles.onboardingTitle}>
+              Flock
+            </MonoText>
+            <Image
+              source={require("../assets/images/OnboardingImage2.png")}
+              resizeMode="contain"
               style={[styles.onboardingImage, { top: 19 }]}
             />
           </View>
-        )
+        );
       case 4:
         return (
           <View style={styles.onboardingImageContainer}>
-            <MonoText useUltra={true} style={styles.onboardingTitle}>Flock</MonoText>
-            <Image 
-              source={require("../assets/images/OnboardingImage3.png")} 
-              resizeMode="contain" 
+            <MonoText useUltra={true} style={styles.onboardingTitle}>
+              Flock
+            </MonoText>
+            <Image
+              source={require("../assets/images/OnboardingImage3.png")}
+              resizeMode="contain"
               style={[styles.onboardingImage, { bottom: 60 }]}
             />
           </View>
-        )
+        );
     }
   };
 
@@ -141,7 +153,7 @@ export default function Onboarding() {
   // };
 
   const handleSignUp = async () => {
-    console.log("sign up");
+    console.log("sign up options");
 
     // setLoading(true);
     // if (email && password) {
@@ -175,13 +187,19 @@ export default function Onboarding() {
       <View style={[styles.container]}>
         <View style={styles.onboardingSpacing} />
         {renderOnboardingImage()}
-        <View 
+        <View
           style={[
-            styles.bottomSheet, 
-            onboardingScreenNumber === 1 && {backgroundColor: "white"}, 
-            onboardingScreenNumber === 2 && {backgroundColor: Colors.color5.light},
-            onboardingScreenNumber === 3 && {backgroundColor: Colors.color3.light},
-            onboardingScreenNumber === 4 && {backgroundColor: Colors.color2.light},
+            styles.bottomSheet,
+            onboardingScreenNumber === 1 && { backgroundColor: "white" },
+            onboardingScreenNumber === 2 && {
+              backgroundColor: Colors.color5.light,
+            },
+            onboardingScreenNumber === 3 && {
+              backgroundColor: Colors.color3.light,
+            },
+            onboardingScreenNumber === 4 && {
+              backgroundColor: Colors.color2.light,
+            },
           ]}
         >
           {onboardingScreenNumber < 5 && (
@@ -236,7 +254,7 @@ export default function Onboarding() {
             <TouchableOpacity
               style={styles.onboardingButton}
               // onPress={() => {setOnboardingScreenNumber(5)}}
-              onPress={() => setCurrentScreen("sign up")}
+              onPress={() => setCurrentScreen("sign up options")}
             >
               <MonoText useUltra={true} style={styles.onBoardingButtonText}>
                 Continue
@@ -293,7 +311,7 @@ export default function Onboarding() {
         </TouchableOpacity>
         <Text
           style={styles.submessageText}
-          onPress={() => setCurrentScreen("sign up")}
+          onPress={() => setCurrentScreen("sign up options")}
         >
           Don't have an account?<Text style={styles.blueText}>Sign Up</Text>
         </Text>
@@ -405,10 +423,14 @@ export default function Onboarding() {
   };
 
   switch (currentScreen) {
+    case "log in options":
+      return <LoginOptions setCurrentScreen={setCurrentScreen} />;
+    case "sign up options":
+      return <SignUpOptions setCurrentScreen={setCurrentScreen} />;
+    case "create account":
+      return <CreateAccount setCurrentScreen={setCurrentScreen} />;
     case "log in":
       return <Login setCurrentScreen={setCurrentScreen} />;
-    case "sign up":
-      return <SignUp setCurrentScreen={setCurrentScreen} />;
     default:
       return renderOnboarding();
   }
@@ -477,8 +499,6 @@ const styles = StyleSheet.create({
   onboardingImage: {
     width: windowWidth * 0.9,
   },
-
-
 
   whiteContainer: {
     flex: 1,
@@ -555,7 +575,7 @@ const styles = StyleSheet.create({
   onboardingButtonPlaceholder: {
     width: 200,
     height: 50,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   secondaryButton: {
     backgroundColor: "pink",

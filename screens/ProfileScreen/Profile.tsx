@@ -100,7 +100,7 @@ const ProfileScreen = () => {
           />
         </View>
         <MonoText useUltra={true} style={styles.username}>
-          @{userProfile.username || "Username"}
+          @{userProfile.username || "username"}
         </MonoText>
         <TouchableOpacity onPress={goToFriends}>
           <MonoText style={styles.mutualFriends}>

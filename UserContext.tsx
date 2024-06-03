@@ -24,7 +24,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       const { data: user, error: authError } = await supabase.auth.getUser();
 
       if (authError) {
-        console.error("Authentication error:", authError);
+        console.log("Authentication error:", authError.message);
+        // console.error("Authentication error:", authError);
         return;
       }
 

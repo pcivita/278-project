@@ -32,7 +32,7 @@ const EditProfileScreen = () => {
     }
   };
 
-  const handleSave = async () => {
+  const handleCreateAccount = async () => {
     try {
       console.log("Fetching user data...");
       const { data, error } = await supabase.auth.getUser();
@@ -96,7 +96,7 @@ const EditProfileScreen = () => {
           console.error('Error uploading or fetching photo URL:', photoError);
           Alert.alert('Error', 'Error uploading photo');
           return;
-        }
+        } 
       }
 
       console.log("Updating user profile...");
@@ -121,7 +121,7 @@ const EditProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleImagePick}>
+      <TouchableOpacity onPress={handleImagePick} style={styles.photoSelection}>
         <Image source={{ uri: profilePhoto || "https://via.placeholder.com/150" }} style={styles.profileImage} />
         <Text style={styles.changePhotoText}>Change Photo</Text>
       </TouchableOpacity>
@@ -156,6 +156,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     backgroundColor: "white",
+  },
+  photoSelection: {
+    alignItems: "center"
   },
   profileImage: {
     width: 150,
