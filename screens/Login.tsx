@@ -25,13 +25,16 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
 
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
 
   
   const [loading, setLoading] = useState(false);
   const onLoginPress = async () => {
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data: { session } } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -40,12 +43,11 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
       setAlertMessage(error.message);
       setAlertVisible(true);
     }
+    if (!session) {
+
+    }
     setLoading(false);
   }
-
-  const closeAlert = () => {
-    setAlertVisible(false);
-  };
 
   return (
     <View style={styles.container}>
@@ -76,6 +78,7 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
           placeholder="Email"
           value={email}
           onChangeText={setemail}
+          autoCapitalize="none"
         />
         <MonoText style={styles.text}>Password</MonoText>
         <MonoTextInput
@@ -84,6 +87,7 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          autoCapitalize="none"
         />
         {/* {wrongLogin && (
           <MonoText style={styles.redText}>The email/username or password you entered is incorrect.</MonoText>
