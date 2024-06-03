@@ -46,7 +46,7 @@ const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
       </View>
       
       <MonoText style={styles.submessageText} >
-        Don't have an account?{" "} 
+        Already have an account?{" "} 
         <MonoText 
           style={styles.coloredText} 
           onPress={() => setCurrentScreen("log in options")}
