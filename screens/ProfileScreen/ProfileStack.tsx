@@ -40,7 +40,7 @@ function ProfileStack() {
           headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Edit Profile</MonoText>,
         }}
       />
-        <Stack.Screen
+      <Stack.Screen
         name="userProfile"
         component={UserProfile}
         options={{

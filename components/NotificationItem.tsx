@@ -2,14 +2,21 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../constants/Colors";
 import { supabase } from "@/utils/supabase";
+import { format } from "date-fns";
 
-const NotificationItem = ({ type, message, time, requestId }) => {
+const NotificationItem = ({
+  type,
+  message,
+  time,
+  requestId,
+  profilePictureUrl,
+}) => {
   const acceptRequest = async () => {
     try {
       const { data, error } = await supabase
         .from("friends")
-        .update({ status: "Accepted" }) // Update the status to "Accepted"
-        .eq("id", requestId); // Ensure you are updating the correct request ID
+        .update({ status: "Friends" })
+        .eq("id", requestId);
 
       if (error) {
         console.error("Error updating request:", error);
@@ -17,7 +24,6 @@ const NotificationItem = ({ type, message, time, requestId }) => {
       }
 
       console.log("Request accepted:", data);
-      // Optionally, update the local state or UI to reflect the change
     } catch (error) {
       console.error("Unexpected error:", error);
     }
@@ -28,7 +34,7 @@ const NotificationItem = ({ type, message, time, requestId }) => {
       const { data, error } = await supabase
         .from("friends")
         .delete()
-        .eq("id", requestId); // Ensure you are deleting the correct request ID
+        .eq("id", requestId);
 
       if (error) {
         console.error("Error deleting request:", error);
@@ -36,7 +42,6 @@ const NotificationItem = ({ type, message, time, requestId }) => {
       }
 
       console.log("Request rejected:", data);
-      // Optionally, update the local state or UI to reflect the change
     } catch (error) {
       console.error("Unexpected error:", error);
     }
@@ -81,17 +86,19 @@ const NotificationItem = ({ type, message, time, requestId }) => {
     });
   };
 
+  const formattedTime = format(new Date(time), "MMM d, yyyy, HH:mm");
+
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: "https://via.placeholder.com/50" }} // Replace with actual image URI
+        source={{ uri: profilePictureUrl || "https://via.placeholder.com/50" }}
         style={styles.profileImage}
       />
       <View style={styles.content}>
         <Text style={styles.message}>{renderMessage(message)}</Text>
         {renderButtons()}
+        <Text style={styles.time}>{formattedTime}</Text>
       </View>
-      <Text style={styles.time}>{time}</Text>
     </View>
   );
 };
@@ -114,10 +121,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginRight: 20,
+    marginRight: 10,
   },
   content: {
     flex: 1,
+    justifyContent: "space-between", // Ensure content is spaced evenly
   },
   message: {
     fontSize: 14,
@@ -125,7 +133,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   boldText: {
-    fontFamily: "TripSans-Ultra", // Ensure this font is correctly loaded in your project
+    fontFamily: "TripSans-Ultra",
     fontWeight: "bold",
   },
   buttonContainer: {
@@ -156,6 +164,7 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 12,
     color: "#888",
+    marginTop: 5, // Adjusted margin for better spacing
   },
 });
 

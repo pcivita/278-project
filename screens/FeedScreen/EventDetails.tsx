@@ -42,7 +42,6 @@ interface EventDetailsProps {
   navigation: StackNavigationProp<RootStackParamList, 'EditEvent'>;
 }
 
-// EventDetails component: a functional component taking in a route prop
 const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
   const {
     eventName,
@@ -138,7 +137,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
     }
 
     try {
-      // insert signup data
       const { data, error } = await supabase
         .from("event_signup")
         .insert([{ user_id: userId, event_id: eventId }]);
@@ -151,7 +149,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
         console.log("Data inserted successfully:", data);
       } 
 
-      // Fetch the current event details
       const { data: eventData, error: eventError } = await supabase
         .from('event')
         .select('current_signups, max_people')
@@ -167,7 +164,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
       const updatedSignups = current_signups + 1;
       const maxSignupReached = (updatedSignups >= max_people);
 
-      // Update the event with the new signup count and max_signup status
       const { error: updateEventError } = await supabase
         .from('event')
         .update({
@@ -183,7 +179,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
       console.log("User signed up and event updated successfully");
 
       setIsAttending(true);
-      fetchAttendees(); // Refresh attendees list
+      fetchAttendees();
     
     } catch (error) {
       console.error("Error joining event:", error);
@@ -194,7 +190,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
 
   const handleDeleteEvent = async () => {
     try {
-      // Delete event_signups entries
       const { error: signupError } = await supabase
         .from('event_signup')
         .delete()
@@ -204,7 +199,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
         throw signupError;
       }
 
-      // Delete the event
       const { error: eventError } = await supabase
         .from('event')
         .delete()
@@ -248,7 +242,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
         isUserHost={isUserHost}
         eventId={eventId}
       />
-      <MonoText style={styles.secondaryText}>Expires Sunday 11:59pm</MonoText>
       <View style={styles.section}>
         <MonoText useUltra={true} style={styles.primaryText}>
           Going
@@ -257,7 +250,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
           {attendees.map((attendee, index) => (
             <View key={index} style={styles.user}>
               <Image
-                source={{ uri: attendee.photo || 'default_image_url' }} // Replace 'default_image_url' with an actual URL
+                source={{ uri: attendee.photo || 'default_image_url' }}
                 style={styles.profileImage}
               />
               <MonoText style={styles.secondaryText}>{attendee.name}</MonoText>
@@ -283,19 +276,17 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
             You're attending this event!
           </MonoText>
         ) : (
-          <TouchableOpacity onPress={joinEvent}>
-            <View style={[styles.button, { backgroundColor: theme.dark }]}>
-              <MonoText style={styles.buttonText}>Join Event</MonoText>
-            </View>
+          <TouchableOpacity onPress={joinEvent} style={[styles.button, styles.joinButton]}>
+            <Text style={styles.buttonText}>Join Event</Text>
           </TouchableOpacity>
         ))}
       {isUserHost && (
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleEditEvent} style={styles.buttonTwo}>
-            <Text style={styles.buttonTextTwo}>Edit Event</Text>
+          <TouchableOpacity onPress={handleEditEvent} style={[styles.button, styles.editButton]}>
+            <Text style={styles.buttonText}>Edit Event</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleDeleteEvent} style={styles.buttonTwo}>
-            <Text style={styles.buttonTextTwo}>Delete Event</Text>
+          <TouchableOpacity onPress={handleDeleteEvent} style={[styles.button, styles.deleteButton]}>
+            <Text style={styles.deleteButtonText}>Delete Event</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -333,8 +324,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 14,
     color: "white",
+    fontWeight: 'bold',
   },
   horizontalLine: {
     width: "100%",
@@ -344,33 +336,43 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   button: {
-    width: windowWidth * 0.9,
-    height: 40,
-    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
     alignItems: "center",
-    justifyContent: "center",
+    marginVertical: 5,
   },
-  notes: {
-    marginVertical: 10,
+  joinButton: {
+    backgroundColor: Colors.color2.dark,
   },
   attendingText: {
-    fontSize: 20,
-    color: "green",
+    fontSize: 18,
+    color: "gray",
+    fontWeight: "bold",
     marginTop: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '95%',
     marginTop: 20,
   },
-  buttonTwo: {
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
+  editButton: {
+    backgroundColor: Colors.color2.dark,
+    flex: 1,
+    borderRadius: 10,
+    marginHorizontal: 5,
   },
-  buttonTextTwo: {
-    color: 'white',
-    fontWeight: 'bold',
+  deleteButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: Colors.color2.dark,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  deleteButtonText: {
+    color: 'black',
   },
 });
 
