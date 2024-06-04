@@ -32,7 +32,7 @@ const EditProfileScreen = () => {
     }
   };
 
-  const handleCreateAccount = async () => {
+  const handleSave = async () => {
     try {
       console.log("Fetching user data...");
       const { data, error } = await supabase.auth.getUser();
