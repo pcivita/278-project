@@ -61,17 +61,90 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
       password,
     });
 
-    // if (name === "" || email === "" || username === "" || password.length < 8) {
-    if (email === "" || password.length < 8) {
+    if (name === "" || email === "" || username === "" || password.length < 8) {
       setAlertMessage("Please fill in all fields");
       setAlertVisible(true);
+      setLoading(false);
+      return;
     }
     else if (error) {
-      setAlertMessage("Check your email for the confirmation link."); // todo: change
+      setAlertMessage(error.message); // todo: change
       setAlertVisible(true);
+      setLoading(false);
+      return;
     }
     if (!session) {
-      
+      setAlertMessage("Session error. Try again"); // todo: change
+      setLoading(false);
+      return;
+    }
+
+    const userId = session.user.id;
+
+
+    let profilePhotoUrl = "";
+    if (profilePhoto) {
+      profilePhotoUrl = profilePhoto;
+      try {
+        // Fetch the file data and convert to Blob
+        const response = await fetch(profilePhoto);
+        const blob = await response.blob();
+
+        const formData = new FormData();
+        formData.append('file', {
+          uri: profilePhoto,
+          name: `${Date.now()}.jpg`,
+          type: 'image/jpeg',
+        } as any);  // 'any' type assertion to bypass TypeScript error
+
+        const filePath = `${userId}/${Date.now()}.jpg`;
+        console.log("File path for upload:", filePath);
+
+        // Upload the FormData using the Supabase storage API
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('profile_photos')
+          .upload(filePath, formData as any, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error('Error uploading photo:', uploadError);
+          throw uploadError;
+        }
+
+        console.log("Photo uploaded:", uploadData);
+
+        // Construct the public URL
+        const { data: publicUrlData, error: urlError } = supabase.storage
+          .from('profile_photos')
+          .getPublicUrl(filePath);
+
+        if (urlError) {
+          console.error('Error getting public URL:', urlError);
+          throw urlError;
+        }
+
+        profilePhotoUrl = publicUrlData.publicUrl;
+        console.log("Public URL of uploaded photo:", profilePhotoUrl);
+      } catch (photoError) {
+        setAlertMessage('Error uploading or fetching photo URL:' + photoError);
+        setAlertVisible(true);
+        setLoading(false);
+        return;
+      } 
+    }
+  
+
+    const { error: profileError } = await supabase
+      .from('users')
+      .update({ username, name, bio, photo: profilePhotoUrl })
+      .eq('id', userId);
+
+    if (profileError) {
+      console.error('Error updating user profile:', profileError);
+      setAlertMessage('Error updating user profile');
+      setAlertVisible(true);
     }
     setLoading(false);
   }
