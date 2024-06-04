@@ -106,7 +106,14 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Create Event"
         component={CreateEvent}
-        options={{ tabBarLabel: '' }}
+        options={{ 
+          tabBarLabel: '',
+          headerTitle: () => (
+            <MonoText useUltra={true} style={{ fontSize: 22 }}>
+              Create Event
+            </MonoText>
+          ),
+        }}
       />
       <Tab.Screen
         name="Notifications"

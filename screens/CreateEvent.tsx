@@ -177,12 +177,12 @@ const CreateEvent = () => {
         onChangeText={setDescription}
         style={styles.input}
       />
-      <TouchableOpacity style={styles.date} onPress={showDatePicker}>
-        <MonoText> Event Start </MonoText>
+      <TouchableOpacity style={styles.input} onPress={showDatePicker}>
+        <MonoText style={styles.dateText}> Event Start </MonoText>
         <MonoText> {eventStartShow} </MonoText>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.date} onPress={showEndPicker}>
-        <MonoText> Event End </MonoText>
+      <TouchableOpacity style={styles.input} onPress={showEndPicker}>
+        <MonoText style={styles.dateText}> Event End </MonoText>
         <MonoText> {eventEndShow} </MonoText>
       </TouchableOpacity>
       <DateTimePickerModal
@@ -221,23 +221,18 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    marginVertical: 8,
-    padding: 15,
+    padding: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    backgroundColor: "#fff",
-  },
-  date: {
-    width: "100%",
-    marginVertical: 8,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    backgroundColor: "#fff",
+    borderColor: "#ddd",
+    borderRadius: 5,
+    marginBottom: 20,
+    fontSize: 16,
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#bbb",
   },
   button: {
     backgroundColor: Colors.color2.dark,
