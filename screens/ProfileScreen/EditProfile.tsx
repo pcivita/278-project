@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { supabase } from "@/utils/supabase";
 import * as ImagePicker from 'expo-image-picker';
 import Colors from "@/constants/Colors";
 import { useNavigation, NavigationProp, useRoute, RouteProp } from "@react-navigation/native";
 import { RootStackParamList, UserProfile } from "./types"; // Adjust the path as needed
+import { MonoText, MonoTextInput } from "@/components/StyledText";
 
 type EditProfileScreenRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
 
@@ -123,28 +124,29 @@ const EditProfileScreen = () => {
     <View style={styles.container}>
       <TouchableOpacity onPress={handleImagePick} style={styles.photoSelection}>
         <Image source={{ uri: profilePhoto || "https://via.placeholder.com/150" }} style={styles.profileImage} />
-        <Text style={styles.changePhotoText}>Change Photo</Text>
+        <MonoText style={styles.changePhotoText}>Change Photo</MonoText>
       </TouchableOpacity>
-      <TextInput
+      <MonoTextInput
         style={styles.input}
         placeholder="Name"
         value={name}
         onChangeText={setName}
       />
-      <TextInput
+      <MonoTextInput
         style={styles.input}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
+        autoCapitalize="none"
       />
-      <TextInput
+      <MonoTextInput
         style={styles.input}
         placeholder="Bio"
         value={bio}
         onChangeText={setBio}
       />
       <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Save</Text>
+        <MonoText style={styles.buttonText}>Save</MonoText>
       </TouchableOpacity>
     </View>
   );
@@ -167,6 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   changePhotoText: {
+    fontSize: 16,
     color: Colors.color2.dark,
     marginBottom: 20,
   },
