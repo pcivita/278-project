@@ -329,7 +329,7 @@ const Feed = ({ navigation }) => {
     >
       {Object.keys(sortedEventObj).map((date) => (
         <View key={date} style={styles.dateSection}>
-          <View>
+          <View style={styles.dateTextContainer}>
             <Text style={styles.dateText}>{date}</Text>
           </View>
           {sortedEventObj[date].map((event) => {
@@ -387,8 +387,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   dateText: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
+  },
+  dateTextContainer: {
+    width: "100%",
+    paddingHorizontal: 10,
   },
 });
 
