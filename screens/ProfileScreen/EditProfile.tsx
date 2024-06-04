@@ -149,7 +149,7 @@ const EditProfileScreen = () => {
         onChangeText={setBio}
       />
       <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <MonoText style={styles.buttonText}>Save</MonoText>
+        <MonoText useMedium={true} style={styles.buttonText}>Save</MonoText>
       </TouchableOpacity>
     </View>
   );
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    width: windowWidth * 0.8,
+    width: windowWidth * 0.9,
     height: 40,
     borderRadius: 100,
     justifyContent: "center",

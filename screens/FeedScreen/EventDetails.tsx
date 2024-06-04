@@ -286,7 +286,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
             <MonoText useMedium={true} style={styles.buttonText}>Edit Event</MonoText>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDeleteEvent} style={[styles.deleteButton, { borderColor: theme.dark }]}>
-            <MonoText useMedium={true} style={{ color: theme.dark }}>Delete Event</MonoText>
+            <MonoText useMedium={true} style={[styles.buttonText, { color: "black" }]}>Delete Event</MonoText>
           </TouchableOpacity>
         </View>
       )}
@@ -343,9 +343,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
   },
-  joinButton: {
-    backgroundColor: Colors.color2.dark,
-  },
   attendingText: {
     fontSize: 18,
     color: "gray",
@@ -367,7 +364,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   deleteButton: {
-  borderWidth: 1,
+    borderWidth: 2,
     flex: 1,
     height: 40,
     borderRadius: 100,
