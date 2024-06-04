@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
-import { FriendRequest } from "@/utils/interfaces";
 import { useUser } from "@/UserContext";
+import { useNavigation } from "@react-navigation/native";
 
 const formatDate = (date) => {
   const today = new Date();
@@ -39,6 +39,7 @@ const formatDate = (date) => {
 
 const NotificationsScreen = () => {
   const { userId } = useUser();
+  const navigation = useNavigation(); // Get the navigation prop
   const [friendRequestsByDate, setFriendRequestsByDate] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -123,10 +124,8 @@ const NotificationsScreen = () => {
     };
 
     const handleDelete = (payload) => {
-      console.log("I deleted");
       setFriendRequestsByDate((prevRequests) => {
         const updatedRequests = { ...prevRequests };
-        console.log(payload);
 
         Object.keys(updatedRequests).forEach((date) => {
           updatedRequests[date] = updatedRequests[date].filter(
@@ -140,11 +139,10 @@ const NotificationsScreen = () => {
         return updatedRequests;
       });
     };
+
     const handleUpdate = (payload) => {
-      console.log("I updated");
       setFriendRequestsByDate((prevRequests) => {
         const updatedRequests = { ...prevRequests };
-        console.log(payload);
 
         // Check if the updated request has a status of "Accepted"
         if (payload.new.status === "Friends") {
@@ -171,6 +169,7 @@ const NotificationsScreen = () => {
         return updatedRequests;
       });
     };
+
     const subscription = supabase
       .channel("friends")
       .on(
@@ -213,7 +212,7 @@ const NotificationsScreen = () => {
             <Text style={styles.noNotificationsText}>No Notifications</Text>
             <TouchableOpacity
               style={styles.addFriendsButton}
-              onPress={() => navigation.navigate("Friends")}
+              onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
             >
               <Text style={styles.addFriendsButtonText}>Add Friends</Text>
             </TouchableOpacity>

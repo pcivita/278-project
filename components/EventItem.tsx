@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
-    backgroundColor: Colors.color2.lightest,
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     marginBottom: 10,
   },
