@@ -276,17 +276,17 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
             You're attending this event!
           </MonoText>
         ) : (
-          <TouchableOpacity onPress={joinEvent} style={[styles.button, styles.joinButton]}>
-            <Text style={styles.buttonText}>Join Event</Text>
+          <TouchableOpacity onPress={joinEvent} style={[styles.button, { backgroundColor: theme.dark }]}>
+            <MonoText useMedium={true} style={styles.buttonText}>Join Event</MonoText>
           </TouchableOpacity>
         ))}
       {isUserHost && (
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleEditEvent} style={[styles.button, styles.editButton]}>
-            <Text style={styles.buttonText}>Edit Event</Text>
+          <TouchableOpacity onPress={handleEditEvent} style={[styles.editButton, { backgroundColor: theme.dark }]}>
+            <MonoText useMedium={true} style={styles.buttonText}>Edit Event</MonoText>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleDeleteEvent} style={[styles.button, styles.deleteButton]}>
-            <Text style={styles.deleteButtonText}>Delete Event</Text>
+          <TouchableOpacity onPress={handleDeleteEvent} style={[styles.deleteButton, { borderColor: theme.dark }]}>
+            <MonoText useMedium={true} style={{ color: theme.dark }}>Delete Event</MonoText>
           </TouchableOpacity>
         </View>
       )}
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   buttonText: {
-    fontSize: 14,
+    fontSize: 16,
     color: "white",
     fontWeight: 'bold',
   },
@@ -336,11 +336,12 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   button: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+    width: windowWidth * 0.9,
+    height: 40,
+    borderRadius: 100,
+    justifyContent: "center",
     alignItems: "center",
-    marginVertical: 5,
+    flexDirection: "row",
   },
   joinButton: {
     backgroundColor: Colors.color2.dark,
@@ -358,21 +359,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   editButton: {
-    backgroundColor: Colors.color2.dark,
     flex: 1,
-    borderRadius: 10,
+    height: 40,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 5,
   },
   deleteButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: Colors.color2.dark,
+  borderWidth: 1,
     flex: 1,
+    height: 40,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 5,
-  },
-  deleteButtonText: {
-    color: 'black',
   },
 });
 

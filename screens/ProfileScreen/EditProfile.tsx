@@ -11,6 +11,7 @@ type EditProfileScreenRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
 
 const windowWidth = Dimensions.get("window").width;
 
+
 const EditProfileScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const route = useRoute<EditProfileScreenRouteProp>();

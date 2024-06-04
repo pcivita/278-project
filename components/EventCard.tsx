@@ -100,12 +100,6 @@ const EventCard: React.FC<EventCardProps> = ({
           <Ionicons name="location-sharp" size={20} color="black" />
           <MonoText style={styles.secondaryText}>{location}</MonoText>
         </View>
-        {/* {isUserHost && (
-          <MonoText style={styles.attendingText}>Your event</MonoText>
-        )}
-        {isAttending && (
-          <MonoText style={styles.attendingText}>You're attending!</MonoText>
-        )} */}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.dark }]}
           onPress={() =>
@@ -120,7 +114,7 @@ const EventCard: React.FC<EventCardProps> = ({
             })
           }
         >
-          <MonoText style={styles.buttonText}>{buttonText}</MonoText>
+          <MonoText useMedium={true} style={styles.buttonText}>{buttonText}</MonoText>
         </TouchableOpacity>
       </View>
     </View>

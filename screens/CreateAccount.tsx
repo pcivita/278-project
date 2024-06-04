@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    // padding: 20,
     backgroundColor: "white",
   },
   backCaret: {
@@ -211,12 +210,12 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
+  borderColor: "#ddd",
     borderRadius: 5,
     marginBottom: 10,
   },
   button: {
-    width: windowWidth * 0.8,
+    width: windowWidth * 0.9,
     height: 40,
     borderRadius: 100,
     justifyContent: "center",

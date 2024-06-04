@@ -51,7 +51,7 @@ const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
           style={styles.coloredText} 
           onPress={() => setCurrentScreen("log in options")}
         > 
-          Login instead
+          Log in instead
         </MonoText>
       </MonoText>
     </View>
