@@ -92,7 +92,7 @@ const Login: React.FC<LoginProps> = ({ setCurrentScreen }) => {
         style={styles.button}
         onPress={onLoginPress}
       >
-        <MonoText style={styles.buttonText}>Sign In</MonoText>
+        <MonoText useMedium={true} style={styles.buttonText}>Sign In</MonoText>
       </TouchableOpacity>
     </View>
   );
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     width: "90%",
     marginTop: 50,
     height: 200,
+    backgroundColor: "red"
   },
   input: {
     fontSize: 16,
@@ -157,14 +158,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    width: windowWidth * 0.8,
+    width: windowWidth * 0.9,
     height: 40,
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: Colors.color2.dark,
     flexDirection: "row",
-    marginTop: 20,
+    // marginTop: 20,
   },
   buttonText: {
     color: "white",
