@@ -12,6 +12,8 @@ import { supabase } from "@/utils/supabase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "./types"; // Adjust the path as needed
+import { MonoText, MonoTextInput } from "@/components/StyledText";
+import Colors from "@/constants/Colors";
 
 const CreateEvent = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -150,53 +152,39 @@ const CreateEvent = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
+      <MonoTextInput
+        placeholder="Event Name"
+        value={eventName}
+        onChangeText={setEventName}
+        style={styles.input}
+      />
+      <MonoTextInput
+        placeholder="Location"
+        value={location}
+        onChangeText={setLocation}
+        style={styles.input}
+      />
+      <MonoTextInput
         placeholder="Max People"
         value={maxPeople}
         onChangeText={setMaxPeople}
         keyboardType="numeric"
         style={styles.input}
       />
-      <TextInput
-        placeholder="Event Name"
-        value={eventName}
-        onChangeText={setEventName}
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="Location"
-        value={location}
-        onChangeText={setLocation}
-        style={styles.input}
-      />
-      <TextInput
+      <MonoTextInput
         placeholder="Notes"
         value={description}
         onChangeText={setDescription}
         style={styles.input}
       />
-      {/* <TextInput
-        placeholder="Event Start (YYYY-MM-DD)"
-        value={eventStart}
-        onChangeText={setEventStart}
-        style={styles.input}
-      /> */}
       <TouchableOpacity style={styles.date} onPress={showDatePicker}>
-        <Text> Event Start </Text>
-        <Text style={{ fontWeight: "bold" }}> {eventStartShow} </Text>
+        <MonoText> Event Start </MonoText>
+        <MonoText> {eventStartShow} </MonoText>
       </TouchableOpacity>
       <TouchableOpacity style={styles.date} onPress={showEndPicker}>
-        <Text> Event End </Text>
-        <Text style={{ fontWeight: "bold" }}> {eventEndShow} </Text>
+        <MonoText> Event End </MonoText>
+        <MonoText> {eventEndShow} </MonoText>
       </TouchableOpacity>
-      {/* <TextInput
-        placeholder="Event End (YYYY-MM-DD)"
-        value={eventEnd}
-        onChangeText={setEventEnd}
-        style={styles.input}
-      /> */}
-
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="datetime"
@@ -212,7 +200,7 @@ const CreateEvent = () => {
         display="inline"
       />
       <TouchableOpacity onPress={createEvent} style={styles.button}>
-        <Text style={styles.buttonText}>Create Event</Text>
+        <MonoText useMedium={true} style={styles.buttonText}>Create Event</MonoText>
       </TouchableOpacity>
     </View>
   );
@@ -224,7 +212,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "white",
   },
   title: {
     fontSize: 24,
@@ -251,18 +239,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-
   button: {
-    backgroundColor: "#9AA899",
-    padding: 15,
-    borderRadius: 30,
+    backgroundColor: Colors.color2.dark,
+    height: 40,
     alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 30,
     width: "100%",
     marginTop: 20,
   },
   buttonText: {
     color: "white",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
   },
 });
