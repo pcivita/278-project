@@ -63,6 +63,22 @@ const Feed = ({ navigation }) => {
 
   useEffect(() => {
     fetchUserAndEvents();
+
+    const channels = supabase
+      .channel("event")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "event" },
+        (payload) => {
+          console.log("Change received!", payload);
+          fetchUserAndEvents();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channels);
+    };
   }, []);
 
   useEffect(() => {
