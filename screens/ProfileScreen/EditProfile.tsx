@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Dimensions } from "react-native";
 import { supabase } from "@/utils/supabase";
 import * as ImagePicker from 'expo-image-picker';
 import Colors from "@/constants/Colors";
@@ -8,6 +8,8 @@ import { RootStackParamList, UserProfile } from "./types"; // Adjust the path as
 import { MonoText, MonoTextInput } from "@/components/StyledText";
 
 type EditProfileScreenRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
+
+const windowWidth = Dimensions.get("window").width;
 
 const EditProfileScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -180,13 +182,16 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 5,
     marginBottom: 20,
+    fontSize: 16,
   },
   button: {
-    width: "100%",
-    padding: 15,
-    backgroundColor: Colors.color2.dark,
-    borderRadius: 5,
+    width: windowWidth * 0.8,
+    height: 40,
+    borderRadius: 100,
+    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: Colors.color2.dark,
+    flexDirection: "row",
   },
   buttonText: {
     color: "white",
