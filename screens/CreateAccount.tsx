@@ -81,64 +81,9 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
 
     const userId = session.user.id;
 
-
-    let profilePhotoUrl = "";
-    if (profilePhoto) {
-      profilePhotoUrl = profilePhoto;
-      try {
-        // Fetch the file data and convert to Blob
-        const response = await fetch(profilePhoto);
-        const blob = await response.blob();
-
-        const formData = new FormData();
-        formData.append('file', {
-          uri: profilePhoto,
-          name: `${Date.now()}.jpg`,
-          type: 'image/jpeg',
-        } as any);  // 'any' type assertion to bypass TypeScript error
-
-        const filePath = `${userId}/${Date.now()}.jpg`;
-        console.log("File path for upload:", filePath);
-
-        // Upload the FormData using the Supabase storage API
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('profile_photos')
-          .upload(filePath, formData as any, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-
-        if (uploadError) {
-          console.error('Error uploading photo:', uploadError);
-          throw uploadError;
-        }
-
-        console.log("Photo uploaded:", uploadData);
-
-        // Construct the public URL
-        const { data: publicUrlData, error: urlError } = supabase.storage
-          .from('profile_photos')
-          .getPublicUrl(filePath);
-
-        if (urlError) {
-          console.error('Error getting public URL:', urlError);
-          throw urlError;
-        }
-
-        profilePhotoUrl = publicUrlData.publicUrl;
-        console.log("Public URL of uploaded photo:", profilePhotoUrl);
-      } catch (photoError) {
-        setAlertMessage('Error uploading or fetching photo URL:' + photoError);
-        setAlertVisible(true);
-        setLoading(false);
-        return;
-      } 
-    }
-  
-
     const { error: profileError } = await supabase
       .from('users')
-      .update({ username, name, bio, photo: profilePhotoUrl })
+      .update({ username, name, bio })
       .eq('id', userId);
 
     if (profileError) {
@@ -169,12 +114,6 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
       >
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
-      
-      <TouchableOpacity onPress={handleImagePick} style={styles.photoSelection}>
-        <Image source={{ uri: profilePhoto || "https://via.placeholder.com/100" }} style={styles.profileImage} />
-        <MonoText style={styles.greenText}>Choose Photo</MonoText>
-      </TouchableOpacity>
-  
       <View style={styles.inputContainer}>
         <MonoText style={styles.text}>Name (First and Last)
           <MonoText style={styles.pinkText}> *</MonoText>
@@ -203,7 +142,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
           onChangeText={setBio}
         />
       </View>
-      <View style={[styles.inputContainer, { marginTop: 50, height: 200 }]}>
+      <View style={[styles.inputContainer, { height: 170 }]}>
         <MonoText style={styles.text}>Choose username
           <MonoText style={styles.pinkText}> *</MonoText>
         </MonoText>
@@ -278,6 +217,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "90%",
+    marginTop: 50
   },
   input: {
     fontSize: 16,
