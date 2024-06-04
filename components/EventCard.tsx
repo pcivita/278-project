@@ -226,13 +226,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
-  attendingText: {
-    color: "black",
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 1,
-    textAlign: "center",
-  },
 });
 
 export default EventCard;
