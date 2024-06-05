@@ -1,26 +1,33 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Dimensions } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from "react-native";
 import { supabase } from "@/utils/supabase";
 import * as ImagePicker from 'expo-image-picker';
 import Colors from "@/constants/Colors";
 import { useNavigation, NavigationProp, useRoute, RouteProp } from "@react-navigation/native";
 import { RootStackParamList, UserProfile } from "./types"; // Adjust the path as needed
 import { MonoText, MonoTextInput } from "@/components/StyledText";
+import Alert from "@/components/Alert";
 
 type EditProfileScreenRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
 
 const windowWidth = Dimensions.get("window").width;
 
-
 const EditProfileScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const route = useRoute<EditProfileScreenRouteProp>();
-  const { userProfile } = route.params;
+  const { userProfile, setAlertVisible, setAlertMessage } = route.params;
 
   const [name, setName] = useState<string>(userProfile.name || '');
   const [bio, setBio] = useState<string>(userProfile.bio || '');
   const [username, setUsername] = useState<string>(userProfile.username || '');
   const [profilePhoto, setProfilePhoto] = useState<string | null>(userProfile.photo || null);
+
+  const [alertVisible, setLocalAlertVisible] = useState(false);
+  const [alertMessage, setLocalAlertMessage] = useState("");
+
+  const closeAlert = () => {
+    setLocalAlertVisible(false);
+  };
 
   const handleImagePick = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -42,7 +49,8 @@ const EditProfileScreen = () => {
       const { data, error } = await supabase.auth.getUser();
       if (error) {
         console.error('Error fetching user:', error);
-        Alert.alert('Error', 'Error fetching user');
+        setLocalAlertMessage('Error fetching user');
+        setLocalAlertVisible(true);
         return;
       }
 
@@ -98,7 +106,8 @@ const EditProfileScreen = () => {
           console.log("Public URL of uploaded photo:", profilePhotoUrl);
         } catch (photoError) {
           console.error('Error uploading or fetching photo URL:', photoError);
-          Alert.alert('Error', 'Error uploading photo');
+          setLocalAlertMessage('Error uploading photo');
+          setLocalAlertVisible(true);
           return;
         } 
       }
@@ -111,20 +120,28 @@ const EditProfileScreen = () => {
 
       if (updateError) {
         console.error('Error updating profile:', updateError);
-        Alert.alert('Error', 'Error updating profile');
+        setLocalAlertMessage('Error updating profile');
+        setLocalAlertVisible(true);
       } else {
         console.log("Profile updated successfully");
-        Alert.alert('Success', 'Profile updated successfully');
+        setAlertMessage('Profile updated successfully');
+        setAlertVisible(true);
         navigation.goBack();
       }
     } catch (mainError) {
       console.error('Error in handleSave:', mainError);
-      Alert.alert('Error', 'An unexpected error occurred');
+      setLocalAlertMessage('An unexpected error occurred');
+      setLocalAlertVisible(true);
     }
   };
 
   return (
     <View style={styles.container}>
+      <Alert
+        visible={alertVisible}
+        message={alertMessage}
+        onClose={closeAlert}
+      />
       <TouchableOpacity onPress={handleImagePick} style={styles.photoSelection}>
         <Image source={{ uri: profilePhoto || "https://via.placeholder.com/150" }} style={styles.profileImage} />
         <MonoText style={styles.changePhotoText}>Change Photo</MonoText>
