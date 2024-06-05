@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import CalendarDate from "../components/CalendarDate";
 import EmptyCalendarDate from "../components/EmptyCalendarDate";
 import { supabase } from "@/utils/supabase";
 import { format } from "date-fns";
 import { useUser } from "@/UserContext";
+import { MonoText } from "@/components/StyledText";
+import Colors from "@/constants/Colors";
+
 
 interface Event {
   id: string;
@@ -22,7 +25,7 @@ interface Event {
   event_month: string;
 }
 
-const Calendar = () => {
+const Calendar = ({ navigation }) => {
   const [eventsByMonth, setEventsByMonth] = useState<
     Record<string, Record<string, Event[]>>
   >({});
@@ -229,10 +232,17 @@ const Calendar = () => {
     (a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b)
   );
 
+
   if (Object.keys(eventsByMonth).length === 0) {
     return (
-      <View style={{ backgroundColor: "white", flex: 1 }}>
-        <Text>No events found</Text>
+      <View style={styles.noNotificationsContainer}>
+        <MonoText style={styles.noNotificationsText}>No events in your calendar</MonoText>
+        <TouchableOpacity
+          style={styles.addFriendsButton}
+          onPress={() => navigation.navigate("Feed")}
+        >
+          <MonoText useMedium={true} style={styles.addFriendsButtonText}>Add Events</MonoText>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -244,7 +254,7 @@ const Calendar = () => {
     >
       {sortedMonths.map((month) => (
         <View key={`month-${month}`}>
-          <Text style={styles.title}>{month}</Text>
+          <MonoText useMedium={true} style={styles.title}>{month}</MonoText>
           {Object.keys(eventsByMonth[month]).map((date) => {
             console.log("month:", month);
             console.log("date", date);
@@ -282,6 +292,28 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginTop: 20,
     alignSelf: "flex-start",
+  },
+  noNotificationsContainer: {
+    flex: 1,
+    backgroundColor: "white",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop: 20,
+  },
+  noNotificationsText: {
+    color: "grey",
+    fontSize: 16,
+  },
+  addFriendsButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.color2.dark,
+    borderRadius: 50,
+  },
+  addFriendsButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });
 

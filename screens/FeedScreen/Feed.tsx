@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View, Text } from "react-native";
+import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
 import EventCard from "../../components/EventCard";
 import { supabase } from "@/utils/supabase";
 import { toZonedTime, format } from "date-fns-tz";
+import { MonoText } from "@/components/StyledText";
+import Colors from "@/constants/Colors";
 
 interface Event {
   event_name: string;
@@ -338,52 +340,66 @@ const Feed = ({ navigation }) => {
 
   let colorIndex = 0; // Declare colorIndex outside of the map functions
 
+  const isEmpty = Object.keys(sortedEventObj).length === 0;
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={{ alignItems: "center", paddingBottom: 100 }}
     >
-      {Object.keys(sortedEventObj).map((date) => (
-        <View key={date} style={styles.dateSection}>
-          <View style={styles.dateTextContainer}>
-            <Text style={styles.dateText}>{date}</Text>
-          </View>
-          {sortedEventObj[date].map((event) => {
-            const colorScheme = `color${(colorIndex % 5) + 1}`;
-            colorIndex++; // Increment the colorIndex
+      {isEmpty ? (
+        <>
+          <MonoText style={styles.noNotificationsText}>No upcoming</MonoText>
+          <TouchableOpacity
+            style={styles.addFriendsButton}
+            onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
+          >
+            <MonoText useMedium={true} style={styles.addFriendsButtonText}>Add Friends</MonoText>
+          </TouchableOpacity>
+        </>
+      ) : (
+        Object.keys(sortedEventObj).map((date) => (
+          <View key={date} style={styles.dateSection}>
+            <View style={styles.dateTextContainer}>
+              <MonoText useMedium={true} style={styles.dateText}>{date}</MonoText>
+            </View>
+            {sortedEventObj[date].map((event) => {
+              const colorScheme = `color${(colorIndex % 5) + 1}`;
+              colorIndex++; // Increment the colorIndex
 
-            return (
-              <View key={event.id} style={styles.eventSection}>
-                <EventCard
-                  eventName={event.event_name}
-                  eventTime={`${event.event_start} - ${event.event_end}`}
-                  location={event.location}
-                  host={event.host}
-                  signups={`${event.current_signups}/${event.max_people}`}
-                  colorScheme={colorScheme}
-                  onNavigate={() =>
-                    handleNavigateToEventDetails({
-                      eventName: event.event_name,
-                      eventTime: `${event.event_start} - ${event.event_end}`,
-                      location: event.location,
-                      host: event.host,
-                      signups: `${event.current_signups}/${event.max_people}`,
-                      colorScheme: colorScheme,
-                      isUserHost: event.creator_id === userId,
-                      eventId: event.id,
-                      description: event.description,
-                    })
-                  }
-                  isUserHost={event.creator_id === userId}
-                  buttonText="View Event"
-                  isAttending={event.isAttending}
-                  attendees={event.attendees} // Pass attendees data here
-                />
-              </View>
-            );
-          })}
-        </View>
-      ))}
+              return (
+                <View key={event.id} style={styles.eventSection}>
+                  <EventCard
+                    eventName={event.event_name}
+                    eventTime={`${event.event_start} - ${event.event_end}`}
+                    location={event.location}
+                    host={event.host}
+                    signups={`${event.current_signups}/${event.max_people}`}
+                    colorScheme={colorScheme}
+                    onNavigate={() =>
+                      handleNavigateToEventDetails({
+                        eventName: event.event_name,
+                        eventTime: `${event.event_start} - ${event.event_end}`,
+                        location: event.location,
+                        host: event.host,
+                        signups: `${event.current_signups}/${event.max_people}`,
+                        colorScheme: colorScheme,
+                        isUserHost: event.creator_id === userId,
+                        eventId: event.id,
+                        description: event.description,
+                      })
+                    }
+                    isUserHost={event.creator_id === userId}
+                    buttonText="View Event"
+                    isAttending={event.isAttending}
+                    attendees={event.attendees} // Pass attendees data here
+                  />
+                </View>
+              );
+            })}
+          </View>
+        ))
+      )}
     </ScrollView>
   );
 };
@@ -409,6 +425,21 @@ const styles = StyleSheet.create({
   dateTextContainer: {
     width: "100%",
     paddingHorizontal: 10,
+  },
+  noNotificationsText: {
+    color: "grey",
+    fontSize: 16,
+  },
+  addFriendsButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.color2.dark,
+    borderRadius: 50,
+  },
+  addFriendsButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });
 

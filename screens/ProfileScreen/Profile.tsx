@@ -17,6 +17,7 @@ import {
 import { MonoText } from "@/components/StyledText";
 import { RootStackParamList, UserProfile } from "./types";
 import { supabase } from "@/utils/supabase";
+import Alert from "@/components/Alert";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -25,6 +26,13 @@ const ProfileScreen = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [friendCount, setFriendCount] = useState<number>(0);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
 
   const fetchUserProfile = async () => {
     setLoading(true);
@@ -79,7 +87,11 @@ const ProfileScreen = () => {
 
   const goToEditProfile = () => {
     if (userProfile) {
-      navigation.navigate("EditProfile", { userProfile });
+      navigation.navigate("EditProfile", {
+        userProfile,
+        setAlertVisible,
+        setAlertMessage,
+      });
     }
   };
 
@@ -101,6 +113,11 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Alert
+        visible={alertVisible}
+        message={alertMessage}
+        onClose={closeAlert}
+      />
       <View style={styles.header} />
       <View style={styles.profileImageWrapper}>
         <View style={styles.profileImageContainer}>

@@ -10,6 +10,8 @@ import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@/UserContext";
 import { useNavigation } from "@react-navigation/native";
+import { MonoText } from "@/components/StyledText";
+import Colors from "@/constants/Colors";
 
 const formatDate = (date) => {
   const today = new Date();
@@ -195,32 +197,32 @@ const NotificationsScreen = () => {
   }, [userId]);
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <MonoText>Loading...</MonoText>;
   }
 
   if (error) {
-    return <Text>Error: {error}</Text>;
+    return <MonoText>Error: {error}</MonoText>;
   }
 
   const isEmpty = Object.keys(friendRequestsByDate).length === 0;
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainer}>
+    <ScrollView contentContainerStyle={styles.contentContainer} style={{ backgroundColor: "white" }}>
       <View style={styles.container}>
         {isEmpty ? (
           <View style={styles.noNotificationsContainer}>
-            <Text style={styles.noNotificationsText}>No Notifications</Text>
+            <MonoText style={styles.noNotificationsText}>No notifications</MonoText>
             <TouchableOpacity
               style={styles.addFriendsButton}
               onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
             >
-              <Text style={styles.addFriendsButtonText}>Add Friends</Text>
+              <MonoText useMedium={true} style={styles.addFriendsButtonText}>Add Friends</MonoText>
             </TouchableOpacity>
           </View>
         ) : (
           Object.keys(friendRequestsByDate).map((date) => (
             <View key={date}>
-              <Text style={styles.dateHeader}>{date}</Text>
+              <MonoText useMedium={true} style={styles.dateHeader}>{date}</MonoText>
               {friendRequestsByDate[date].map((request) => (
                 <NotificationItem
                   type={"friend_request"}
@@ -247,7 +249,6 @@ const styles = StyleSheet.create({
   container: {},
   dateHeader: {
     fontSize: 24,
-    fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
   },
@@ -255,7 +256,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "0%",
+    marginTop: 20,
   },
   noNotificationsText: {
     color: "grey",
@@ -265,13 +266,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: "#9AA899",
-    borderRadius: 5,
+    backgroundColor: Colors.color2.dark,
+    borderRadius: 50,
   },
   addFriendsButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
 });
 

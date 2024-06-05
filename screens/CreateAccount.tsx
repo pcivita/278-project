@@ -26,7 +26,6 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
   
-  const isFormValid = name !== "" && email !== "" && username !== "" && password.length >= 8;
   const passwordMessage = password && password.length < 8;
 
   const [loading, setLoading] = useState(false);
@@ -37,21 +36,6 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
     setAlertVisible(false);
   };
 
-  // console.log(setCurrentScreen)
-
-  const handleImagePick = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const pickedPhoto = result.assets[0].uri; // Access the uri from the assets array
-      setProfilePhoto(pickedPhoto);
-    }
-  };
 
   const onSignUpPress = async () => {
     setLoading(true);
@@ -61,17 +45,35 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
       password,
     });
 
-    // if (name === "" || email === "" || username === "" || password.length < 8) {
-    if (email === "" || password.length < 8) {
-      setAlertMessage("Please fill in all fields");
+    if (name === "" || email === "" || username === "" || password.length < 8) {
+      setAlertMessage("Please fill in all required fields");
       setAlertVisible(true);
+      setLoading(false);
+      return;
     }
     else if (error) {
-      setAlertMessage("Check your email for the confirmation link."); // todo: change
+      setAlertMessage(error.message); // todo: change
       setAlertVisible(true);
+      setLoading(false);
+      return;
     }
     if (!session) {
-      
+      setAlertMessage("Session error. Try again");
+      setLoading(false);
+      return;
+    }
+
+    const userId = session.user.id;
+
+    const { error: profileError } = await supabase
+      .from('users')
+      .update({ username, name, bio })
+      .eq('id', userId);
+
+    if (profileError) {
+      console.error('Error updating user profile:', profileError);
+      setAlertMessage('Error updating user profile');
+      setAlertVisible(true);
     }
     setLoading(false);
   }
@@ -96,12 +98,9 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
       >
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
-      
-      <TouchableOpacity onPress={handleImagePick} style={styles.photoSelection}>
-        <Image source={{ uri: profilePhoto || "https://via.placeholder.com/100" }} style={styles.profileImage} />
-        <MonoText style={styles.greenText}>Choose Photo</MonoText>
-      </TouchableOpacity>
-  
+      <View style={styles.header}>
+        <MonoText useUltra={true} style={styles.headerText}>Create a new account</MonoText>
+      </View>
       <View style={styles.inputContainer}>
         <MonoText style={styles.text}>Name (First and Last)
           <MonoText style={styles.pinkText}> *</MonoText>
@@ -130,7 +129,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
           onChangeText={setBio}
         />
       </View>
-      <View style={[styles.inputContainer, { marginTop: 50, height: 200 }]}>
+      <View style={[styles.inputContainer, { height: 170 }]}>
         <MonoText style={styles.text}>Choose username
           <MonoText style={styles.pinkText}> *</MonoText>
         </MonoText>
@@ -177,8 +176,12 @@ const styles = StyleSheet.create({
     marginTop: 70,
     marginLeft: 10,
   },
-  photoSelection: {
-    alignItems: "center",
+  header: {
+    marginTop: 50,
+    width: "90%"
+  },
+  headerText: {
+    fontSize: 24,
   },
   profileImage: {
     width: 100,
@@ -204,6 +207,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "90%",
+    marginTop: 50
   },
   input: {
     fontSize: 16,

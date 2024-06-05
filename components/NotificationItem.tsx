@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../constants/Colors";
 import { supabase } from "@/utils/supabase";
 import { format } from "date-fns";
+import { MonoText } from "./StyledText";
 
 const NotificationItem = ({
   type,
@@ -55,10 +56,10 @@ const NotificationItem = ({
             style={[styles.button, styles.acceptButton]}
             onPress={acceptRequest}
           >
-            <Text style={styles.acceptButtonText}>Accept</Text>
+            <MonoText useMedium={true} style={styles.acceptButtonText}>Accept</MonoText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={rejectRequest}>
-            <Text style={styles.buttonText}>Reject</Text>
+            <MonoText useMedium={true} style={styles.buttonText}>Reject</MonoText>
           </TouchableOpacity>
         </View>
       );
@@ -77,9 +78,9 @@ const NotificationItem = ({
         boldWords.map((word) => word.toLowerCase()).includes(part.toLowerCase())
       ) {
         return (
-          <Text key={index} style={styles.boldText}>
+          <MonoText key={index} style={styles.boldText}>
             {part}
-          </Text>
+          </MonoText>
         );
       }
       return part;
@@ -95,9 +96,9 @@ const NotificationItem = ({
         style={styles.profileImage}
       />
       <View style={styles.content}>
-        <Text style={styles.message}>{renderMessage(message)}</Text>
+        <MonoText style={styles.message}>{renderMessage(message)}</MonoText>
         {renderButtons()}
-        <Text style={styles.time}>{formattedTime}</Text>
+        <MonoText style={styles.time}>{formattedTime}</MonoText>
       </View>
     </View>
   );
@@ -125,11 +126,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: "space-between", // Ensure content is spaced evenly
+    justifyContent: "space-around", // Ensure content is spaced evenly
   },
   message: {
     fontSize: 14,
-    color: "#333",
     flexWrap: "wrap",
   },
   boldText: {
@@ -142,10 +142,10 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#000",
+    paddingHorizontal: 15,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: Colors.color2.dark,
     marginRight: 10,
   },
   acceptButton: {
