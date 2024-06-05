@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     lineHeight: 32, // Adjust line height for better vertical spacing
   },
   secondaryText: {
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 18, // Increase if secondary texts feel too tight vertically
   },
   location: {

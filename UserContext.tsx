@@ -25,7 +25,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
       if (authError) {
         console.log("Authentication error:", authError.message);
-        // console.error("Authentication error:", authError);
         return;
       }
 
@@ -41,6 +40,18 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     fetchUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+          fetchUser();
+        }
+      }
+    );
+
+    return () => {
+      authListener?.unsubscribe();
+    };
   }, []);
 
   return (

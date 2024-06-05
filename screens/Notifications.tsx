@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@/UserContext";
@@ -33,7 +39,7 @@ const formatDate = (date) => {
 
 const NotificationsScreen = () => {
   const { userId } = useUser();
-  const navigation = useNavigation();
+  const navigation = useNavigation(); // Get the navigation prop
   const [friendRequestsByDate, setFriendRequestsByDate] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,24 +63,16 @@ const NotificationsScreen = () => {
           requests.map(async (request) => {
             const { data: userData, error: userError } = await supabase
               .from("users")
-              .select("name, photo") // Include photo URL
+              .select("name")
               .eq("id", request.user_requested)
               .single();
 
             if (userError) {
               console.error(userError);
-              return {
-                ...request,
-                userName: "Unknown",
-                profilePictureUrl: null,
-              };
+              return { ...request, userName: "Unknown" };
             }
 
-            return {
-              ...request,
-              userName: userData.name,
-              profilePictureUrl: userData.photo,
-            };
+            return { ...request, userName: userData.name };
           })
         );
 
@@ -96,41 +94,98 @@ const NotificationsScreen = () => {
 
     fetchFriendRequests();
 
+    const handleInsert = (payload) => {
+      if (payload.new.user_accepted === userId) {
+        const fetchUserName = async () => {
+          const { data: userData, error: userError } = await supabase
+            .from("users")
+            .select("name")
+            .eq("id", payload.new.user_requested)
+            .single();
+
+          const userName = userError ? "Unknown" : userData.name;
+
+          const date = formatDate(new Date(payload.new.created_at));
+          setFriendRequestsByDate((prevRequests) => {
+            const updatedRequests = { ...prevRequests };
+            if (!updatedRequests[date]) {
+              updatedRequests[date] = [];
+            }
+            updatedRequests[date].push({
+              ...payload.new,
+              userName,
+            });
+            return updatedRequests;
+          });
+        };
+
+        fetchUserName();
+      }
+    };
+
+    const handleDelete = (payload) => {
+      setFriendRequestsByDate((prevRequests) => {
+        const updatedRequests = { ...prevRequests };
+
+        Object.keys(updatedRequests).forEach((date) => {
+          updatedRequests[date] = updatedRequests[date].filter(
+            (req) => req.id !== payload.old.id
+          );
+          if (updatedRequests[date].length === 0) {
+            delete updatedRequests[date];
+          }
+        });
+
+        return updatedRequests;
+      });
+    };
+
+    const handleUpdate = (payload) => {
+      setFriendRequestsByDate((prevRequests) => {
+        const updatedRequests = { ...prevRequests };
+
+        // Check if the updated request has a status of "Accepted"
+        if (payload.new.status === "Friends") {
+          Object.keys(updatedRequests).forEach((date) => {
+            updatedRequests[date] = updatedRequests[date].filter(
+              (req) => req.id !== payload.new.id
+            );
+            if (updatedRequests[date].length === 0) {
+              delete updatedRequests[date];
+            }
+          });
+        } else {
+          // Update the request if needed
+          Object.keys(updatedRequests).forEach((date) => {
+            updatedRequests[date] = updatedRequests[date].map((req) => {
+              if (req.id === payload.new.id) {
+                return { ...req, ...payload.new };
+              }
+              return req;
+            });
+          });
+        }
+
+        return updatedRequests;
+      });
+    };
+
     const subscription = supabase
       .channel("friends")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "friends" },
-        (payload) => {
-          if (payload.new.user_accepted === userId) {
-            const fetchUserName = async () => {
-              const { data: userData, error: userError } = await supabase
-                .from("users")
-                .select("name, photo") // Include photo URL
-                .eq("id", payload.new.user_requested)
-                .single();
-
-              const userName = userError ? "Unknown" : userData.name;
-              const profilePictureUrl = userError ? null : userData.photo;
-
-              const date = formatDate(new Date(payload.new.created_at));
-              setFriendRequestsByDate((prevRequests) => {
-                const updatedRequests = { ...prevRequests };
-                if (!updatedRequests[date]) {
-                  updatedRequests[date] = [];
-                }
-                updatedRequests[date].push({
-                  ...payload.new,
-                  userName,
-                  profilePictureUrl,
-                });
-                return updatedRequests;
-              });
-            };
-
-            fetchUserName();
-          }
-        }
+        handleInsert
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "friends" },
+        handleDelete
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "friends" },
+        handleUpdate
       )
       .subscribe();
 
@@ -155,7 +210,10 @@ const NotificationsScreen = () => {
         {isEmpty ? (
           <View style={styles.noNotificationsContainer}>
             <Text style={styles.noNotificationsText}>No Notifications</Text>
-            <TouchableOpacity style={styles.addFriendsButton} onPress={() => navigation.navigate('Friends')}>
+            <TouchableOpacity
+              style={styles.addFriendsButton}
+              onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
+            >
               <Text style={styles.addFriendsButtonText}>Add Friends</Text>
             </TouchableOpacity>
           </View>

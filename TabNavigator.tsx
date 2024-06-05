@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, View, Text } from 'react-native';
+import { Image, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FeedStack from './screens/FeedScreen/FeedStack';
 import ProfileStack from './screens/ProfileScreen/ProfileStack';
@@ -52,22 +52,9 @@ const TabNavigator = () => {
             </View>
           );
         },
-        tabBarLabel: ({ focused }) => {
-          return route.name === 'Create Event' ? null : (
-            <Text
-              style={{
-                fontSize: 12,
-                color: focused ? 'green' : 'gray',
-                marginBottom: 10, // Increased space between text and icon
-              }}
-            >
-              {route.name}
-            </Text>
-          );
-        },
         tabBarActiveTintColor: '#000',
         tabBarInactiveTintColor: 'gray',
-        tabBarLabelStyle: { fontSize: 12 },
+        tabBarLabelStyle: { fontSize: 14 },
         tabBarStyle: {
           padding: 10,
           height: 90, // Increased height
@@ -89,13 +76,24 @@ const TabNavigator = () => {
       <Tab.Screen
         name="FeedTab"
         component={FeedStack}
-        options={{ tabBarLabel: 'Home', headerShown: false }}
+        options={{ 
+          tabBarLabel: ({ focused }) => (
+            <MonoText useUltra={focused} style={{ fontSize: 14,  color: "black" }}>
+              Home
+            </MonoText>
+          ),
+          headerShown: false 
+        }}
       />
       <Tab.Screen
         name="Calendar"
         component={Calendar}
         options={{
-          tabBarLabel: 'Calendar',
+          tabBarLabel: ({ focused }) => (
+            <MonoText useUltra={focused} style={{ fontSize: 14,  color: "black" }}>
+              Calendar
+            </MonoText>
+          ),
           headerTitle: () => (
             <MonoText useUltra={true} style={{ fontSize: 22 }}>
               Calendar
@@ -106,13 +104,24 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Create Event"
         component={CreateEvent}
-        options={{ tabBarLabel: '' }}
+        options={{ 
+          tabBarLabel: '',
+          headerTitle: () => (
+            <MonoText useUltra={true} style={{ fontSize: 22 }}>
+              Create Event
+            </MonoText>
+          ),
+        }}
       />
       <Tab.Screen
         name="Notifications"
         component={NotificationsScreen}
         options={{
-          tabBarLabel: 'Notifications',
+          tabBarLabel: ({ focused }) => (
+            <MonoText useUltra={focused} style={{ fontSize: 14,  color: "black" }}>
+              Notifs
+            </MonoText>
+          ),
           headerTitle: () => (
             <MonoText useUltra={true} style={{ fontSize: 22 }}>
               Notifications
@@ -124,7 +133,11 @@ const TabNavigator = () => {
         name="ProfileTab"
         component={ProfileStack}
         options={{
-          tabBarLabel: 'Profile',
+          tabBarLabel: ({ focused }) => (
+            <MonoText useUltra={focused} style={{ fontSize: 14,  color: "black" }}>
+              Profile
+            </MonoText>
+          ),
           headerShown: false,
         }}
       />

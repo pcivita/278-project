@@ -66,7 +66,7 @@ const CalendarDate: React.FC<CalendarDateProps> = ({ date, events }) => {
 const styles = StyleSheet.create({
   container: {
     width: "95%",
-    backgroundColor: Colors.color2.light,
+    backgroundColor: '#F3F3F3',
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,

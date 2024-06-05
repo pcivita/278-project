@@ -1,11 +1,24 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import ProfileCard from "../../components/ProfileCard";
 import Colors from "@/constants/Colors";
-import { useNavigation, NavigationProp, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  NavigationProp,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { MonoText } from "@/components/StyledText";
 import { RootStackParamList, UserProfile } from "./types";
 import { supabase } from "@/utils/supabase";
+
+const windowWidth = Dimensions.get("window").width;
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -73,7 +86,7 @@ const ProfileScreen = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <MonoText>Loading...</MonoText>
       </View>
     );
   }
@@ -81,7 +94,7 @@ const ProfileScreen = () => {
   if (!userProfile) {
     return (
       <View style={styles.container}>
-        <Text>Error fetching profile</Text>
+        <MonoText>Error fetching profile</MonoText>
       </View>
     );
   }
@@ -118,15 +131,17 @@ const ProfileScreen = () => {
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.button} onPress={goToEditProfile}>
-          <Text style={styles.buttonText}>Edit Profile</Text>
+          <MonoText useMedium={true} style={styles.buttonTextWhite}>
+            Edit Profile
+          </MonoText>
         </TouchableOpacity>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.button, styles.signOutButton]}
           onPress={() => supabase.auth.signOut()}
         >
-          <Text style={[styles.buttonText, styles.signOutButtonText]}>
+          <MonoText useMedium={true} style={styles.buttonText}>
             Sign Out
-          </Text>
+          </MonoText>
         </TouchableOpacity>
       </View>
     </View>
@@ -191,23 +206,25 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    width: "49%",
-    backgroundColor: Colors.color2.dark,
-    padding: 10,
-    borderRadius: 10,
+    flex: 1,
+    height: 40,
+    borderRadius: 100,
+    justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: 5,
+    backgroundColor: Colors.color2.dark
   },
   signOutButton: {
-    backgroundColor: "#fff",
     borderWidth: 2,
+    backgroundColor: "white",
     borderColor: Colors.color2.dark,
   },
   buttonText: {
-    color: "#fff",
     fontSize: 16,
   },
-  signOutButtonText: {
-    color: "black",
+  buttonTextWhite: {
+    fontSize: 16,
+    color: "white"
   },
 });
 

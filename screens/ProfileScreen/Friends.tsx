@@ -36,37 +36,42 @@ const Friends: React.FC = () => {
 
   const handleAddFriend = async (friendId: string) => {
     console.log("Handling friend request for:", friendId);
-  
+
     // Check if a request already exists
     const { data: existingRequests, error } = await supabase
       .from("friends")
       .select("*")
       .or(`user_requested.eq.${userId},user_accepted.eq.${userId}`)
       .or(`user_requested.eq.${friendId},user_accepted.eq.${friendId}`);
-  
+
     if (error) {
       console.error("Error checking friendship status:", error);
       return;
     }
-  
+
     console.log("Existing requests:", existingRequests);
-  
+
     const existingRequest = existingRequests.find(
       (request) =>
-        (request.user_requested === userId && request.user_accepted === friendId) ||
-        (request.user_requested === friendId && request.user_accepted === userId)
+        (request.user_requested === userId &&
+          request.user_accepted === friendId) ||
+        (request.user_requested === friendId &&
+          request.user_accepted === userId)
     );
-  
+
     if (existingRequest) {
       console.log("Existing request found:", existingRequest);
-  
-      if (existingRequest.status === "Requested" || existingRequest.status === "Friends") {
+
+      if (
+        existingRequest.status === "Requested" ||
+        existingRequest.status === "Friends"
+      ) {
         // Delete the request if it's pending or already friends
         const { error: deleteError } = await supabase
           .from("friends")
           .delete()
           .eq("id", existingRequest.id);
-  
+
         if (!deleteError) {
           setUsers((prevUsers) =>
             prevUsers.map((user) =>
@@ -87,7 +92,7 @@ const Friends: React.FC = () => {
           status: "Requested",
         },
       ]);
-  
+
       if (!insertError) {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
@@ -100,7 +105,6 @@ const Friends: React.FC = () => {
       }
     }
   };
-  
 
   // const handleAddFriend = async (userId: any) => {
   //   console.log("Added Friend: ", userId);
