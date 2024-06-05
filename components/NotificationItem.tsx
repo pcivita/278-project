@@ -126,11 +126,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: "space-between", // Ensure content is spaced evenly
+    justifyContent: "space-around", // Ensure content is spaced evenly
   },
   message: {
     fontSize: 14,
-    color: "#333",
     flexWrap: "wrap",
   },
   boldText: {
