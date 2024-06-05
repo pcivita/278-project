@@ -26,7 +26,6 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
   
-  const isFormValid = name !== "" && email !== "" && username !== "" && password.length >= 8;
   const passwordMessage = password && password.length < 8;
 
   const [loading, setLoading] = useState(false);
@@ -37,21 +36,6 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
     setAlertVisible(false);
   };
 
-  // console.log(setCurrentScreen)
-
-  const handleImagePick = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const pickedPhoto = result.assets[0].uri; // Access the uri from the assets array
-      setProfilePhoto(pickedPhoto);
-    }
-  };
 
   const onSignUpPress = async () => {
     setLoading(true);
@@ -62,7 +46,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
     });
 
     if (name === "" || email === "" || username === "" || password.length < 8) {
-      setAlertMessage("Please fill in all fields");
+      setAlertMessage("Please fill in all required fields");
       setAlertVisible(true);
       setLoading(false);
       return;
@@ -74,7 +58,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
       return;
     }
     if (!session) {
-      setAlertMessage("Session error. Try again"); // todo: change
+      setAlertMessage("Session error. Try again");
       setLoading(false);
       return;
     }
@@ -114,6 +98,9 @@ const CreateAccount: React.FC<CreateAccountProps> = ({ setCurrentScreen }) => {
       >
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
+      <View style={styles.header}>
+        <MonoText useUltra={true} style={styles.headerText}>Create a new account</MonoText>
+      </View>
       <View style={styles.inputContainer}>
         <MonoText style={styles.text}>Name (First and Last)
           <MonoText style={styles.pinkText}> *</MonoText>
@@ -189,8 +176,12 @@ const styles = StyleSheet.create({
     marginTop: 70,
     marginLeft: 10,
   },
-  photoSelection: {
-    alignItems: "center",
+  header: {
+    marginTop: 50,
+    width: "90%"
+  },
+  headerText: {
+    fontSize: 24,
   },
   profileImage: {
     width: 100,

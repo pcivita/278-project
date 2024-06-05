@@ -146,7 +146,6 @@ const styles = StyleSheet.create({
     width: "90%",
     marginTop: 50,
     height: 200,
-    backgroundColor: "red"
   },
   input: {
     fontSize: 16,
