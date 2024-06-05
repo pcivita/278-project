@@ -11,6 +11,7 @@ import { supabase } from "@/utils/supabase";
 import { useUser } from "@/UserContext";
 import { useNavigation } from "@react-navigation/native";
 import { MonoText } from "@/components/StyledText";
+import Colors from "@/constants/Colors";
 
 const formatDate = (date) => {
   const today = new Date();
@@ -215,7 +216,7 @@ const NotificationsScreen = () => {
               style={styles.addFriendsButton}
               onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
             >
-              <MonoText style={styles.addFriendsButtonText}>Add Friends</MonoText>
+              <MonoText useMedium={true} style={styles.addFriendsButtonText}>Add Friends</MonoText>
             </TouchableOpacity>
           </View>
         ) : (
@@ -265,8 +266,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: "#9AA899",
-    borderRadius: 5,
+    backgroundColor: Colors.color2.dark,
+    borderRadius: 50,
   },
   addFriendsButtonText: {
     color: "white",
