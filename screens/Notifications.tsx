@@ -10,6 +10,7 @@ import NotificationItem from "../components/NotificationItem";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@/UserContext";
 import { useNavigation } from "@react-navigation/native";
+import { MonoText } from "@/components/StyledText";
 
 const formatDate = (date) => {
   const today = new Date();
@@ -195,32 +196,32 @@ const NotificationsScreen = () => {
   }, [userId]);
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <MonoText>Loading...</MonoText>;
   }
 
   if (error) {
-    return <Text>Error: {error}</Text>;
+    return <MonoText>Error: {error}</MonoText>;
   }
 
   const isEmpty = Object.keys(friendRequestsByDate).length === 0;
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainer}>
+    <ScrollView contentContainerStyle={styles.contentContainer} style={{ backgroundColor: "white" }}>
       <View style={styles.container}>
         {isEmpty ? (
           <View style={styles.noNotificationsContainer}>
-            <Text style={styles.noNotificationsText}>No Notifications</Text>
+            <MonoText style={styles.noNotificationsText}>No Notifications</MonoText>
             <TouchableOpacity
               style={styles.addFriendsButton}
               onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
             >
-              <Text style={styles.addFriendsButtonText}>Add Friends</Text>
+              <MonoText style={styles.addFriendsButtonText}>Add Friends</MonoText>
             </TouchableOpacity>
           </View>
         ) : (
           Object.keys(friendRequestsByDate).map((date) => (
             <View key={date}>
-              <Text style={styles.dateHeader}>{date}</Text>
+              <MonoText useMedium={true} style={styles.dateHeader}>{date}</MonoText>
               {friendRequestsByDate[date].map((request) => (
                 <NotificationItem
                   type={"friend_request"}
@@ -247,7 +248,6 @@ const styles = StyleSheet.create({
   container: {},
   dateHeader: {
     fontSize: 24,
-    fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
   },
@@ -271,7 +271,6 @@ const styles = StyleSheet.create({
   addFriendsButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
 });
 

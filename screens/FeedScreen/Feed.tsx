@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View, Text } from "react-native";
 import EventCard from "../../components/EventCard";
 import { supabase } from "@/utils/supabase";
 import { toZonedTime, format } from "date-fns-tz";
+import { MonoText } from "@/components/StyledText";
 
 interface Event {
   event_name: string;
@@ -346,7 +347,7 @@ const Feed = ({ navigation }) => {
       {Object.keys(sortedEventObj).map((date) => (
         <View key={date} style={styles.dateSection}>
           <View style={styles.dateTextContainer}>
-            <Text style={styles.dateText}>{date}</Text>
+            <MonoText useMedium={true} style={styles.dateText}>{date}</MonoText>
           </View>
           {sortedEventObj[date].map((event) => {
             const colorScheme = `color${(colorIndex % 5) + 1}`;

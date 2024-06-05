@@ -5,6 +5,8 @@ import EmptyCalendarDate from "../components/EmptyCalendarDate";
 import { supabase } from "@/utils/supabase";
 import { format } from "date-fns";
 import { useUser } from "@/UserContext";
+import { MonoText } from "@/components/StyledText";
+
 
 interface Event {
   id: string;
@@ -232,7 +234,7 @@ const Calendar = () => {
   if (Object.keys(eventsByMonth).length === 0) {
     return (
       <View style={{ backgroundColor: "white", flex: 1 }}>
-        <Text>No events found</Text>
+        <MonoText>No events found</MonoText>
       </View>
     );
   }
@@ -244,7 +246,7 @@ const Calendar = () => {
     >
       {sortedMonths.map((month) => (
         <View key={`month-${month}`}>
-          <Text style={styles.title}>{month}</Text>
+          <MonoText useMedium={true} style={styles.title}>{month}</MonoText>
           {Object.keys(eventsByMonth[month]).map((date) => {
             console.log("month:", month);
             console.log("date", date);
