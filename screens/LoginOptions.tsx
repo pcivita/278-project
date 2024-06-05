@@ -22,13 +22,6 @@ const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
 
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity
-        onPress={() => setCurrentScreen("onboarding")}
-        style={styles.backCaret}
-      >
-        <FontAwesome5 name="arrow-left" size={24} color="black" />
-      </TouchableOpacity> */}
-      {/* <Text style={styles.title}>Get started with Flock today</Text> */}
       <View style={styles.header} />
       <Image source={require("../assets/icons/FlockIcon.png")} style={styles.logo} />
       <MonoText useUltra={true} style={styles.title}>
@@ -41,7 +34,7 @@ const Login: React.FC<LoginProps> = ({  setCurrentScreen }) => {
           style={styles.button}
         >
           <Ionicons name="mail" size={15} color="white" />
-          <MonoText style={styles.buttonText}>Sign in with Email</MonoText>
+          <MonoText useMedium={true} style={styles.buttonText}>Sign in with Email</MonoText>
         </TouchableOpacity>
       </View>
       

@@ -41,7 +41,7 @@ const SignUp: React.FC<SignUpProps> = ({  setCurrentScreen }) => {
           style={styles.button}
         >
           <Ionicons name="mail" size={15} color="white" />
-          <MonoText style={styles.buttonText}>Sign up with Email</MonoText>
+          <MonoText useMedium={true} style={styles.buttonText}>Sign up with Email</MonoText>
         </TouchableOpacity>
       </View>
       

@@ -256,7 +256,7 @@ export default function Onboarding() {
               // onPress={() => {setOnboardingScreenNumber(5)}}
               onPress={() => setCurrentScreen("sign up options")}
             >
-              <MonoText useUltra={true} style={styles.onBoardingButtonText}>
+              <MonoText useMedium={true} style={styles.onBoardingButtonText}>
                 Continue
               </MonoText>
             </TouchableOpacity>
