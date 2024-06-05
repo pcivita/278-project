@@ -211,7 +211,7 @@ const NotificationsScreen = () => {
       <View style={styles.container}>
         {isEmpty ? (
           <View style={styles.noNotificationsContainer}>
-            <MonoText style={styles.noNotificationsText}>No Notifications</MonoText>
+            <MonoText style={styles.noNotificationsText}>No notifications</MonoText>
             <TouchableOpacity
               style={styles.addFriendsButton}
               onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}

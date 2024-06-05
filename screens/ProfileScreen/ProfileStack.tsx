@@ -34,7 +34,7 @@ function ProfileStack() {
         options={({ navigation }) => ({
           headerTitle: () => <MonoText useUltra={true} style={{ fontSize: 22 }}>Friends</MonoText>,
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
               <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
           ),

@@ -349,7 +349,7 @@ const Feed = ({ navigation }) => {
     >
       {isEmpty ? (
         <>
-          <MonoText style={styles.noNotificationsText}>No Events</MonoText>
+          <MonoText style={styles.noNotificationsText}>No upcoming</MonoText>
           <TouchableOpacity
             style={styles.addFriendsButton}
             onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
@@ -425,12 +425,6 @@ const styles = StyleSheet.create({
   dateTextContainer: {
     width: "100%",
     paddingHorizontal: 10,
-  },
-  noNotificationsContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
   },
   noNotificationsText: {
     color: "grey",
