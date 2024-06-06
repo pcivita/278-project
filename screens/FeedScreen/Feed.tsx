@@ -349,7 +349,7 @@ const Feed = ({ navigation }) => {
     >
       {isEmpty ? (
         <>
-          <MonoText style={styles.noNotificationsText}>No upcoming</MonoText>
+          <MonoText style={styles.noNotificationsText}>No upcoming events</MonoText>
           <TouchableOpacity
             style={styles.addFriendsButton}
             onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}

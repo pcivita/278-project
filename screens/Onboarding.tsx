@@ -45,7 +45,7 @@ export default function Onboarding() {
     {
       title: "Create events and invite your friends",
       description:
-        "For example, lunch at a local restaurant, a hike, a movie night, or anything else",
+        "Lunch at a local restaurant, a hike, a movie night, or anything!",
     },
     {
       title: "Browse events and join in on the fun",
