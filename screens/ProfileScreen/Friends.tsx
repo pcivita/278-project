@@ -114,7 +114,7 @@ const Friends: React.FC = () => {
   if (error) return <Text>Error: {error}</Text>;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 150 }}>
       {users.map((user: User) => (
         // <AddFriendCard key={user.id} user={user} />
         <AddFriendCard

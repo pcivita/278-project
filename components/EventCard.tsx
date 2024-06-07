@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
   hostText: {
     fontSize: 14,
     lineHeight: 18,
+    top: 0.5
   },
   attendeesContainer: {
     alignItems: "flex-start", // Align items to the start (left)
