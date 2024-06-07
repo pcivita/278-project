@@ -65,7 +65,7 @@ const NotificationsScreen = () => {
           requests.map(async (request) => {
             const { data: userData, error: userError } = await supabase
               .from("users")
-              .select("name")
+              .select("name, photo")
               .eq("id", request.user_requested)
               .single();
 
@@ -74,7 +74,11 @@ const NotificationsScreen = () => {
               return { ...request, userName: "Unknown" };
             }
 
-            return { ...request, userName: userData.name };
+            return {
+              ...request,
+              userName: userData.name,
+              userPhoto: userData.photo,
+            };
           })
         );
 
@@ -207,29 +211,40 @@ const NotificationsScreen = () => {
   const isEmpty = Object.keys(friendRequestsByDate).length === 0;
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainer} style={{ backgroundColor: "white" }}>
+    <ScrollView
+      contentContainerStyle={styles.contentContainer}
+      style={{ backgroundColor: "white" }}
+    >
       <View style={styles.container}>
         {isEmpty ? (
           <View style={styles.noNotificationsContainer}>
-            <MonoText style={styles.noNotificationsText}>No notifications</MonoText>
+            <MonoText style={styles.noNotificationsText}>
+              No notifications
+            </MonoText>
             <TouchableOpacity
               style={styles.addFriendsButton}
-              onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
+              onPress={() =>
+                navigation.navigate("ProfileTab", { screen: "Friends" })
+              }
             >
-              <MonoText useMedium={true} style={styles.addFriendsButtonText}>Add Friends</MonoText>
+              <MonoText useMedium={true} style={styles.addFriendsButtonText}>
+                Add Friends
+              </MonoText>
             </TouchableOpacity>
           </View>
         ) : (
           Object.keys(friendRequestsByDate).map((date) => (
             <View key={date}>
-              <MonoText useMedium={true} style={styles.dateHeader}>{date}</MonoText>
+              <MonoText useMedium={true} style={styles.dateHeader}>
+                {date}
+              </MonoText>
               {friendRequestsByDate[date].map((request) => (
                 <NotificationItem
                   type={"friend_request"}
                   message={request.userName + " wants to be your friend."}
                   requestId={request.id}
                   key={request.id}
-                  profilePictureUrl={request.profilePictureUrl} // Pass profile picture URL
+                  profilePictureUrl={request.userPhoto} // Pass profile picture URL
                   time={request.created_at}
                 />
               ))}

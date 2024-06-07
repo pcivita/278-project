@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import EventDetailsCard from "@/components/EventDetailsCard";
 import Colors from "@/constants/Colors";
@@ -6,8 +13,8 @@ import { MonoText } from "@/components/StyledText";
 import { Dimensions } from "react-native";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@/UserContext";
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -39,7 +46,7 @@ interface EventDetailsProps {
       eventId: string;
     };
   };
-  navigation: StackNavigationProp<RootStackParamList, 'EditEvent'>;
+  navigation: StackNavigationProp<RootStackParamList, "EditEvent">;
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
@@ -55,9 +62,11 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
     description,
   } = route.params;
   const theme = Colors[colorScheme]; // Gets theme from event's colour scheme
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState("");
   const [isAttending, setIsAttending] = useState(false);
-  const [attendees, setAttendees] = useState<Array<{ userId: string, name: string, photo: string | null }>>([]);
+  const [attendees, setAttendees] = useState<
+    Array<{ userId: string; name: string; photo: string | null }>
+  >([]);
 
   useEffect(() => {
     fetchUserId();
@@ -73,17 +82,17 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
   const fetchUserId = async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
-      console.error('Error fetching user:', error);
+      console.error("Error fetching user:", error);
     } else if (data && data.user && data.user.id) {
       setUserId(data.user.id);
     } else {
-      console.error('User data is invalid:', data);
+      console.error("User data is invalid:", data);
     }
   };
 
   const checkAttendanceStatus = async () => {
-    if (!userId || userId.trim() === '') {
-      console.error('Invalid user ID:', userId);
+    if (!userId || userId.trim() === "") {
+      console.error("Invalid user ID:", userId);
       return;
     }
     const { data, error } = await supabase
@@ -101,27 +110,27 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
 
   const fetchAttendees = async () => {
     const { data: signupData, error: signupError } = await supabase
-      .from('event_signup')
-      .select('user_id')
-      .eq('event_id', eventId);
+      .from("event_signup")
+      .select("user_id")
+      .eq("event_id", eventId);
 
     if (signupError) {
-      console.error('Error fetching signups:', signupError);
+      console.error("Error fetching signups:", signupError);
       return;
     }
 
-    const attendeeIds = signupData.map(signup => signup.user_id);
+    const attendeeIds = signupData.map((signup) => signup.user_id);
     const { data: usersData, error: usersError } = await supabase
-      .from('users')
-      .select('id, name, photo')
-      .in('id', attendeeIds);
+      .from("users")
+      .select("id, name, photo")
+      .in("id", attendeeIds);
 
     if (usersError) {
-      console.error('Error fetching user details:', usersError);
+      console.error("Error fetching user details:", usersError);
       return;
     }
 
-    const attendeesList = usersData.map(user => ({
+    const attendeesList = usersData.map((user) => ({
       userId: user.id,
       name: user.name,
       photo: user.photo,
@@ -144,33 +153,32 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
       if (error) {
         console.error("Error inserting data:", error);
         return;
-      
       } else {
         console.log("Data inserted successfully:", data);
-      } 
+      }
 
       const { data: eventData, error: eventError } = await supabase
-        .from('event')
-        .select('current_signups, max_people')
-        .eq('id', eventId)
+        .from("event")
+        .select("current_signups, max_people")
+        .eq("id", eventId)
         .single();
 
       if (eventError) {
-        console.error('Error fetching event data:', eventError);
+        console.error("Error fetching event data:", eventError);
         return;
       }
 
       const { current_signups, max_people } = eventData;
       const updatedSignups = current_signups + 1;
-      const maxSignupReached = (updatedSignups >= max_people);
+      const maxSignupReached = updatedSignups >= max_people;
 
       const { error: updateEventError } = await supabase
-        .from('event')
+        .from("event")
         .update({
           current_signups: updatedSignups,
-          max_signup: maxSignupReached
+          max_signup: maxSignupReached,
         })
-        .eq('id', eventId);
+        .eq("id", eventId);
 
       if (updateEventError) {
         console.error("Error updating event data:", updateEventError);
@@ -180,29 +188,28 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
 
       setIsAttending(true);
       fetchAttendees();
-    
     } catch (error) {
       console.error("Error joining event:", error);
     }
 
-    console.log(description)
+    console.log(description);
   };
 
   const handleDeleteEvent = async () => {
     try {
       const { error: signupError } = await supabase
-        .from('event_signup')
+        .from("event_signup")
         .delete()
-        .eq('event_id', eventId);
+        .eq("event_id", eventId);
 
       if (signupError) {
         throw signupError;
       }
 
       const { error: eventError } = await supabase
-        .from('event')
+        .from("event")
         .delete()
-        .eq('id', eventId);
+        .eq("id", eventId);
 
       if (eventError) {
         throw eventError;
@@ -217,7 +224,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
   };
 
   const handleEditEvent = () => {
-    navigation.navigate('EditEvent', {
+    navigation.navigate("EditEvent", {
       eventId,
       eventName,
       eventTime,
@@ -250,7 +257,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
           {attendees.map((attendee, index) => (
             <View key={index} style={styles.user}>
               <Image
-                source={{ uri: attendee.photo || 'default_image_url' }}
+                source={{ uri: attendee.photo || "default_image_url" }}
                 style={styles.profileImage}
               />
               <MonoText style={styles.secondaryText}>{attendee.name}</MonoText>
@@ -264,9 +271,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
           Notes
         </MonoText>
         <View style={styles.notes}>
-          <MonoText style={styles.secondaryText}>
-            {description}
-          </MonoText>
+          <MonoText style={styles.secondaryText}>{description}</MonoText>
         </View>
         <View style={styles.horizontalLine} />
       </View>
@@ -276,17 +281,30 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route, navigation }) => {
             You're attending this event!
           </MonoText>
         ) : (
-          <TouchableOpacity onPress={joinEvent} style={[styles.button, { backgroundColor: theme.dark }]}>
-            <MonoText useMedium={true} style={styles.buttonText}>Join Event</MonoText>
+          <TouchableOpacity
+            onPress={joinEvent}
+            style={[styles.button, { backgroundColor: theme.dark }]}
+          >
+            <MonoText useMedium={true} style={styles.buttonText}>
+              Join Event
+            </MonoText>
           </TouchableOpacity>
         ))}
       {isUserHost && (
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleEditEvent} style={[styles.editButton, { backgroundColor: theme.dark }]}>
+          {/* <TouchableOpacity onPress={handleEditEvent} style={[styles.editButton, { backgroundColor: theme.dark }]}>
             <MonoText useMedium={true} style={styles.buttonText}>Edit Event</MonoText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleDeleteEvent} style={[styles.deleteButton, { borderColor: theme.dark }]}>
-            <MonoText useMedium={true} style={[styles.buttonText, { color: "black" }]}>Delete Event</MonoText>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={handleDeleteEvent}
+            style={[styles.deleteButton, { borderColor: theme.dark }]}
+          >
+            <MonoText
+              useMedium={true}
+              style={[styles.buttonText, { color: "black" }]}
+            >
+              Delete Event
+            </MonoText>
           </TouchableOpacity>
         </View>
       )}
@@ -326,7 +344,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: "white",
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   horizontalLine: {
     width: "100%",
@@ -350,9 +368,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '95%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "95%",
     marginTop: 20,
   },
   editButton: {
