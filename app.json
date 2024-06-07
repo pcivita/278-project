@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "supa-app",
-    "slug": "supa-app",
+    "slug": "278-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -37,6 +37,19 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "096ededf-1aad-48ca-8d94-a0f00ebddb38"
+      }
+    },
+    "owner": "pcivita",
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/096ededf-1aad-48ca-8d94-a0f00ebddb38"
     }
   }
 }
