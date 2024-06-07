@@ -349,19 +349,27 @@ const Feed = ({ navigation }) => {
     >
       {isEmpty ? (
         <>
-          <MonoText style={styles.noNotificationsText}>No upcoming events</MonoText>
+          <MonoText style={styles.noNotificationsText}>
+            No upcoming events
+          </MonoText>
           <TouchableOpacity
             style={styles.addFriendsButton}
-            onPress={() => navigation.navigate("ProfileTab", { screen: "Friends" })}
+            onPress={() =>
+              navigation.navigate("ProfileTab", { screen: "Friends" })
+            }
           >
-            <MonoText useMedium={true} style={styles.addFriendsButtonText}>Add Friends</MonoText>
+            <MonoText useMedium={true} style={styles.addFriendsButtonText}>
+              Add Friends
+            </MonoText>
           </TouchableOpacity>
         </>
       ) : (
         Object.keys(sortedEventObj).map((date) => (
           <View key={date} style={styles.dateSection}>
             <View style={styles.dateTextContainer}>
-              <MonoText useMedium={true} style={styles.dateText}>{date}</MonoText>
+              <MonoText useMedium={true} style={styles.dateText}>
+                {date}
+              </MonoText>
             </View>
             {sortedEventObj[date].map((event) => {
               const colorScheme = `color${(colorIndex % 5) + 1}`;
